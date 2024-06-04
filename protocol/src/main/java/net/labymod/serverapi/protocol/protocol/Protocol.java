@@ -3,15 +3,17 @@ package net.labymod.serverapi.protocol.protocol;
 import net.labymod.serverapi.protocol.packet.Packet;
 import net.labymod.serverapi.protocol.packet.PacketHandler;
 import net.labymod.serverapi.protocol.payload.identifier.PayloadChannelIdentifier;
+import net.labymod.serverapi.protocol.payload.io.PayloadReader;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.lang.reflect.Constructor;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.Predicate;
 
-public class Protocol {
+public abstract class Protocol {
 
   protected final PayloadChannelIdentifier identifier;
   protected final Set<ProtocolPacket> packets;
@@ -26,6 +28,14 @@ public class Protocol {
     Objects.requireNonNull(identifier, "Identifier cannot be null");
     this.identifier = identifier;
     this.packets = new HashSet<>();
+  }
+
+  /**
+   * @return the identifier of the protocol.
+   */
+  public @NotNull
+  final PayloadChannelIdentifier identifier() {
+    return this.identifier;
   }
 
   /**
@@ -54,7 +64,7 @@ public class Protocol {
   ) {
     Objects.requireNonNull(packetClass, "Packet cannot be null");
     ProtocolPacket protocolPacket = new ProtocolPacket(id, packetClass);
-    protocolPacket.handler = handler;
+    protocolPacket.handlers.add(handler);
     this.packets.add(protocolPacket);
   }
 
@@ -104,13 +114,15 @@ public class Protocol {
               + "in protocol " + this.identifier + "found");
     }
 
-    if (protocolPacket.handler != null) {
-      throw new UnsupportedOperationException(
-          "Packet " + packetClass.getSimpleName() + " in protocol " + this.identifier
-              + " already has a handler");
+    for (PacketHandler packetHandler : protocolPacket.handlers) {
+      if (packetHandler == handler) {
+        throw new UnsupportedOperationException(
+            "Packet " + packetClass.getSimpleName() + " in protocol " + this.identifier
+                + " already has " + handler.getClass().getSimpleName() + " as handler");
+      }
     }
 
-    protocolPacket.handler = handler;
+    protocolPacket.handlers.add(handler);
   }
 
   /**
@@ -130,9 +142,24 @@ public class Protocol {
               + this.identifier + "found");
     }
 
-    if (protocolPacket.handler != null) {
-      protocolPacket.handler.handle(packet);
+    this.handlePacket(protocolPacket, packet);
+  }
+
+  /**
+   * Handles the incoming payload.
+   *
+   * @param reader The reader to read the payload.
+   */
+  public void handleIncomingPayload(PayloadReader reader) {
+    int id = reader.readVarInt();
+    ProtocolPacket protocolPacket = this.getProtocolPacket(packet -> packet.id == id);
+    if (protocolPacket == null) {
+      return;
     }
+
+    Packet packet = protocolPacket.createPacket();
+    packet.read(reader);
+    this.handlePacket(protocolPacket, packet);
   }
 
   private ProtocolPacket getProtocolPacket(Predicate<ProtocolPacket> filter) {
@@ -145,15 +172,36 @@ public class Protocol {
     return null;
   }
 
+  private void handlePacket(ProtocolPacket protocolPacket, Packet packet) {
+    for (PacketHandler handler : protocolPacket.handlers) {
+      handler.handle(packet);
+    }
+  }
+
   private static class ProtocolPacket {
 
     private final int id;
     private final Class<? extends Packet> packet;
-    private PacketHandler handler;
+    private final Set<PacketHandler> handlers;
+
+    private Constructor<? extends Packet> constructor;
 
     private ProtocolPacket(int id, Class<? extends Packet> packet) {
       this.id = id;
       this.packet = packet;
+      this.handlers = new HashSet<>();
+    }
+
+    private Packet createPacket() {
+      try {
+        if (this.constructor == null) {
+          this.constructor = this.packet.getDeclaredConstructor();
+        }
+
+        return this.constructor.newInstance();
+      } catch (Exception exception) {
+        throw new RuntimeException(exception);
+      }
     }
   }
 }

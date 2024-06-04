@@ -33,6 +33,10 @@ subprojects {
         sourceCompatibility = JavaVersion.VERSION_21
         targetCompatibility = JavaVersion.VERSION_21
     }
+
+    tasks.jar {
+        archiveFileName.set("labymod-server-api-" + archiveFileName.get().replace("server-", ""))
+    }
 }
 
 tasks.getByName<Test>("test") {
