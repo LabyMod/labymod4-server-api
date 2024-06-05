@@ -1,3 +1,3 @@
 dependencies {
-    api(project(":protocol"))
+    compile(project(":protocol"))
 }

@@ -2,12 +2,15 @@ package net.labymod.serverapi.protocol.payload.io;
 
 import net.labymod.serverapi.protocol.payload.exception.PayloadWriterException;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.nio.Buffer;
 import java.nio.BufferOverflowException;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
+import java.util.Collection;
 import java.util.UUID;
+import java.util.function.Consumer;
 
 public class PayloadWriter {
 
@@ -52,6 +55,10 @@ public class PayloadWriter {
 
   public void writeString(@NotNull String value) {
     this.writeSizedString(value, Short.MAX_VALUE);
+  }
+
+  public void writeString(@NotNull Object value) {
+    this.writeString(value.toString());
   }
 
   public void writeSizedString(@NotNull String value, int maximumLength) {
@@ -101,6 +108,29 @@ public class PayloadWriter {
     byte[] buffer = new byte[this.buffer.remaining()];
     this.buffer.get(buffer);
     return buffer;
+  }
+
+  public <T> void writeCollection(@NotNull Collection<T> list, @NotNull Consumer<T> writer) {
+    this.writeVarInt(list.size());
+    for (T element : list) {
+      writer.accept(element);
+    }
+  }
+
+  public <T> void writeArray(@Nullable T[] array, @NotNull Consumer<T> writer) {
+    if (array == null) {
+      this.writeVarInt(0);
+      return;
+    }
+
+    this.writeVarInt(array.length);
+    for (T element : array) {
+      writer.accept(element);
+    }
+  }
+
+  public void writeArray(@Nullable String[] array) {
+    this.writeArray(array, this::writeString);
   }
 
   private void ensureSize(int length) {

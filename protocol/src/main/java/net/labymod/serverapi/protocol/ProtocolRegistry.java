@@ -1,4 +1,4 @@
-package net.labymod.serverapi.protocol.protocol;
+package net.labymod.serverapi.protocol;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Unmodifiable;

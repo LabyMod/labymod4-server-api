@@ -6,6 +6,11 @@ import org.jetbrains.annotations.NotNull;
 import java.nio.BufferUnderflowException;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.function.Supplier;
 
 public class PayloadReader {
 
@@ -112,5 +117,39 @@ public class PayloadReader {
 
   public float readFloat() {
     return this.buffer.getFloat();
+  }
+
+  public <T> List<T> readList(Supplier<T> reader) {
+    int length = this.readVarInt();
+    List<T> list = new ArrayList<>(length);
+    for (int i = 0; i < length; i++) {
+      list.add(reader.get());
+    }
+
+    return list;
+  }
+
+  public <T> Set<T> readSet(Supplier<T> reader) {
+    int length = this.readVarInt();
+    Set<T> set = new HashSet<>(length);
+    for (int i = 0; i < length; i++) {
+      set.add(reader.get());
+    }
+
+    return set;
+  }
+
+  public <T> T[] readArray(Supplier<T> reader) {
+    int length = this.readVarInt();
+    T[] array = (T[]) new Object[length];
+    for (int i = 0; i < length; i++) {
+      array[i] = reader.get();
+    }
+
+    return array;
+  }
+
+  public String[] readArray() {
+    return this.readArray(this::readString);
   }
 }

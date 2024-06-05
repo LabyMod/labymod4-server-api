@@ -21,6 +21,10 @@ subprojects {
     group = rootProject.group
     version = rootProject.version
 
+    val compile = configurations.create("compile")
+    val api by configurations
+    api.extendsFrom(compile)
+
     repositories {
         mavenCentral()
     }
@@ -36,6 +40,20 @@ subprojects {
 
     tasks.jar {
         archiveFileName.set("labymod-server-api-" + archiveFileName.get().replace("server-", ""))
+
+        fun includeProjectDependencies(config: Configuration, visited: MutableSet<Project>) {
+            config.dependencies.forEach { dependency ->
+                if (dependency is ProjectDependency) {
+                    val project = dependency.dependencyProject
+                    if (visited.add(project)) {
+                        from(project.sourceSets["main"].output)
+                        includeProjectDependencies(project.configurations["compile"], visited)
+                    }
+                }
+            }
+        }
+
+        includeProjectDependencies(configurations["compile"], mutableSetOf())
     }
 }
 

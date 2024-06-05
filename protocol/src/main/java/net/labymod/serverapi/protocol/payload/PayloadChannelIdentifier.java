@@ -1,4 +1,4 @@
-package net.labymod.serverapi.protocol.payload.identifier;
+package net.labymod.serverapi.protocol.payload;
 
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;

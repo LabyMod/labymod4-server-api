@@ -1,17 +1,21 @@
 package net.labymod.serverapi.core;
 
+import net.labymod.serverapi.core.packet.clientbound.game.moderation.PermissionPacket;
 import net.labymod.serverapi.core.packet.serverbound.login.VersionLoginPacket;
-import net.labymod.serverapi.protocol.payload.identifier.PayloadChannelIdentifier;
-import net.labymod.serverapi.protocol.protocol.Protocol;
+import net.labymod.serverapi.protocol.Protocol;
+import net.labymod.serverapi.protocol.packet.Direction;
+import net.labymod.serverapi.protocol.payload.PayloadChannelIdentifier;
 
-public class LabyModProtocol extends Protocol {
+public class LabyModProtocol extends Protocol<AbstractLabyModProtocolService> {
 
-  protected LabyModProtocol() {
-    super(PayloadChannelIdentifier.create("labymod", "neo"));
+  protected LabyModProtocol(AbstractLabyModProtocolService protocolService) {
+    super(protocolService, PayloadChannelIdentifier.create("labymod", "neo"));
     this.registerPackets();
   }
 
   private void registerPackets() {
-    this.registerPacket(0, VersionLoginPacket.class);
+    this.registerPacket(0, VersionLoginPacket.class, Direction.SERVERBOUND);
+
+    this.registerPacket(40, PermissionPacket.class, Direction.CLIENTBOUND);
   }
 }
