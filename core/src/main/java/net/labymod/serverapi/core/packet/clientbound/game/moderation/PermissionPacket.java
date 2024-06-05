@@ -15,7 +15,7 @@ public class PermissionPacket implements Packet {
   private List<StatedPermission> permissions;
 
   public PermissionPacket() {
-
+    // Constructor for reading
   }
 
   public PermissionPacket(@NotNull List<StatedPermission> permissions) {

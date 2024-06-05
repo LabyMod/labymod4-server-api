@@ -13,7 +13,7 @@ public class VersionLoginPacket implements Packet {
   private String version;
 
   public VersionLoginPacket() {
-    // Empty constructor
+    // Constructor for reading
   }
 
   public VersionLoginPacket(String version) {

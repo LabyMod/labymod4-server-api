@@ -119,6 +119,10 @@ public class PayloadReader {
     return this.buffer.getFloat();
   }
 
+  public double readDouble() {
+    return this.buffer.getDouble();
+  }
+
   public <T> List<T> readList(Supplier<T> reader) {
     int length = this.readVarInt();
     List<T> list = new ArrayList<>(length);
@@ -147,6 +151,18 @@ public class PayloadReader {
     }
 
     return array;
+  }
+
+  public <T> T readOptional(Supplier<T> reader) {
+    return this.readBoolean() ? reader.get() : null;
+  }
+
+  public String[] readStringArray() {
+    return this.readArray(this::readString);
+  }
+
+  public String readOptionalString() {
+    return this.readOptional(this::readString);
   }
 
   public String[] readArray() {

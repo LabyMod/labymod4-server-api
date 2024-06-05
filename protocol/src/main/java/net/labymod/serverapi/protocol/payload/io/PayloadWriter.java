@@ -103,6 +103,11 @@ public class PayloadWriter {
     this.buffer.putFloat(value);
   }
 
+  public void writeDouble(double value) {
+    this.ensureSize(8);
+    this.buffer.putDouble(value);
+  }
+
   public byte[] toByteArray() {
     this.bufferFlip();
     byte[] buffer = new byte[this.buffer.remaining()];
@@ -129,8 +134,19 @@ public class PayloadWriter {
     }
   }
 
-  public void writeArray(@Nullable String[] array) {
+  public void writeStringArray(@Nullable String[] array) {
     this.writeArray(array, this::writeString);
+  }
+
+  public <T> void writeOptional(@Nullable T value, @NotNull Consumer<T> writer) {
+    this.writeBoolean(value != null);
+    if (value != null) {
+      writer.accept(value);
+    }
+  }
+
+  public void writeOptionalString(@Nullable String value) {
+    this.writeOptional(value, this::writeString);
   }
 
   private void ensureSize(int length) {
