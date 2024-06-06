@@ -9,7 +9,7 @@ import java.util.Map;
 
 public class ServerAPITextColor {
 
-  public static final Map<Integer, ServerAPITextColor> NAMED_VALUES = new HashMap<>();
+  private static final Map<Integer, ServerAPITextColor> NAMED_VALUES = new HashMap<>();
   private static final Map<String, ServerAPITextColor> NAMED = new HashMap<>();
 
   public static final ServerAPITextColor BLACK = named("BLACK", 0);
