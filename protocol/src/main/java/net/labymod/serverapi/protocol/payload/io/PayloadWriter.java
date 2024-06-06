@@ -1,5 +1,7 @@
 package net.labymod.serverapi.protocol.payload.io;
 
+import net.labymod.serverapi.protocol.model.component.ServerAPIComponent;
+import net.labymod.serverapi.protocol.model.component.ServerAPITextComponent;
 import net.labymod.serverapi.protocol.payload.exception.PayloadWriterException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -88,6 +90,11 @@ public class PayloadWriter {
     this.buffer.put((byte) (value ? 1 : 0));
   }
 
+  public void writeByte(byte value) {
+    this.ensureSize(1);
+    this.buffer.put(value);
+  }
+
   public void writeShort(short value) {
     this.ensureSize(2);
     this.buffer.putShort(value);
@@ -147,6 +154,49 @@ public class PayloadWriter {
 
   public void writeOptionalString(@Nullable String value) {
     this.writeOptional(value, this::writeString);
+  }
+
+  public void writeComponent(@NotNull ServerAPIComponent component) {
+    byte id = 0;
+    Consumer<PayloadWriter> dataWriter = null;
+    if (component instanceof ServerAPITextComponent textComponent && !textComponent.getText()
+        .isEmpty()) {
+      id = 1;
+      dataWriter = writer -> writer.writeString(textComponent.getText());
+    }
+
+    this.writeByte(id);
+    if (dataWriter != null) {
+      dataWriter.accept(this);
+    }
+
+    Collection<Boolean> decorations = component.getDecorations().values();
+    int setDecorations = 0;
+    for (Boolean decoration : decorations) {
+      if (decoration != null) {
+        setDecorations++;
+      }
+    }
+
+    boolean styleHasContent = component.getColor() != null || setDecorations != 0;
+    this.writeBoolean(styleHasContent);
+    if (styleHasContent) {
+      this.writeOptional(component.getColor(), color -> this.writeInt(color.getValue()));
+
+      // Write decorations
+      this.writeVarInt(setDecorations);
+      byte i = 0;
+      for (Boolean decoration : decorations) {
+        if (decoration != null) {
+          this.writeByte(i);
+          this.writeBoolean(decoration);
+        }
+
+        i++;
+      }
+    }
+
+    this.writeCollection(component.getChildren(), this::writeComponent);
   }
 
   private void ensureSize(int length) {

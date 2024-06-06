@@ -1,5 +1,8 @@
 package net.labymod.serverapi.protocol.payload.io;
 
+import net.labymod.serverapi.protocol.model.component.ServerAPIComponent;
+import net.labymod.serverapi.protocol.model.component.ServerAPITextColor;
+import net.labymod.serverapi.protocol.model.component.ServerAPITextDecoration;
 import net.labymod.serverapi.protocol.payload.exception.PayloadReaderException;
 import org.jetbrains.annotations.NotNull;
 
@@ -111,6 +114,10 @@ public class PayloadReader {
     return data;
   }
 
+  public byte readByte() {
+    return this.buffer.get();
+  }
+
   public short readShort() {
     return this.buffer.getShort();
   }
@@ -167,5 +174,38 @@ public class PayloadReader {
 
   public String[] readArray() {
     return this.readArray(this::readString);
+  }
+
+  public ServerAPIComponent readComponent() {
+    byte id = this.readByte();
+    ServerAPIComponent component;
+    if (id == 1) {
+      component = ServerAPIComponent.text(this.readString());
+    } else {
+      component = ServerAPIComponent.empty();
+    }
+
+    if (this.readBoolean()) {
+      component.color(this.readOptional(() -> ServerAPITextColor.of(this.readInt())));
+
+      List<ServerAPITextDecoration> decorations = ServerAPITextDecoration.getValues();
+      int setDecorations = this.readVarInt();
+      for (int i = 0; i < setDecorations; i++) {
+        int ordinal = this.readByte();
+        if (ordinal < 0 || ordinal >= decorations.size()) {
+          continue;
+        }
+
+        ServerAPITextDecoration decoration = decorations.get(ordinal);
+        if (this.readBoolean()) {
+          component.decorate(decoration);
+        } else {
+          component.undecorate(decoration);
+        }
+      }
+    }
+
+    component.setChildren(this.readList(this::readComponent));
+    return component;
   }
 }

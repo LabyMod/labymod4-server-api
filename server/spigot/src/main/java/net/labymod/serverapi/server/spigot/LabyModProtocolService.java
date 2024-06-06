@@ -1,11 +1,11 @@
-package net.labymod.serverapi.server.bukkit;
+package net.labymod.serverapi.server.spigot;
 
 import net.labymod.serverapi.core.AbstractLabyModProtocolService;
 import net.labymod.serverapi.protocol.logger.NoOpProtocolPlatformLogger;
 import net.labymod.serverapi.protocol.logger.ProtocolPlatformLogger;
 import net.labymod.serverapi.protocol.payload.PayloadChannelIdentifier;
 import net.labymod.serverapi.protocol.payload.io.PayloadWriter;
-import net.labymod.serverapi.server.bukkit.listener.PluginMessageListener;
+import net.labymod.serverapi.server.spigot.listener.PluginMessageListener;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.messaging.Messenger;
@@ -94,7 +94,7 @@ public class LabyModProtocolService extends AbstractLabyModProtocolService {
     }
 
     this.plugin = javaPlugin;
-    this.logger = new LabyModBukkitProtocolLogger(javaPlugin.getLogger());
+    this.logger = new LabyModSpigotProtocolLogger(javaPlugin.getLogger());
     Messenger messenger = this.plugin.getServer().getMessenger();
     this.registry().addRegisterListener(protocol -> {
       String identifier = protocol.identifier().toString();

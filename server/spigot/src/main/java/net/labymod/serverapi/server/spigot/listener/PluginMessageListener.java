@@ -1,8 +1,8 @@
-package net.labymod.serverapi.server.bukkit.listener;
+package net.labymod.serverapi.server.spigot.listener;
 
 import net.labymod.serverapi.protocol.Protocol;
 import net.labymod.serverapi.protocol.payload.io.PayloadReader;
-import net.labymod.serverapi.server.bukkit.LabyModProtocolService;
+import net.labymod.serverapi.server.spigot.LabyModProtocolService;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
