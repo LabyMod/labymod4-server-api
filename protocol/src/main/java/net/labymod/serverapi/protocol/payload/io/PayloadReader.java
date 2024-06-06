@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 import java.util.function.Supplier;
 
 public class PayloadReader {
@@ -158,6 +159,10 @@ public class PayloadReader {
     }
 
     return array;
+  }
+
+  public UUID readUUID() {
+    return new UUID(this.readLong(), this.readLong());
   }
 
   public <T> T readOptional(Supplier<T> reader) {

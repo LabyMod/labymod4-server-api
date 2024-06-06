@@ -51,8 +51,9 @@ public class PayloadWriter {
     this.buffer.put(bytes);
   }
 
-  public void writeUuid(@NotNull UUID value) {
-    this.writeString(value.toString());
+  public void writeUUID(@NotNull UUID value) {
+    this.writeLong(value.getMostSignificantBits());
+    this.writeLong(value.getLeastSignificantBits());
   }
 
   public void writeString(@NotNull String value) {
