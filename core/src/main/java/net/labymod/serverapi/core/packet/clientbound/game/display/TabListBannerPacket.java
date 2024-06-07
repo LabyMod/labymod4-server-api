@@ -10,10 +10,6 @@ public class TabListBannerPacket implements Packet {
 
   private String iconUrl;
 
-  public TabListBannerPacket() {
-    // Constructor for reading
-  }
-
   public TabListBannerPacket(@Nullable String iconUrl) {
     this.iconUrl = iconUrl;
   }
@@ -28,7 +24,12 @@ public class TabListBannerPacket implements Packet {
     writer.writeOptionalString(this.iconUrl);
   }
 
-  public String getIconUrl() {
+  public @NotNull String getIconUrl() {
     return this.iconUrl;
+  }
+
+  @Override
+  public String toString() {
+    return "TabListBannerPacket{" + "iconUrl='" + this.iconUrl + '\'' + '}';
   }
 }

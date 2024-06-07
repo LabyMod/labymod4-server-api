@@ -22,4 +22,11 @@ public class ServerAPITextComponent extends ServerAPIBaseComponent<ServerAPIText
   public @NotNull String getText() {
     return this.text;
   }
+
+  @Override
+  public String toString() {
+    return "ServerAPITextComponent{" +
+        "text='" + this.text + '\'' +
+        "} " + super.toString();
+  }
 }

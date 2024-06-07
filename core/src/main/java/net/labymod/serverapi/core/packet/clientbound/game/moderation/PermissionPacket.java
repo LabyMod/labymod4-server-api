@@ -14,10 +14,6 @@ public class PermissionPacket implements Packet {
 
   private List<StatedPermission> permissions;
 
-  public PermissionPacket() {
-    // Constructor for reading
-  }
-
   public PermissionPacket(@NotNull List<StatedPermission> permissions) {
     Objects.requireNonNull(permissions, "Permissions");
     this.permissions = permissions;
@@ -44,7 +40,7 @@ public class PermissionPacket implements Packet {
     });
   }
 
-  public List<StatedPermission> getPermissions() {
+  public @NotNull List<StatedPermission> getPermissions() {
     return this.permissions;
   }
 }

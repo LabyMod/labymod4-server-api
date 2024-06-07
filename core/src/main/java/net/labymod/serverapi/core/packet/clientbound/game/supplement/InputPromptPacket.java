@@ -19,10 +19,6 @@ public class InputPromptPacket extends IdentifiablePacket {
 
   //todo: maybe also add minlength?
 
-  public InputPromptPacket() {
-    // Constructor for reading
-  }
-
   public InputPromptPacket(
       @NotNull ServerAPIComponent title,
       @Nullable ServerAPIComponent placeholder,
@@ -54,19 +50,29 @@ public class InputPromptPacket extends IdentifiablePacket {
     writer.writeVarInt(this.maxLength);
   }
 
-  public ServerAPIComponent title() {
+  public @NotNull ServerAPIComponent title() {
     return this.title;
   }
 
-  public ServerAPIComponent getPlaceholder() {
+  public @Nullable ServerAPIComponent getPlaceholder() {
     return this.placeholder;
   }
 
-  public String getDefaultValue() {
+  public @Nullable String getDefaultValue() {
     return this.defaultValue;
   }
 
   public int getMaxLength() {
     return this.maxLength;
+  }
+
+  @Override
+  public String toString() {
+    return "InputPromptPacket{" +
+        "title=" + this.title +
+        ", placeholder=" + this.placeholder +
+        ", defaultValue='" + this.defaultValue + '\'' +
+        ", maxLength=" + this.maxLength +
+        "} " + super.toString();
   }
 }

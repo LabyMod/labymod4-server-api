@@ -59,4 +59,13 @@ public class Subtitle {
   public @NotNull ServerAPIComponent text() {
     return this.text;
   }
+
+  @Override
+  public String toString() {
+    return "Subtitle{" +
+        "uniqueId=" + this.uniqueId +
+        ", text=" + this.text +
+        ", size=" + this.size +
+        '}';
+  }
 }

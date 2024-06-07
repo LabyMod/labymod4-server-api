@@ -71,4 +71,11 @@ public class ServerAPITextColor {
   public int getValue() {
     return this.value;
   }
+
+  @Override
+  public String toString() {
+    return "ServerAPITextColor{" +
+        "value=" + this.value +
+        '}';
+  }
 }

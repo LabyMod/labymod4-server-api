@@ -84,5 +84,13 @@ public class EconomyDisplay {
     public int hashCode() {
       return Objects.hash(this.format, this.divisor);
     }
+
+    @Override
+    public String toString() {
+      return "DecimalFormat{" +
+          "format='" + this.format + '\'' +
+          ", divisor=" + this.divisor +
+          '}';
+    }
   }
 }

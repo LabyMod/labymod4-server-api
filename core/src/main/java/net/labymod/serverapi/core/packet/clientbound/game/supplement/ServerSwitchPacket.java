@@ -14,10 +14,6 @@ public class ServerSwitchPacket extends IdentifiablePacket {
   private String address;
   private boolean showPreview;
 
-  public ServerSwitchPacket() {
-    // Constructor for reading
-  }
-
   public ServerSwitchPacket(
       @NotNull ServerAPIComponent title,
       @NotNull String address,
@@ -53,15 +49,24 @@ public class ServerSwitchPacket extends IdentifiablePacket {
     writer.writeBoolean(this.showPreview);
   }
 
-  public ServerAPIComponent getTitle() {
+  public @NotNull ServerAPIComponent title() {
     return this.title;
   }
 
-  public String getAddress() {
+  public @NotNull String getAddress() {
     return this.address;
   }
 
   public boolean isShowPreview() {
     return this.showPreview;
+  }
+
+  @Override
+  public String toString() {
+    return "ServerSwitchPacket{" +
+        "title=" + this.title +
+        ", address='" + this.address + '\'' +
+        ", showPreview=" + this.showPreview +
+        "} " + super.toString();
   }
 }

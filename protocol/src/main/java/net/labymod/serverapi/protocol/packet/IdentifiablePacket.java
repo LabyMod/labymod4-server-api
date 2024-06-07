@@ -3,9 +3,7 @@ package net.labymod.serverapi.protocol.packet;
 import net.labymod.serverapi.protocol.payload.io.PayloadReader;
 import net.labymod.serverapi.protocol.payload.io.PayloadWriter;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.Objects;
-import java.util.UUID;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Represents an identifiable packet. Commonly used if a packet has a corresponding response
@@ -15,23 +13,32 @@ import java.util.UUID;
  */
 public abstract class IdentifiablePacket implements Packet {
 
-  private UUID identifier;
+  private static int ID = 0;
+
+  private int identifier = -1;
 
   /**
    * Default constructor. Use this when creating an initial packet.
    */
   protected IdentifiablePacket() {
-    this.identifier = UUID.randomUUID();
+    this.identifier = ID++;
+    if (ID == Integer.MAX_VALUE) {
+      ID = 0;
+    }
   }
 
   /**
    * Constructor for supplying the response packet with the initiator packet so that the
    * identifier stays the same.
    *
-   * @param initiator the initiator packet of the current packet
+   * @param initiator when sending, provide initiator packet of the current packet. When reading:
+   *                  {@code null} to not unnecessarily increase the identifier;
    */
-  protected IdentifiablePacket(@NotNull IdentifiablePacket initiator) {
-    Objects.requireNonNull(initiator, "Initiator packet cannot be null");
+  protected IdentifiablePacket(@Nullable IdentifiablePacket initiator) {
+    if (initiator == null) {
+      return;
+    }
+
     if (initiator == this) {
       throw new IllegalArgumentException(
           "Initiator packet cannot be the same as the current packet"
@@ -43,15 +50,27 @@ public abstract class IdentifiablePacket implements Packet {
 
   @Override
   public void read(@NotNull PayloadReader reader) {
-    this.identifier = reader.readUUID();
+    this.identifier = reader.readVarInt();
   }
 
   @Override
   public void write(@NotNull PayloadWriter writer) {
-    writer.writeUUID(this.identifier);
+    writer.writeVarInt(this.identifier);
   }
 
-  public UUID getIdentifier() {
+  /**
+   * Gets the identifier of the packet. Might return -1 when the wrong constructor was used.
+   *
+   * @return the identifier of the packet
+   */
+  public int getIdentifier() {
     return this.identifier;
+  }
+
+  @Override
+  public String toString() {
+    return "IdentifiablePacket{" +
+        "identifier=" + this.identifier +
+        '}';
   }
 }

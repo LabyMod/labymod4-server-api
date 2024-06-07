@@ -3,7 +3,9 @@ package net.labymod.serverapi.server.spigot;
 import net.labymod.serverapi.core.AbstractLabyModProtocolService;
 import net.labymod.serverapi.protocol.logger.NoOpProtocolPlatformLogger;
 import net.labymod.serverapi.protocol.logger.ProtocolPlatformLogger;
+import net.labymod.serverapi.protocol.packet.Packet;
 import net.labymod.serverapi.protocol.payload.PayloadChannelIdentifier;
+import net.labymod.serverapi.protocol.payload.io.PayloadReader;
 import net.labymod.serverapi.protocol.payload.io.PayloadWriter;
 import net.labymod.serverapi.server.spigot.listener.PluginMessageListener;
 import org.bukkit.entity.Player;
@@ -23,6 +25,8 @@ public class LabyModProtocolService extends AbstractLabyModProtocolService {
   private LabyModProtocolService() {
     super(Side.SERVER);
     this.logger = NoOpProtocolPlatformLogger.get();
+
+    //this.handleTestPacket(new VersionLoginPacket("test"));
   }
 
   /**
@@ -41,6 +45,27 @@ public class LabyModProtocolService extends AbstractLabyModProtocolService {
    */
   public static void initialize(@NotNull JavaPlugin javaPlugin) {
     LabyModProtocolService.get().initializePlugin(javaPlugin);
+  }
+
+  private void handleTestPacket(Packet packet) { //todo remove again
+    try {
+      int id = this.labyModProtocol().getPacketId(packet.getClass());
+      System.out.println(
+          "Handling dummy packet " + packet.getClass().getSimpleName() + " with id " + id);
+
+      PayloadWriter payloadWriter = new PayloadWriter();
+      payloadWriter.writeVarInt(id);
+      packet.write(payloadWriter);
+      byte[] bytes = payloadWriter.toByteArray();
+      System.out.println("Written packet " + packet.getClass().getSimpleName() + ". Reading...");
+
+      PayloadReader payloadReader = new PayloadReader(bytes);
+      Packet incomingPacket = this.labyModProtocol().handleIncomingPayload(UUID.randomUUID(),
+          payloadReader);
+      System.out.println(incomingPacket);
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
   }
 
   /**
@@ -99,7 +124,8 @@ public class LabyModProtocolService extends AbstractLabyModProtocolService {
     this.registry().addRegisterListener(protocol -> {
       String identifier = protocol.identifier().toString();
       messenger.registerOutgoingPluginChannel(this.plugin, identifier);
-      messenger.registerIncomingPluginChannel(this.plugin, identifier, new PluginMessageListener(this));
+      messenger.registerIncomingPluginChannel(this.plugin, identifier,
+          new PluginMessageListener(this));
     });
   }
 }

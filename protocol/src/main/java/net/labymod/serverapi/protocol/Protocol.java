@@ -1,6 +1,7 @@
 package net.labymod.serverapi.protocol;
 
 import net.labymod.serverapi.protocol.packet.Direction;
+import net.labymod.serverapi.protocol.packet.OnlyWriteConstructor;
 import net.labymod.serverapi.protocol.packet.Packet;
 import net.labymod.serverapi.protocol.packet.PacketHandler;
 import net.labymod.serverapi.protocol.payload.PayloadChannelIdentifier;
@@ -8,8 +9,10 @@ import net.labymod.serverapi.protocol.payload.io.PayloadReader;
 import net.labymod.serverapi.protocol.payload.io.PayloadWriter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import sun.misc.Unsafe;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
@@ -84,7 +87,10 @@ public abstract class Protocol<T extends AbstractProtocolService> {
     Objects.requireNonNull(packetClass, "Packet cannot be null");
     Objects.requireNonNull(direction, "Direction cannot be null");
     ProtocolPacket protocolPacket = new ProtocolPacket(id, packetClass, direction);
-    protocolPacket.handlers.add(handler);
+    if (handler != null) {
+      protocolPacket.handlers.add(handler);
+    }
+
     this.packets.add(protocolPacket);
   }
 
@@ -175,24 +181,29 @@ public abstract class Protocol<T extends AbstractProtocolService> {
    *
    * @param sender The sender of the payload.
    * @param reader The reader to read the payload.
+   * @return the received packet
    * @throws NullPointerException If the sender or reader is null.
    */
-  public void handleIncomingPayload(@NotNull UUID sender, @NotNull PayloadReader reader) {
+  public @Nullable Packet handleIncomingPayload(
+      @NotNull UUID sender,
+      @NotNull PayloadReader reader
+  ) throws Exception {
     Objects.requireNonNull(sender, "Sender cannot be null");
     Objects.requireNonNull(reader, "Reader cannot be null");
     int id = reader.readVarInt();
     ProtocolPacket protocolPacket = this.getProtocolPacketById(id);
     if (protocolPacket == null) {
-      return;
+      return null;
     }
 
     if (!this.protocolSide.isAcceptingDirection(protocolPacket.direction)) {
-      return;
+      return null;
     }
 
     Packet packet = protocolPacket.createPacket();
     packet.read(reader);
     this.handlePacket(protocolPacket, sender, packet);
+    return packet;
   }
 
   /**
@@ -248,11 +259,14 @@ public abstract class Protocol<T extends AbstractProtocolService> {
 
   private static class ProtocolPacket {
 
+    private static final UnsafeProvider UNSAFE_PROVIDER = new UnsafeProvider();
+
     private final int id;
     private final Class<? extends Packet> packet;
     private final Set<PacketHandler> handlers;
     private final Direction direction;
 
+    private boolean fromConstructor = true;
     private Constructor<? extends Packet> constructor;
 
     private ProtocolPacket(int id, Class<? extends Packet> packet, Direction direction) {
@@ -262,15 +276,38 @@ public abstract class Protocol<T extends AbstractProtocolService> {
       this.handlers = new HashSet<>();
     }
 
-    private Packet createPacket() {
-      try {
-        if (this.constructor == null) {
+    private Packet createPacket() throws Exception {
+      if (this.constructor == null && this.fromConstructor) {
+        try {
           this.constructor = this.packet.getDeclaredConstructor();
+          this.constructor.setAccessible(true);
+          this.fromConstructor = !this.constructor.isAnnotationPresent(
+              OnlyWriteConstructor.class
+          );
+        } catch (Exception e) {
+          this.fromConstructor = false;
         }
+      }
 
+      if (this.fromConstructor) {
         return this.constructor.newInstance();
+      }
+
+      return (Packet) UNSAFE_PROVIDER.unsafe.allocateInstance(this.packet);
+    }
+  }
+
+  private static final class UnsafeProvider {
+
+    private final Unsafe unsafe;
+
+    private UnsafeProvider() {
+      try {
+        Field field = Unsafe.class.getDeclaredField("theUnsafe");
+        field.setAccessible(true);
+        this.unsafe = (Unsafe) field.get(null);
       } catch (Exception exception) {
-        throw new RuntimeException(exception);
+        throw new IllegalStateException("Failed to get unsafe instance", exception);
       }
     }
   }

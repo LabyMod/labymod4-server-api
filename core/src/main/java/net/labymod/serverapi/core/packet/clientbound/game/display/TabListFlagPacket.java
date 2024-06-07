@@ -12,10 +12,6 @@ public class TabListFlagPacket implements Packet {
 
   private List<TabListFlag> flags;
 
-  public TabListFlagPacket() {
-    // Constructor for reading
-  }
-
   public TabListFlagPacket(List<TabListFlag> flags) {
     this.flags = flags;
   }
@@ -37,7 +33,14 @@ public class TabListFlagPacket implements Packet {
     });
   }
 
-  public List<TabListFlag> getFlags() {
+  public @NotNull List<TabListFlag> getFlags() {
     return this.flags;
+  }
+
+  @Override
+  public String toString() {
+    return "TabListFlagPacket{" +
+        "flags=" + this.flags +
+        '}';
   }
 }

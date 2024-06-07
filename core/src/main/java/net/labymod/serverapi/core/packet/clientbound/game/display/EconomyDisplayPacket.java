@@ -10,10 +10,6 @@ public class EconomyDisplayPacket implements Packet {
 
   private EconomyDisplay economy;
 
-  public EconomyDisplayPacket() {
-    // Constructor for reading
-  }
-
   public EconomyDisplayPacket(EconomyDisplay economy) {
     this.economy = economy;
   }
@@ -45,7 +41,14 @@ public class EconomyDisplayPacket implements Packet {
     });
   }
 
-  public EconomyDisplay getEconomy() {
+  public @NotNull EconomyDisplay economy() {
     return this.economy;
+  }
+
+  @Override
+  public String toString() {
+    return "EconomyDisplayPacket{" +
+        "economy=" + this.economy +
+        '}';
   }
 }

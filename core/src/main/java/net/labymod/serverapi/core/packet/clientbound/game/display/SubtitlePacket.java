@@ -12,10 +12,6 @@ public class SubtitlePacket implements Packet {
 
   private List<Subtitle> subtitles;
 
-  public SubtitlePacket() {
-    // Constructor for reading
-  }
-
   public SubtitlePacket(List<Subtitle> subtitles) {
     this.subtitles = subtitles;
   }
@@ -40,7 +36,14 @@ public class SubtitlePacket implements Packet {
     });
   }
 
-  public List<Subtitle> getSubtitles() {
+  public @NotNull List<Subtitle> getSubtitles() {
     return this.subtitles;
+  }
+
+  @Override
+  public String toString() {
+    return "SubtitlePacket{" +
+        "subtitles=" + this.subtitles +
+        '}';
   }
 }

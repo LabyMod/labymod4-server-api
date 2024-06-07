@@ -78,5 +78,12 @@ public class Permission {
 
   public record StatedPermission(Permission permission, boolean allowed) {
 
+    @Override
+    public String toString() {
+      return "StatedPermission{" +
+          "permission=" + this.permission +
+          ", allowed=" + this.allowed +
+          '}';
+    }
   }
 }

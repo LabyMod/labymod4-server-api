@@ -10,10 +10,6 @@ public class PlayingGameModePacket implements Packet {
 
   private String gameMode;
 
-  public PlayingGameModePacket() {
-    // Constructor for reading
-  }
-
   public PlayingGameModePacket(@Nullable String gameMode) {
     this.gameMode = gameMode;
   }
@@ -28,7 +24,14 @@ public class PlayingGameModePacket implements Packet {
     writer.writeOptionalString(this.gameMode);
   }
 
-  public String getGameMode() {
+  public @NotNull String getGameMode() {
     return this.gameMode;
+  }
+
+  @Override
+  public String toString() {
+    return "PlayingGameModePacket{" +
+        "gameMode='" + this.gameMode + '\'' +
+        '}';
   }
 }

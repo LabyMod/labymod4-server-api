@@ -44,6 +44,14 @@ public class TabListFlag {
     return this.countryCode;
   }
 
+  @Override
+  public String toString() {
+    return "TabListFlag{" +
+        "uniqueId=" + this.uniqueId +
+        ", countryCode=" + this.countryCode +
+        '}';
+  }
+
   public enum TabListFlagCountryCode {
     AD,
     AE,

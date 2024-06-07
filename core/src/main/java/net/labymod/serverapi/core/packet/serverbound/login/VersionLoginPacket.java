@@ -12,10 +12,6 @@ public class VersionLoginPacket implements Packet {
 
   private String version;
 
-  public VersionLoginPacket() {
-    // Constructor for reading
-  }
-
   public VersionLoginPacket(String version) {
     this.version = version;
   }
@@ -33,7 +29,14 @@ public class VersionLoginPacket implements Packet {
   /**
    * @return the version of the client
    */
-  public String getVersion() {
+  public @NotNull String getVersion() {
     return this.version;
+  }
+
+  @Override
+  public String toString() {
+    return "VersionLoginPacket{" +
+        "version='" + this.version + '\'' +
+        '}';
   }
 }

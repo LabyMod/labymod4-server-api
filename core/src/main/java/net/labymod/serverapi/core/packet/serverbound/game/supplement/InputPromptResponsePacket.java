@@ -11,8 +11,9 @@ public class InputPromptResponsePacket extends IdentifiablePacket {
 
   private String value;
 
-  public InputPromptResponsePacket() {
-    // Constructor for reading
+  // Constructor for reading
+  protected InputPromptResponsePacket() {
+    super(null);
   }
 
   public InputPromptResponsePacket(@NotNull InputPromptPacket initiator, @Nullable String value) {
@@ -32,7 +33,14 @@ public class InputPromptResponsePacket extends IdentifiablePacket {
     writer.writeOptionalString(this.value);
   }
 
-  public String getValue() {
+  public @NotNull String getValue() {
     return this.value;
+  }
+
+  @Override
+  public String toString() {
+    return "InputPromptResponsePacket{" +
+        "value='" + this.value + '\'' +
+        "} " + super.toString();
   }
 }

@@ -145,4 +145,13 @@ public class ServerAPIBaseComponent<T extends ServerAPIBaseComponent<?>>
   public @Nullable ServerAPITextColor getColor() {
     return this.textColor;
   }
+
+  @Override
+  public String toString() {
+    return "ServerAPIBaseComponent{" +
+        "textColor=" + this.textColor +
+        ", decorations=" + this.decorations +
+        ", children=" + this.children +
+        '}';
+  }
 }

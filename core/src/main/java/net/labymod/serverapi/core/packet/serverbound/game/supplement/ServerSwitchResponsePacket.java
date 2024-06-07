@@ -11,8 +11,9 @@ public class ServerSwitchResponsePacket extends IdentifiablePacket {
   private String address;
   private boolean accepted;
 
-  public ServerSwitchResponsePacket() {
-    // Constructor for reading
+  // Constructor for reading
+  protected ServerSwitchResponsePacket() {
+    super(null);
   }
 
   public ServerSwitchResponsePacket(@NotNull ServerSwitchPacket initiator, boolean accepted) {
@@ -35,11 +36,19 @@ public class ServerSwitchResponsePacket extends IdentifiablePacket {
     writer.writeBoolean(this.accepted);
   }
 
-  public String getAddress() {
+  public @NotNull String getAddress() {
     return this.address;
   }
 
   public boolean wasAccepted() {
     return this.accepted;
+  }
+
+  @Override
+  public String toString() {
+    return "ServerSwitchResponsePacket{" +
+        "address='" + this.address + '\'' +
+        ", accepted=" + this.accepted +
+        "} " + super.toString();
   }
 }
