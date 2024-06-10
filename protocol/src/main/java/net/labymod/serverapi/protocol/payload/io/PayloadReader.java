@@ -135,7 +135,12 @@ public class PayloadReader {
     int length = this.readVarInt();
     List<T> list = new ArrayList<>(length);
     for (int i = 0; i < length; i++) {
-      list.add(reader.get());
+      T value = reader.get();
+      if (value == null) {
+        continue;
+      }
+
+      list.add(value);
     }
 
     return list;

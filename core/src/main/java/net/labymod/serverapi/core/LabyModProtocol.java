@@ -4,10 +4,14 @@ import net.labymod.serverapi.core.packet.clientbound.game.display.EconomyDisplay
 import net.labymod.serverapi.core.packet.clientbound.game.display.SubtitlePacket;
 import net.labymod.serverapi.core.packet.clientbound.game.display.TabListBannerPacket;
 import net.labymod.serverapi.core.packet.clientbound.game.display.TabListFlagPacket;
+import net.labymod.serverapi.core.packet.clientbound.game.feature.EmotePacket;
+import net.labymod.serverapi.core.packet.clientbound.game.feature.InteractionMenuPacket;
 import net.labymod.serverapi.core.packet.clientbound.game.feature.PlayingGameModePacket;
+import net.labymod.serverapi.core.packet.clientbound.game.moderation.AddonRecommendationPacket;
 import net.labymod.serverapi.core.packet.clientbound.game.moderation.PermissionPacket;
 import net.labymod.serverapi.core.packet.clientbound.game.supplement.InputPromptPacket;
 import net.labymod.serverapi.core.packet.clientbound.game.supplement.ServerSwitchPromptPacket;
+import net.labymod.serverapi.core.packet.serverbound.game.moderation.AddonRecommendationResponsePacket;
 import net.labymod.serverapi.core.packet.serverbound.game.supplement.InputPromptResponsePacket;
 import net.labymod.serverapi.core.packet.serverbound.game.supplement.ServerSwitchPromptResponsePacket;
 import net.labymod.serverapi.core.packet.serverbound.login.VersionLoginPacket;
@@ -34,25 +38,23 @@ public class LabyModProtocol extends Protocol<AbstractLabyModProtocolService> {
     this.registerPacket(14, TabListFlagPacket.class, Direction.CLIENTBOUND);
     this.registerPacket(15, TabListBannerPacket.class, Direction.CLIENTBOUND);
 
-    //this.registerPacket(16, EmotePacket.class, Direction.CLIENTBOUND);
+    this.registerPacket(16, EmotePacket.class, Direction.CLIENTBOUND);
     //this.registerPacket(17, SprayPacket.class, Direction.CLIENTBOUND);
     //this.registerPacket(18, DiscordRPCPacket.class, Direction.CLIENTBOUND);
-    //this.registerPacket(19, InteractionMenuPacket.class, Direction.CLIENTBOUND);
+    this.registerPacket(19, InteractionMenuPacket.class, Direction.CLIENTBOUND);
 
     this.registerPacket(20, ServerSwitchPromptPacket.class, Direction.CLIENTBOUND);
     this.registerPacket(21, ServerSwitchPromptResponsePacket.class, Direction.SERVERBOUND);
     this.registerPacket(22, InputPromptPacket.class, Direction.CLIENTBOUND);
     this.registerPacket(23, InputPromptResponsePacket.class, Direction.SERVERBOUND);
     //this.registerPacket(24, AddonDisablePacket.class, Direction.CLIENTBOUND);
-    //this.registerPacket(25, AddonRecommendationPacket.class, Direction.CLIENTBOUND);
-    //this.registerPacket(26, AddonRecommendationResponsePacket.class, Direction.SERVERBOUND);
+    this.registerPacket(25, AddonRecommendationPacket.class, Direction.CLIENTBOUND);
+    this.registerPacket(26, AddonRecommendationResponsePacket.class, Direction.SERVERBOUND);
     //this.registerPacket(27, MarkerPacket.class, Direction.CLIENTBOUND);
     //this.registerPacket(28, AddMarkerPacket.class, Direction.CLIENTBOUND);
     //this.registerPacket(29, ClientMarkerPacket.class, Direction.CLIENTBOUND);
     //this.registerPacket(30, ChatFilterPacket.class, Direction.CLIENTBOUND);
     //this.registerPacket(31, ChatFilterRemovePacket.class, Direction.CLIENTBOUND);
     //this.registerPacket(32, ServerEventPacket.class, Direction.CLIENTBOUND);
-
-
   }
 }
