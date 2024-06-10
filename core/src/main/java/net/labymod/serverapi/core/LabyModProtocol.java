@@ -7,9 +7,9 @@ import net.labymod.serverapi.core.packet.clientbound.game.display.TabListFlagPac
 import net.labymod.serverapi.core.packet.clientbound.game.feature.PlayingGameModePacket;
 import net.labymod.serverapi.core.packet.clientbound.game.moderation.PermissionPacket;
 import net.labymod.serverapi.core.packet.clientbound.game.supplement.InputPromptPacket;
-import net.labymod.serverapi.core.packet.clientbound.game.supplement.ServerSwitchPacket;
+import net.labymod.serverapi.core.packet.clientbound.game.supplement.ServerSwitchPromptPacket;
 import net.labymod.serverapi.core.packet.serverbound.game.supplement.InputPromptResponsePacket;
-import net.labymod.serverapi.core.packet.serverbound.game.supplement.ServerSwitchResponsePacket;
+import net.labymod.serverapi.core.packet.serverbound.game.supplement.ServerSwitchPromptResponsePacket;
 import net.labymod.serverapi.core.packet.serverbound.login.VersionLoginPacket;
 import net.labymod.serverapi.protocol.Protocol;
 import net.labymod.serverapi.protocol.packet.Direction;
@@ -39,8 +39,8 @@ public class LabyModProtocol extends Protocol<AbstractLabyModProtocolService> {
     //this.registerPacket(18, DiscordRPCPacket.class, Direction.CLIENTBOUND);
     //this.registerPacket(19, InteractionMenuPacket.class, Direction.CLIENTBOUND);
 
-    this.registerPacket(20, ServerSwitchPacket.class, Direction.CLIENTBOUND);
-    this.registerPacket(21, ServerSwitchResponsePacket.class, Direction.SERVERBOUND);
+    this.registerPacket(20, ServerSwitchPromptPacket.class, Direction.CLIENTBOUND);
+    this.registerPacket(21, ServerSwitchPromptResponsePacket.class, Direction.SERVERBOUND);
     this.registerPacket(22, InputPromptPacket.class, Direction.CLIENTBOUND);
     this.registerPacket(23, InputPromptResponsePacket.class, Direction.SERVERBOUND);
     //this.registerPacket(24, AddonDisablePacket.class, Direction.CLIENTBOUND);

@@ -1,24 +1,27 @@
 package net.labymod.serverapi.core.packet.serverbound.game.supplement;
 
-import net.labymod.serverapi.core.packet.clientbound.game.supplement.ServerSwitchPacket;
+import net.labymod.serverapi.core.packet.clientbound.game.supplement.ServerSwitchPromptPacket;
 import net.labymod.serverapi.protocol.packet.IdentifiablePacket;
 import net.labymod.serverapi.protocol.payload.io.PayloadReader;
 import net.labymod.serverapi.protocol.payload.io.PayloadWriter;
 import org.jetbrains.annotations.NotNull;
 
-public class ServerSwitchResponsePacket extends IdentifiablePacket {
+public class ServerSwitchPromptResponsePacket extends IdentifiablePacket {
 
   private String address;
   private boolean accepted;
 
   // Constructor for reading
-  protected ServerSwitchResponsePacket() {
+  protected ServerSwitchPromptResponsePacket() {
     super(null);
   }
 
-  public ServerSwitchResponsePacket(@NotNull ServerSwitchPacket initiator, boolean accepted) {
+  public ServerSwitchPromptResponsePacket(
+      @NotNull ServerSwitchPromptPacket initiator,
+      boolean accepted
+  ) {
     super(initiator);
-    this.address = initiator.getAddress();
+    this.address = initiator.prompt().getAddress();
     this.accepted = accepted;
   }
 

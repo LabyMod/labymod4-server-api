@@ -48,8 +48,7 @@ public abstract class Protocol<T extends AbstractProtocolService> {
   /**
    * @return the identifier of the protocol.
    */
-  public @NotNull
-  final PayloadChannelIdentifier identifier() {
+  public final @NotNull PayloadChannelIdentifier identifier() {
     return this.identifier;
   }
 
