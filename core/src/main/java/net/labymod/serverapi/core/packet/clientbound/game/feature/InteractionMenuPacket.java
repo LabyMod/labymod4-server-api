@@ -50,7 +50,7 @@ public class InteractionMenuPacket implements Packet {
     });
   }
 
-  public @NotNull List<InteractionMenuEntry> getEmotes() {
+  public @NotNull List<InteractionMenuEntry> getEntries() {
     return this.entries;
   }
 

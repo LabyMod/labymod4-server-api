@@ -230,6 +230,7 @@ public abstract class Protocol<T extends AbstractProtocolService> {
     writer.writeVarInt(protocolPacket.id);
     packet.write(writer);
     this.protocolService.send(this.identifier, recipient, writer);
+    this.protocolService.afterPacketSent(this, packet, recipient);
   }
 
   private ProtocolPacket getProtocolPacket(Predicate<ProtocolPacket> filter) {
@@ -254,6 +255,8 @@ public abstract class Protocol<T extends AbstractProtocolService> {
     for (PacketHandler handler : protocolPacket.handlers) {
       handler.handle(sender, packet);
     }
+
+    this.protocolService.afterPacketHandled(this, packet, sender);
   }
 
   private static class ProtocolPacket {

@@ -24,7 +24,7 @@ public class PlayingGameModePacket implements Packet {
     writer.writeOptionalString(this.gameMode);
   }
 
-  public @NotNull String getGameMode() {
+  public @Nullable String getGameMode() {
     return this.gameMode;
   }
 

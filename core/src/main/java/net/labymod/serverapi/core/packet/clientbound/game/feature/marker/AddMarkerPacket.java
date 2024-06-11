@@ -4,6 +4,7 @@ import net.labymod.serverapi.core.packet.common.game.feature.marker.AbstractMark
 import net.labymod.serverapi.protocol.payload.io.PayloadReader;
 import net.labymod.serverapi.protocol.payload.io.PayloadWriter;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 import java.util.UUID;
@@ -18,7 +19,7 @@ public class AddMarkerPacket extends AbstractMarkerPacket {
       int y,
       int z,
       boolean large,
-      @NotNull UUID target
+      @Nullable UUID target
   ) {
     super(x, y, z, large, target);
     Objects.requireNonNull(sender, "Sender entity is null");

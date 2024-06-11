@@ -5,7 +5,7 @@ import org.jetbrains.annotations.NotNull;
 
 public abstract class AbstractLabyModProtocolService extends AbstractProtocolService {
 
-  private final LabyModProtocol labyModProtocol;
+  protected final LabyModProtocol labyModProtocol;
 
   /**
    * Creates a new labymod protocol service.

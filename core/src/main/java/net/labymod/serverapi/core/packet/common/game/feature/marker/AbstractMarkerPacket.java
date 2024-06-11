@@ -4,8 +4,8 @@ import net.labymod.serverapi.protocol.packet.Packet;
 import net.labymod.serverapi.protocol.payload.io.PayloadReader;
 import net.labymod.serverapi.protocol.payload.io.PayloadWriter;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import java.util.Objects;
 import java.util.UUID;
 
 public abstract class AbstractMarkerPacket implements Packet {
@@ -16,8 +16,7 @@ public abstract class AbstractMarkerPacket implements Packet {
   private boolean large;
   private UUID target;
 
-  protected AbstractMarkerPacket(int x, int y, int z, boolean large, @NotNull UUID target) {
-    Objects.requireNonNull(target, "Target entity is null");
+  protected AbstractMarkerPacket(int x, int y, int z, boolean large, @Nullable UUID target) {
     this.x = x;
     this.y = y;
     this.z = z;
@@ -31,7 +30,7 @@ public abstract class AbstractMarkerPacket implements Packet {
     this.y = reader.readVarInt();
     this.z = reader.readVarInt();
     this.large = reader.readBoolean();
-    this.target = reader.readUUID();
+    this.target = reader.readOptional(reader::readUUID);
   }
 
   @Override
@@ -40,7 +39,7 @@ public abstract class AbstractMarkerPacket implements Packet {
     writer.writeVarInt(this.y);
     writer.writeVarInt(this.z);
     writer.writeBoolean(this.large);
-    writer.writeUUID(this.target);
+    writer.writeOptional(this.target, writer::writeUUID);
   }
 
   public int getX() {
@@ -59,7 +58,7 @@ public abstract class AbstractMarkerPacket implements Packet {
     return this.large;
   }
 
-  public @NotNull UUID getTarget() {
+  public @Nullable UUID getTarget() {
     return this.target;
   }
 

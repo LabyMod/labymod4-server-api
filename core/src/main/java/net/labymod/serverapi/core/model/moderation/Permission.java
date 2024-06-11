@@ -15,7 +15,7 @@ public class Permission {
   private StatedPermission allowedPermission;
   private StatedPermission deniedPermission;
 
-  private Permission(@NotNull String identifier) {
+  protected Permission(@NotNull String identifier) {
     this.identifier = identifier;
   }
 

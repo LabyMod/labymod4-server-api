@@ -2,6 +2,7 @@ package net.labymod.serverapi.protocol;
 
 import net.labymod.serverapi.protocol.logger.ProtocolPlatformLogger;
 import net.labymod.serverapi.protocol.packet.Direction;
+import net.labymod.serverapi.protocol.packet.Packet;
 import net.labymod.serverapi.protocol.payload.PayloadChannelIdentifier;
 import net.labymod.serverapi.protocol.payload.io.PayloadWriter;
 import org.jetbrains.annotations.NotNull;
@@ -69,6 +70,36 @@ public abstract class AbstractProtocolService {
    * @return {@code true} if the protocol service is initialized, otherwise {@code false}
    */
   public abstract boolean isInitialized();
+
+  /**
+   * Called after a packet was received and handled by the protocol.
+   *
+   * @param protocol the protocol that handled the packet
+   * @param packet   the packet that was handled
+   * @param sender   the sender of the packet
+   */
+  public void afterPacketHandled(
+      @NotNull Protocol<? extends AbstractProtocolService> protocol,
+      @NotNull Packet packet,
+      @NotNull UUID sender
+  ) {
+    // NO-OP
+  }
+
+  /**
+   * Called after a packet was sent by the protocol.
+   *
+   * @param protocol  the protocol that sent the packet
+   * @param packet    the packet that was sent
+   * @param recipient the recipient of the packet
+   */
+  public void afterPacketSent(
+      @NotNull Protocol<? extends AbstractProtocolService> protocol,
+      @NotNull Packet packet,
+      @NotNull UUID recipient
+  ) {
+    // NO-OP
+  }
 
   protected enum Side {
     CLIENT(Direction.CLIENTBOUND),
