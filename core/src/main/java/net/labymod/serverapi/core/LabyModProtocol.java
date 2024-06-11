@@ -4,6 +4,7 @@ import net.labymod.serverapi.core.packet.clientbound.game.display.EconomyDisplay
 import net.labymod.serverapi.core.packet.clientbound.game.display.SubtitlePacket;
 import net.labymod.serverapi.core.packet.clientbound.game.display.TabListBannerPacket;
 import net.labymod.serverapi.core.packet.clientbound.game.display.TabListFlagPacket;
+import net.labymod.serverapi.core.packet.clientbound.game.feature.DiscordRPCPacket;
 import net.labymod.serverapi.core.packet.clientbound.game.feature.EmotePacket;
 import net.labymod.serverapi.core.packet.clientbound.game.feature.InteractionMenuPacket;
 import net.labymod.serverapi.core.packet.clientbound.game.feature.PlayingGameModePacket;
@@ -43,7 +44,7 @@ public class LabyModProtocol extends Protocol<AbstractLabyModProtocolService> {
 
     this.registerPacket(16, EmotePacket.class, Direction.CLIENTBOUND);
     //this.registerPacket(17, SprayPacket.class, Direction.CLIENTBOUND);
-    //this.registerPacket(18, DiscordRPCPacket.class, Direction.CLIENTBOUND);
+    this.registerPacket(18, DiscordRPCPacket.class, Direction.CLIENTBOUND);
     this.registerPacket(19, InteractionMenuPacket.class, Direction.CLIENTBOUND);
 
     this.registerPacket(20, ServerSwitchPromptPacket.class, Direction.CLIENTBOUND);
