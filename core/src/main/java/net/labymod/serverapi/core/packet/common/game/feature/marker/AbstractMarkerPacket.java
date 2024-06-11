@@ -1,0 +1,76 @@
+package net.labymod.serverapi.core.packet.common.game.feature.marker;
+
+import net.labymod.serverapi.protocol.packet.Packet;
+import net.labymod.serverapi.protocol.payload.io.PayloadReader;
+import net.labymod.serverapi.protocol.payload.io.PayloadWriter;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.Objects;
+import java.util.UUID;
+
+public abstract class AbstractMarkerPacket implements Packet {
+
+  private int x;
+  private int y;
+  private int z;
+  private boolean large;
+  private UUID target;
+
+  protected AbstractMarkerPacket(int x, int y, int z, boolean large, @NotNull UUID target) {
+    Objects.requireNonNull(target, "Target entity is null");
+    this.x = x;
+    this.y = y;
+    this.z = z;
+    this.large = large;
+    this.target = target;
+  }
+
+  @Override
+  public void read(@NotNull PayloadReader reader) {
+    this.x = reader.readVarInt();
+    this.y = reader.readVarInt();
+    this.z = reader.readVarInt();
+    this.large = reader.readBoolean();
+    this.target = reader.readUUID();
+  }
+
+  @Override
+  public void write(@NotNull PayloadWriter writer) {
+    writer.writeVarInt(this.x);
+    writer.writeVarInt(this.y);
+    writer.writeVarInt(this.z);
+    writer.writeBoolean(this.large);
+    writer.writeUUID(this.target);
+  }
+
+  public int getX() {
+    return this.x;
+  }
+
+  public int getY() {
+    return this.y;
+  }
+
+  public int getZ() {
+    return this.z;
+  }
+
+  public boolean isLarge() {
+    return this.large;
+  }
+
+  public @NotNull UUID getTarget() {
+    return this.target;
+  }
+
+  @Override
+  public String toString() {
+    return "AbstractMarkerPacket{" +
+        "x=" + this.x +
+        ", y=" + this.y +
+        ", z=" + this.z +
+        ", large=" + this.large +
+        ", target=" + this.target +
+        '}';
+  }
+}
