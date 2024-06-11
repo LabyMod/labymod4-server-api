@@ -1,5 +1,6 @@
 plugins {
     id("java")
+    id("maven-publish")
 }
 
 group = "net.labymod.serverapi"
@@ -54,6 +55,42 @@ subprojects {
         }
 
         includeProjectDependencies(configurations["compile"], mutableSetOf())
+    }
+
+    var publishToken = System.getenv("PUBLISH_TOKEN")
+
+    if (publishToken == null && project.hasProperty("net.labymod.distributor.publish-token")) {
+        publishToken = project.property("net.labymod.distributor.publish-token").toString()
+    }
+
+    java {
+        withSourcesJar()
+    }
+
+    publishing {
+        publications {
+            create<MavenPublication>(project.name) {
+                groupId = project.group.toString()
+                artifactId = project.name
+                version = project.version.toString()
+                from(components["java"])
+            }
+        }
+
+        repositories {
+            maven(project.property("net.labymod.distributor-url").toString()) {
+                name = "LabyMod-Distributor"
+
+                authentication {
+                    create<HttpHeaderAuthentication>("header")
+                }
+
+                credentials(HttpHeaderCredentials::class) {
+                    name = "Publish-Token"
+                    value = publishToken
+                }
+            }
+        }
     }
 }
 
