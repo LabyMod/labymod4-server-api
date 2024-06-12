@@ -23,7 +23,7 @@ import net.labymod.serverapi.protocol.Protocol;
 import net.labymod.serverapi.protocol.packet.Direction;
 import net.labymod.serverapi.protocol.payload.PayloadChannelIdentifier;
 
-public class LabyModProtocol extends Protocol<AbstractLabyModProtocolService> {
+public class LabyModProtocol extends Protocol {
 
   protected LabyModProtocol(AbstractLabyModProtocolService protocolService) {
     super(protocolService, PayloadChannelIdentifier.create("labymod", "neo"));

@@ -79,7 +79,7 @@ public abstract class AbstractProtocolService {
    * @param sender   the sender of the packet
    */
   public void afterPacketHandled(
-      @NotNull Protocol<? extends AbstractProtocolService> protocol,
+      @NotNull Protocol protocol,
       @NotNull Packet packet,
       @NotNull UUID sender
   ) {
@@ -94,7 +94,7 @@ public abstract class AbstractProtocolService {
    * @param recipient the recipient of the packet
    */
   public void afterPacketSent(
-      @NotNull Protocol<? extends AbstractProtocolService> protocol,
+      @NotNull Protocol protocol,
       @NotNull Packet packet,
       @NotNull UUID recipient
   ) {

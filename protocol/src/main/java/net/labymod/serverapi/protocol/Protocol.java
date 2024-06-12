@@ -19,11 +19,11 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.function.Predicate;
 
-public abstract class Protocol<T extends AbstractProtocolService> {
+public abstract class Protocol {
 
   protected final PayloadChannelIdentifier identifier;
-  protected final T protocolService;
-  protected final Set<ProtocolPacket> packets;
+  private final Set<ProtocolPacket> packets;
+  private final AbstractProtocolService protocolService;
   private final AbstractProtocolService.Side protocolSide;
 
   /**
@@ -34,7 +34,7 @@ public abstract class Protocol<T extends AbstractProtocolService> {
    * @throws NullPointerException If the identifier or protocol service is null.
    */
   protected Protocol(
-      @NotNull T protocolService,
+      @NotNull AbstractProtocolService protocolService,
       @NotNull PayloadChannelIdentifier identifier
   ) {
     Objects.requireNonNull(identifier, "Identifier cannot be null");
