@@ -218,4 +218,8 @@ public class PayloadReader {
     component.setChildren(this.readList(this::readComponent));
     return component;
   }
+
+  public void reset() {
+    this.buffer.position(0);
+  }
 }

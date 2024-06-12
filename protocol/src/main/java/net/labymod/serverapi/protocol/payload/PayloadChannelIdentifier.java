@@ -7,6 +7,7 @@ import java.util.Objects;
 
 public final class PayloadChannelIdentifier {
 
+  private final String combinedIdentifier;
   private final String namespace;
   private final String path;
 
@@ -15,6 +16,7 @@ public final class PayloadChannelIdentifier {
     Objects.requireNonNull(path, "Path cannot be null");
     this.namespace = namespace;
     this.path = path;
+    this.combinedIdentifier = namespace + ":" + path;
   }
 
   /**
@@ -57,7 +59,7 @@ public final class PayloadChannelIdentifier {
   @Contract(pure = true)
   @Override
   public @NotNull String toString() {
-    return this.namespace + ":" + this.path;
+    return this.combinedIdentifier;
   }
 
   /**
