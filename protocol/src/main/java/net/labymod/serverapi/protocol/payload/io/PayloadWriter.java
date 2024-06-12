@@ -2,6 +2,7 @@ package net.labymod.serverapi.protocol.payload.io;
 
 import net.labymod.serverapi.protocol.model.component.ServerAPIComponent;
 import net.labymod.serverapi.protocol.model.component.ServerAPITextComponent;
+import net.labymod.serverapi.protocol.model.component.ServerAPITextDecoration;
 import net.labymod.serverapi.protocol.payload.exception.PayloadWriterException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -11,6 +12,8 @@ import java.nio.BufferOverflowException;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
+import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import java.util.function.Consumer;
 
@@ -171,29 +174,21 @@ public class PayloadWriter {
       dataWriter.accept(this);
     }
 
-    Collection<Boolean> decorations = component.getDecorations().values();
-    int setDecorations = 0;
-    for (Boolean decoration : decorations) {
-      if (decoration != null) {
-        setDecorations++;
-      }
-    }
-
-    boolean styleHasContent = component.getColor() != null || setDecorations != 0;
+    Set<Map.Entry<ServerAPITextDecoration, Boolean>> entries = component.getDecorations()
+        .entrySet();
+    boolean styleHasContent = component.getColor() != null || !entries.isEmpty();
     this.writeBoolean(styleHasContent);
     if (styleHasContent) {
       this.writeOptional(component.getColor(), color -> this.writeInt(color.getValue()));
 
       // Write decorations
-      this.writeVarInt(setDecorations);
-      byte i = 0;
-      for (Boolean decoration : decorations) {
-        if (decoration != null) {
-          this.writeByte(i);
-          this.writeBoolean(decoration);
+      this.writeVarInt(entries.size());
+      for (Map.Entry<ServerAPITextDecoration, Boolean> entry : entries) {
+        Boolean value = entry.getValue();
+        if (value != null) {
+          this.writeVarInt(entry.getKey().ordinal());
+          this.writeBoolean(value);
         }
-
-        i++;
       }
     }
 

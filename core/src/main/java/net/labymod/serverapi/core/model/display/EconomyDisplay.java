@@ -66,6 +66,17 @@ public class EconomyDisplay {
     return Objects.hash(this.key, this.visible, this.balance, this.iconUrl, this.decimalFormat);
   }
 
+  @Override
+  public String toString() {
+    return "EconomyDisplay{" +
+        "key='" + this.key + '\'' +
+        ", visible=" + this.visible +
+        ", balance=" + this.balance +
+        ", iconUrl='" + this.iconUrl + '\'' +
+        ", decimalFormat=" + this.decimalFormat +
+        '}';
+  }
+
   public record DecimalFormat(@NotNull String format, double divisor) {
 
     @Override
