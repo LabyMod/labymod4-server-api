@@ -104,6 +104,10 @@ public abstract class Protocol {
     return protocolPacket != null ? protocolPacket.packet : null;
   }
 
+  public boolean hasPacket(Class<? extends Packet> packetClass) {
+    return this.getProtocolPacketByClass(packetClass) != null;
+  }
+
   /**
    * Gets the id of the packet.
    *

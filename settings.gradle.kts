@@ -3,7 +3,7 @@ rootProject.name = "labymod4-server-api"
 include(":protocol")
 include(":core")
 
-sequenceOf("spigot").forEach {
+sequenceOf("common", "spigot").forEach {
     val name = "server-$it"
 
     include(name)

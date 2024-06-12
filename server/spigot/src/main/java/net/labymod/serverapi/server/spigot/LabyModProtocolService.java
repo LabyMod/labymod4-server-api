@@ -1,13 +1,15 @@
 package net.labymod.serverapi.server.spigot;
 
-import net.labymod.serverapi.core.AbstractLabyModProtocolService;
+import net.labymod.serverapi.core.packet.serverbound.login.VersionLoginPacket;
 import net.labymod.serverapi.protocol.logger.NoOpProtocolPlatformLogger;
 import net.labymod.serverapi.protocol.logger.ProtocolPlatformLogger;
-import net.labymod.serverapi.protocol.packet.Packet;
 import net.labymod.serverapi.protocol.payload.PayloadChannelIdentifier;
-import net.labymod.serverapi.protocol.payload.io.PayloadReader;
 import net.labymod.serverapi.protocol.payload.io.PayloadWriter;
-import net.labymod.serverapi.server.spigot.listener.PluginMessageListener;
+import net.labymod.serverapi.server.common.AbstractServerLabyModProtocolService;
+import net.labymod.serverapi.server.spigot.handler.DefaultVersionLoginPacketHandler;
+import net.labymod.serverapi.server.spigot.listener.DefaultPlayerQuitListener;
+import net.labymod.serverapi.server.spigot.listener.DefaultPluginMessageListener;
+import net.labymod.serverapi.server.spigot.player.LabyModPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.messaging.Messenger;
@@ -16,7 +18,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Objects;
 import java.util.UUID;
 
-public class LabyModProtocolService extends AbstractLabyModProtocolService {
+public class LabyModProtocolService extends AbstractServerLabyModProtocolService<LabyModPlayer> {
 
   private static final LabyModProtocolService INSTANCE = new LabyModProtocolService();
   private ProtocolPlatformLogger logger;
@@ -25,8 +27,6 @@ public class LabyModProtocolService extends AbstractLabyModProtocolService {
   private LabyModProtocolService() {
     super(Side.SERVER);
     this.logger = NoOpProtocolPlatformLogger.get();
-
-    //this.handleTestPacket(new VersionLoginPacket("test"));
   }
 
   /**
@@ -45,27 +45,6 @@ public class LabyModProtocolService extends AbstractLabyModProtocolService {
    */
   public static void initialize(@NotNull JavaPlugin javaPlugin) {
     LabyModProtocolService.get().initializePlugin(javaPlugin);
-  }
-
-  private void handleTestPacket(Packet packet) { //todo remove again
-    try {
-      int id = this.labyModProtocol().getPacketId(packet.getClass());
-      System.out.println(
-          "Handling dummy packet " + packet.getClass().getSimpleName() + " with id " + id);
-
-      PayloadWriter payloadWriter = new PayloadWriter();
-      payloadWriter.writeVarInt(id);
-      packet.write(payloadWriter);
-      byte[] bytes = payloadWriter.toByteArray();
-      System.out.println("Written packet " + packet.getClass().getSimpleName() + ". Reading...");
-
-      PayloadReader payloadReader = new PayloadReader(bytes);
-      Packet incomingPacket = this.labyModProtocol().handleIncomingPayload(UUID.randomUUID(),
-          payloadReader);
-      System.out.println(incomingPacket);
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
   }
 
   /**
@@ -125,7 +104,21 @@ public class LabyModProtocolService extends AbstractLabyModProtocolService {
       String identifier = protocol.identifier().toString();
       messenger.registerOutgoingPluginChannel(this.plugin, identifier);
       messenger.registerIncomingPluginChannel(this.plugin, identifier,
-          new PluginMessageListener(this));
+          new DefaultPluginMessageListener(this));
     });
+
+    this.initializeManaged();
+  }
+
+  private void initializeManaged() {
+    this.labyModProtocol.registerHandler(
+        VersionLoginPacket.class,
+        new DefaultVersionLoginPacketHandler(this, this.players, this.plugin)
+    );
+
+    this.plugin.getServer().getPluginManager().registerEvents(
+        new DefaultPlayerQuitListener(this.players),
+        this.plugin
+    );
   }
 }

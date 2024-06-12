@@ -4,13 +4,14 @@ import net.labymod.serverapi.protocol.Protocol;
 import net.labymod.serverapi.protocol.payload.io.PayloadReader;
 import net.labymod.serverapi.server.spigot.LabyModProtocolService;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.messaging.PluginMessageListener;
 import org.jetbrains.annotations.NotNull;
 
-public class PluginMessageListener implements org.bukkit.plugin.messaging.PluginMessageListener {
+public class DefaultPluginMessageListener implements PluginMessageListener {
 
   private final LabyModProtocolService protocolService;
 
-  public PluginMessageListener(LabyModProtocolService protocolService) {
+  public DefaultPluginMessageListener(LabyModProtocolService protocolService) {
     this.protocolService = protocolService;
   }
 

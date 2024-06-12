@@ -2,6 +2,7 @@ package net.labymod.serverapi.core.model.display;
 
 import net.labymod.serverapi.protocol.model.component.ServerAPIComponent;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 import java.util.UUID;
@@ -12,25 +13,24 @@ public class Subtitle {
   private final ServerAPIComponent text;
   private double size;
 
-  private Subtitle(@NotNull UUID uniqueId, @NotNull ServerAPIComponent text, double size) {
+  private Subtitle(@NotNull UUID uniqueId, @Nullable ServerAPIComponent text, double size) {
     Objects.requireNonNull(uniqueId, "UniqueId is null");
-    Objects.requireNonNull(text, "Text is null");
     this.uniqueId = uniqueId;
     this.text = text;
     this.setSize(size);
   }
 
-  private Subtitle(@NotNull UUID uniqueId, @NotNull ServerAPIComponent text) {
+  private Subtitle(@NotNull UUID uniqueId, @Nullable ServerAPIComponent text) {
     this(uniqueId, text, 1.0);
   }
 
-  public static Subtitle create(@NotNull UUID uniqueId, @NotNull ServerAPIComponent text) {
+  public static Subtitle create(@NotNull UUID uniqueId, @Nullable ServerAPIComponent text) {
     return new Subtitle(uniqueId, text);
   }
 
   public static Subtitle create(
       @NotNull UUID uniqueId,
-      @NotNull ServerAPIComponent text,
+      @Nullable ServerAPIComponent text,
       double size
   ) {
     return new Subtitle(uniqueId, text, size);
@@ -56,7 +56,7 @@ public class Subtitle {
     this.size = size;
   }
 
-  public @NotNull ServerAPIComponent text() {
+  public @Nullable ServerAPIComponent getText() {
     return this.text;
   }
 
