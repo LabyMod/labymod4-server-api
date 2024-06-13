@@ -21,15 +21,13 @@ jobs:
           java-version: '21'
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
-      - name: Build with Gradle
+      - name: Build Release Artifacts with Gradle
         run: ./gradlew build
       - name: Upload Artifact
         uses: actions/upload-artifact@v3
         with:
           name: Artifacts
           path: build/commonOutput/*.jar
-      - name: Deploy Application
-        run: ./gradlew publish
       - name: Grant execute permission for output
         run: chmod +x build/commonOutput/*.jar
       - name: Upload Assets to Release
@@ -41,3 +39,9 @@ jobs:
           upload_url: ${{ github.event.release.upload_url }}
           asset_path: build/commonOutput/*.jar
           asset_content_type: application/zip
+      - name: Build Publish Artifacts with Gradle
+        env:
+          DEFAULT_BUILD: 'true'
+        run: ./gradlew build
+      - name: Publish Application
+        run: ./gradlew publish

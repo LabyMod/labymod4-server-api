@@ -77,7 +77,9 @@ subprojects {
             }
         }
 
-        includeProjectDependencies(configurations["compile"], mutableSetOf())
+        if (System.getenv("DEFAULT_BUILD") != "true") {
+            includeProjectDependencies(configurations["compile"], mutableSetOf())
+        }
     }
 
     tasks.register("sourcesJar", Jar::class) {
