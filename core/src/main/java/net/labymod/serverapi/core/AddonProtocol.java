@@ -12,13 +12,13 @@ public class AddonProtocol extends Protocol {
   private final String namespace;
 
   /**
-   * Creates a new protocol.
+   * Creates a new addon protocol.
    *
    * @param protocolService The protocol service.
    * @param namespace       The namespace of the addon.
    * @throws NullPointerException If the namespace or protocol service is null.
    */
-  protected AddonProtocol(
+  public AddonProtocol(
       @NotNull AbstractProtocolService protocolService,
       @NotNull String namespace
   ) {

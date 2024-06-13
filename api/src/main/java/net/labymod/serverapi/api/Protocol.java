@@ -19,7 +19,7 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.function.Predicate;
 
-public abstract class Protocol {
+public class Protocol {
 
   protected final PayloadChannelIdentifier identifier;
   private final Set<ProtocolPacket> packets;
@@ -33,7 +33,7 @@ public abstract class Protocol {
    * @param identifier      The identifier of the protocol.
    * @throws NullPointerException If the identifier or protocol service is null.
    */
-  protected Protocol(
+  public Protocol(
       @NotNull AbstractProtocolService protocolService,
       @NotNull PayloadChannelIdentifier identifier
   ) {
