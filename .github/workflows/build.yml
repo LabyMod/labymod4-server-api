@@ -41,9 +41,7 @@ jobs:
           asset_content_type: application/zip
       - name: Clean Gradle
         run: ./gradlew clean
-      - name: Build Publish Artifacts with Gradle
+      - name: Publish Application
         env:
           DEFAULT_BUILD: 'true'
-        run: ./gradlew build
-      - name: Publish Application
         run: ./gradlew publish
