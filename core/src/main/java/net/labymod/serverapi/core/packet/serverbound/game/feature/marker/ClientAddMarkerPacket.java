@@ -1,8 +1,8 @@
 package net.labymod.serverapi.core.packet.serverbound.game.feature.marker;
 
+import net.labymod.serverapi.api.payload.io.PayloadReader;
+import net.labymod.serverapi.api.payload.io.PayloadWriter;
 import net.labymod.serverapi.core.packet.common.game.feature.marker.AbstractMarkerPacket;
-import net.labymod.serverapi.protocol.payload.io.PayloadReader;
-import net.labymod.serverapi.protocol.payload.io.PayloadWriter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

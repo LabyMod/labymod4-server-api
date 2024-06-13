@@ -1,6 +1,6 @@
 package net.labymod.serverapi.core.model.display;
 
-import net.labymod.serverapi.protocol.model.component.ServerAPIComponent;
+import net.labymod.serverapi.api.model.component.ServerAPIComponent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

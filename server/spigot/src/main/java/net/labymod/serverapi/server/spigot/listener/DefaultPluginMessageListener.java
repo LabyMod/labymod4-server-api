@@ -1,7 +1,7 @@
 package net.labymod.serverapi.server.spigot.listener;
 
-import net.labymod.serverapi.protocol.Protocol;
-import net.labymod.serverapi.protocol.payload.io.PayloadReader;
+import net.labymod.serverapi.api.Protocol;
+import net.labymod.serverapi.api.payload.io.PayloadReader;
 import net.labymod.serverapi.server.spigot.LabyModProtocolService;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.messaging.PluginMessageListener;

@@ -1,9 +1,9 @@
 package net.labymod.serverapi.core.packet.clientbound.game.moderation;
 
+import net.labymod.serverapi.api.packet.IdentifiablePacket;
+import net.labymod.serverapi.api.payload.io.PayloadReader;
+import net.labymod.serverapi.api.payload.io.PayloadWriter;
 import net.labymod.serverapi.core.model.moderation.RecommendedAddon;
-import net.labymod.serverapi.protocol.packet.IdentifiablePacket;
-import net.labymod.serverapi.protocol.payload.io.PayloadReader;
-import net.labymod.serverapi.protocol.payload.io.PayloadWriter;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;

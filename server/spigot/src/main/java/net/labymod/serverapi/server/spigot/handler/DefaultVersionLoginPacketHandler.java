@@ -1,7 +1,7 @@
 package net.labymod.serverapi.server.spigot.handler;
 
+import net.labymod.serverapi.api.packet.PacketHandler;
 import net.labymod.serverapi.core.packet.serverbound.login.VersionLoginPacket;
-import net.labymod.serverapi.protocol.packet.PacketHandler;
 import net.labymod.serverapi.server.spigot.LabyModProtocolService;
 import net.labymod.serverapi.server.spigot.event.LabyModPlayerJoinEvent;
 import net.labymod.serverapi.server.spigot.player.LabyModPlayer;

@@ -1,11 +1,11 @@
 package net.labymod.serverapi.server.common.model.player;
 
+import net.labymod.serverapi.api.Protocol;
+import net.labymod.serverapi.api.model.component.ServerAPIComponent;
+import net.labymod.serverapi.api.packet.Packet;
 import net.labymod.serverapi.core.LabyModProtocol;
 import net.labymod.serverapi.core.model.display.Subtitle;
 import net.labymod.serverapi.core.packet.clientbound.game.display.SubtitlePacket;
-import net.labymod.serverapi.protocol.Protocol;
-import net.labymod.serverapi.protocol.model.component.ServerAPIComponent;
-import net.labymod.serverapi.protocol.packet.Packet;
 import net.labymod.serverapi.server.common.AbstractServerLabyModProtocolService;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

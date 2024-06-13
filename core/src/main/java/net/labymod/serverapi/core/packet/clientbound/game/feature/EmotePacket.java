@@ -1,9 +1,9 @@
 package net.labymod.serverapi.core.packet.clientbound.game.feature;
 
+import net.labymod.serverapi.api.packet.Packet;
+import net.labymod.serverapi.api.payload.io.PayloadReader;
+import net.labymod.serverapi.api.payload.io.PayloadWriter;
 import net.labymod.serverapi.core.model.feature.Emote;
-import net.labymod.serverapi.protocol.packet.Packet;
-import net.labymod.serverapi.protocol.payload.io.PayloadReader;
-import net.labymod.serverapi.protocol.payload.io.PayloadWriter;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;

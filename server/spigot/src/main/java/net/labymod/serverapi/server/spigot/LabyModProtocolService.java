@@ -1,12 +1,12 @@
 package net.labymod.serverapi.server.spigot;
 
+import net.labymod.serverapi.api.Protocol;
+import net.labymod.serverapi.api.logger.NoOpProtocolPlatformLogger;
+import net.labymod.serverapi.api.logger.ProtocolPlatformLogger;
+import net.labymod.serverapi.api.packet.Packet;
+import net.labymod.serverapi.api.payload.PayloadChannelIdentifier;
+import net.labymod.serverapi.api.payload.io.PayloadWriter;
 import net.labymod.serverapi.core.packet.serverbound.login.VersionLoginPacket;
-import net.labymod.serverapi.protocol.Protocol;
-import net.labymod.serverapi.protocol.logger.NoOpProtocolPlatformLogger;
-import net.labymod.serverapi.protocol.logger.ProtocolPlatformLogger;
-import net.labymod.serverapi.protocol.packet.Packet;
-import net.labymod.serverapi.protocol.payload.PayloadChannelIdentifier;
-import net.labymod.serverapi.protocol.payload.io.PayloadWriter;
 import net.labymod.serverapi.server.common.AbstractServerLabyModProtocolService;
 import net.labymod.serverapi.server.spigot.event.LabyModPacketReceivedEvent;
 import net.labymod.serverapi.server.spigot.event.LabyModPacketSentEvent;

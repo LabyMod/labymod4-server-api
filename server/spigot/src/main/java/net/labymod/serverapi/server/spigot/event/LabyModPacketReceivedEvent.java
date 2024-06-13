@@ -1,7 +1,7 @@
 package net.labymod.serverapi.server.spigot.event;
 
-import net.labymod.serverapi.protocol.Protocol;
-import net.labymod.serverapi.protocol.packet.Packet;
+import net.labymod.serverapi.api.Protocol;
+import net.labymod.serverapi.api.packet.Packet;
 import net.labymod.serverapi.server.spigot.LabyModProtocolService;
 import net.labymod.serverapi.server.spigot.player.LabyModPlayer;
 import org.bukkit.event.Event;

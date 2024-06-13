@@ -1,6 +1,6 @@
 rootProject.name = "labymod4-server-api"
 
-include(":protocol")
+include(":api")
 include(":core")
 
 sequenceOf("common", "spigot").forEach {

@@ -1,9 +1,9 @@
 package net.labymod.serverapi.core.packet.serverbound.game.supplement;
 
+import net.labymod.serverapi.api.packet.IdentifiablePacket;
+import net.labymod.serverapi.api.payload.io.PayloadReader;
+import net.labymod.serverapi.api.payload.io.PayloadWriter;
 import net.labymod.serverapi.core.packet.clientbound.game.supplement.ServerSwitchPromptPacket;
-import net.labymod.serverapi.protocol.packet.IdentifiablePacket;
-import net.labymod.serverapi.protocol.payload.io.PayloadReader;
-import net.labymod.serverapi.protocol.payload.io.PayloadWriter;
 import org.jetbrains.annotations.NotNull;
 
 public class ServerSwitchPromptResponsePacket extends IdentifiablePacket {

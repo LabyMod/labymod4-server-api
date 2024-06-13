@@ -1,9 +1,9 @@
 package net.labymod.serverapi.core.packet.clientbound.game.display;
 
+import net.labymod.serverapi.api.packet.Packet;
+import net.labymod.serverapi.api.payload.io.PayloadReader;
+import net.labymod.serverapi.api.payload.io.PayloadWriter;
 import net.labymod.serverapi.core.model.display.EconomyDisplay;
-import net.labymod.serverapi.protocol.packet.Packet;
-import net.labymod.serverapi.protocol.payload.io.PayloadReader;
-import net.labymod.serverapi.protocol.payload.io.PayloadWriter;
 import org.jetbrains.annotations.NotNull;
 
 public class EconomyDisplayPacket implements Packet {

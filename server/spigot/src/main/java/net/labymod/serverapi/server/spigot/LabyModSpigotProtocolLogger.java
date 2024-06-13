@@ -1,6 +1,6 @@
 package net.labymod.serverapi.server.spigot;
 
-import net.labymod.serverapi.protocol.logger.ProtocolPlatformLogger;
+import net.labymod.serverapi.api.logger.ProtocolPlatformLogger;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.logging.Level;

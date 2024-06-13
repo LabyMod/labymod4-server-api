@@ -1,5 +1,8 @@
 package net.labymod.serverapi.core;
 
+import net.labymod.serverapi.api.Protocol;
+import net.labymod.serverapi.api.packet.Direction;
+import net.labymod.serverapi.api.payload.PayloadChannelIdentifier;
 import net.labymod.serverapi.core.packet.clientbound.game.display.EconomyDisplayPacket;
 import net.labymod.serverapi.core.packet.clientbound.game.display.SubtitlePacket;
 import net.labymod.serverapi.core.packet.clientbound.game.display.TabListBannerPacket;
@@ -19,9 +22,6 @@ import net.labymod.serverapi.core.packet.serverbound.game.moderation.AddonRecomm
 import net.labymod.serverapi.core.packet.serverbound.game.supplement.InputPromptResponsePacket;
 import net.labymod.serverapi.core.packet.serverbound.game.supplement.ServerSwitchPromptResponsePacket;
 import net.labymod.serverapi.core.packet.serverbound.login.VersionLoginPacket;
-import net.labymod.serverapi.protocol.Protocol;
-import net.labymod.serverapi.protocol.packet.Direction;
-import net.labymod.serverapi.protocol.payload.PayloadChannelIdentifier;
 
 public class LabyModProtocol extends Protocol {
 

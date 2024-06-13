@@ -1,6 +1,6 @@
 package net.labymod.serverapi.core;
 
-import net.labymod.serverapi.protocol.AbstractProtocolService;
+import net.labymod.serverapi.api.AbstractProtocolService;
 import org.jetbrains.annotations.NotNull;
 
 public abstract class AbstractLabyModProtocolService extends AbstractProtocolService {
