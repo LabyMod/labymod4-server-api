@@ -15,6 +15,20 @@ dependencies {
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.8.1")
 }
 
+val commonOutputDir = "${buildDir}/commonOutput"
+
+tasks.register<Delete>("cleanCommonOutput") {
+    delete(commonOutputDir)
+}
+
+tasks.named("clean") {
+    dependsOn("cleanCommonOutput")
+}
+
+tasks.named("build") {
+    dependsOn("cleanCommonOutput")
+}
+
 subprojects {
     plugins.apply("java-library")
     plugins.apply("maven-publish")
@@ -39,8 +53,17 @@ subprojects {
         targetCompatibility = JavaVersion.VERSION_17
     }
 
+    fun adjustArchiveFileName(property: Property<String>) {
+        var value = property.get()
+        if (name != "server-common") {
+            value = value.replace("server-", "")
+        }
+
+        property.set("labymod-server-api-$value")
+    }
+
     tasks.jar {
-        archiveFileName.set("labymod-server-api-" + archiveFileName.get().replace("server-", ""))
+        adjustArchiveFileName(archiveFileName)
 
         fun includeProjectDependencies(config: Configuration, visited: MutableSet<Project>) {
             config.dependencies.forEach { dependency ->
@@ -55,6 +78,13 @@ subprojects {
         }
 
         includeProjectDependencies(configurations["compile"], mutableSetOf())
+    }
+
+    tasks.register("sourcesJar", Jar::class) {
+        archiveClassifier.set("sources")
+        adjustArchiveFileName(archiveFileName)
+
+        from(sourceSets.main.get().allSource)
     }
 
     var publishToken = System.getenv("PUBLISH_TOKEN")
@@ -91,6 +121,25 @@ subprojects {
                 }
             }
         }
+    }
+
+    tasks.register<Copy>("copyToCommonOutput") {
+        val commonOutputDir = project.rootProject.buildDir.resolve("commonOutput")
+
+        // Copy regular JAR files
+        from(tasks.named("jar").map { it.outputs.files })
+
+        // Copy sources JAR files if they exist
+        val sourcesJarTask = tasks.findByName("sourcesJar")
+        if (sourcesJarTask != null) {
+            from(sourcesJarTask.outputs.files)
+        }
+
+        into(commonOutputDir)
+    }
+
+    tasks.named("build") {
+        dependsOn("copyToCommonOutput")
     }
 }
 

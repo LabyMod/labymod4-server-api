@@ -1,0 +1,43 @@
+name: Gradle Build Workflow
+
+on:
+  release:
+    types: [ created ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      VERSION: ${{ github.event.release.tag_name }}
+      BEARER_TOKEN: ${{ secrets.LABYMOD_BEARER_TOKEN }}
+      PUBLISH_TOKEN: ${{ secrets.LABYMOD_PUBLISH_TOKEN }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Set up JDK 21
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+      - name: Build with Gradle
+        run: ./gradlew build
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: Artifacts
+          path: build/commonOutput/*.jar
+      - name: Deploy Application
+        run: ./gradlew publish
+      - name: Grant execute permission for output
+        run: chmod +x build/commonOutput/*.jar
+      - name: Upload Assets to Release
+        id: upload-release-asset
+        uses: sekwah41/upload-release-assets@v1.1.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ github.event.release.upload_url }}
+          asset_path: build/commonOutput/*.jar
+          asset_content_type: application/zip
