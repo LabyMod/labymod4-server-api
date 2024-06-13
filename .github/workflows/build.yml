@@ -39,6 +39,8 @@ jobs:
           upload_url: ${{ github.event.release.upload_url }}
           asset_path: build/commonOutput/*.jar
           asset_content_type: application/zip
+      - name: Clean Gradle
+        run: ./gradlew clean
       - name: Build Publish Artifacts with Gradle
         env:
           DEFAULT_BUILD: 'true'
