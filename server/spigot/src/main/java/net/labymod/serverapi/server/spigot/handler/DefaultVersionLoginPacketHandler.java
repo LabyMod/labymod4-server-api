@@ -1,8 +1,6 @@
 package net.labymod.serverapi.server.spigot.handler;
 
 import net.labymod.serverapi.core.packet.serverbound.login.VersionLoginPacket;
-import net.labymod.serverapi.protocol.model.component.ServerAPIComponent;
-import net.labymod.serverapi.protocol.model.component.ServerAPITextColor;
 import net.labymod.serverapi.protocol.packet.PacketHandler;
 import net.labymod.serverapi.server.spigot.LabyModProtocolService;
 import net.labymod.serverapi.server.spigot.event.LabyModPlayerJoinEvent;
@@ -53,10 +51,9 @@ public class DefaultVersionLoginPacketHandler implements PacketHandler<VersionLo
     );
 
     this.players.put(uuid, labyModPlayer);
-    server.getPluginManager().callEvent(new LabyModPlayerJoinEvent(labyModPlayer));
-
-    //todo remove
-    String value = ((int) (Math.random() * (10000))) + "";
-    labyModPlayer.setSubtitle(ServerAPIComponent.text(value).color(ServerAPITextColor.GOLD));
+    server.getPluginManager().callEvent(new LabyModPlayerJoinEvent(
+        this.protocolService,
+        labyModPlayer
+    ));
   }
 }

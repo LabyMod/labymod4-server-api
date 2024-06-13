@@ -107,4 +107,30 @@ public abstract class AbstractLabyModPlayer<T> {
 
     this.sendPacket(new SubtitlePacket(subtitles));
   }
+
+  @Override
+  public String toString() {
+    return "AbstractLabyModPlayer{" +
+        "uniqueId=" + this.uniqueId +
+        ", labyModVersion='" + this.labyModVersion + '\'' +
+        '}';
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+
+    if (!(o instanceof AbstractLabyModPlayer<?> that)) {
+      return false;
+    }
+
+    return Objects.equals(this.uniqueId, that.uniqueId);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hashCode(this.uniqueId);
+  }
 }

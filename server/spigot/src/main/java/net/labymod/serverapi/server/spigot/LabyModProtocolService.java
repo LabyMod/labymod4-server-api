@@ -1,11 +1,15 @@
 package net.labymod.serverapi.server.spigot;
 
 import net.labymod.serverapi.core.packet.serverbound.login.VersionLoginPacket;
+import net.labymod.serverapi.protocol.Protocol;
 import net.labymod.serverapi.protocol.logger.NoOpProtocolPlatformLogger;
 import net.labymod.serverapi.protocol.logger.ProtocolPlatformLogger;
+import net.labymod.serverapi.protocol.packet.Packet;
 import net.labymod.serverapi.protocol.payload.PayloadChannelIdentifier;
 import net.labymod.serverapi.protocol.payload.io.PayloadWriter;
 import net.labymod.serverapi.server.common.AbstractServerLabyModProtocolService;
+import net.labymod.serverapi.server.spigot.event.LabyModPacketReceivedEvent;
+import net.labymod.serverapi.server.spigot.event.LabyModPacketSentEvent;
 import net.labymod.serverapi.server.spigot.handler.DefaultVersionLoginPacketHandler;
 import net.labymod.serverapi.server.spigot.listener.DefaultPlayerQuitListener;
 import net.labymod.serverapi.server.spigot.listener.DefaultPluginMessageListener;
@@ -45,6 +49,38 @@ public class LabyModProtocolService extends AbstractServerLabyModProtocolService
    */
   public static void initialize(@NotNull JavaPlugin javaPlugin) {
     LabyModProtocolService.get().initializePlugin(javaPlugin);
+  }
+
+  @Override
+  public void afterPacketHandled(
+      @NotNull Protocol protocol,
+      @NotNull Packet packet,
+      @NotNull UUID sender
+  ) {
+    if (this.plugin != null) {
+      this.plugin.getServer().getPluginManager().callEvent(new LabyModPacketReceivedEvent(
+          this,
+          protocol,
+          sender,
+          packet
+      ));
+    }
+  }
+
+  @Override
+  public void afterPacketSent(
+      @NotNull Protocol protocol,
+      @NotNull Packet packet,
+      @NotNull UUID recipient
+  ) {
+    if (this.plugin != null) {
+      this.plugin.getServer().getPluginManager().callEvent(new LabyModPacketSentEvent(
+          this,
+          protocol,
+          recipient,
+          packet
+      ));
+    }
   }
 
   /**
