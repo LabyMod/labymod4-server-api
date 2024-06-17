@@ -5,6 +5,8 @@ import net.labymod.serverapi.api.payload.io.PayloadReader;
 import net.labymod.serverapi.api.payload.io.PayloadWriter;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Objects;
+
 public class MarkerPacket implements Packet {
 
   private MarkerSendType type;
@@ -14,7 +16,8 @@ public class MarkerPacket implements Packet {
    *
    * @param type the way the client will send markers. See {@link MarkerSendType}
    */
-  public MarkerPacket(MarkerSendType type) {
+  public MarkerPacket(@NotNull MarkerSendType type) {
+    Objects.requireNonNull(type, "Type must not be null");
     this.type = type;
   }
 
