@@ -2,6 +2,7 @@ package net.labymod.serverapi.api.packet;
 
 import net.labymod.serverapi.api.payload.io.PayloadReader;
 import net.labymod.serverapi.api.payload.io.PayloadWriter;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -65,6 +66,16 @@ public abstract class IdentifiablePacket implements Packet {
    */
   public int getIdentifier() {
     return this.identifier;
+  }
+
+  /**
+   * Sets the identifier of the packet. Do not use this if you don't know what you're doing
+   *
+   * @param identifier the identifier to set
+   */
+  @ApiStatus.Internal
+  public void setIdentifier(int identifier) {
+    this.identifier = identifier;
   }
 
   @Override
