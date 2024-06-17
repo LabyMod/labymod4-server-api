@@ -1,7 +1,7 @@
-package net.labymod.serverapi.server.spigot.player;
+package net.labymod.serverapi.server.bukkit.player;
 
+import net.labymod.serverapi.server.bukkit.LabyModProtocolService;
 import net.labymod.serverapi.server.common.model.player.AbstractLabyModPlayer;
-import net.labymod.serverapi.server.spigot.LabyModProtocolService;
 import org.bukkit.entity.Player;
 
 import java.util.UUID;

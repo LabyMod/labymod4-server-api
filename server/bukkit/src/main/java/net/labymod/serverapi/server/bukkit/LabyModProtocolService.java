@@ -1,4 +1,4 @@
-package net.labymod.serverapi.server.spigot;
+package net.labymod.serverapi.server.bukkit;
 
 import net.labymod.serverapi.api.Protocol;
 import net.labymod.serverapi.api.logger.NoOpProtocolPlatformLogger;
@@ -7,13 +7,13 @@ import net.labymod.serverapi.api.packet.Packet;
 import net.labymod.serverapi.api.payload.PayloadChannelIdentifier;
 import net.labymod.serverapi.api.payload.io.PayloadWriter;
 import net.labymod.serverapi.core.packet.serverbound.login.VersionLoginPacket;
+import net.labymod.serverapi.server.bukkit.event.LabyModPacketReceivedEvent;
+import net.labymod.serverapi.server.bukkit.event.LabyModPacketSentEvent;
+import net.labymod.serverapi.server.bukkit.handler.DefaultVersionLoginPacketHandler;
+import net.labymod.serverapi.server.bukkit.listener.DefaultPlayerQuitListener;
+import net.labymod.serverapi.server.bukkit.listener.DefaultPluginMessageListener;
+import net.labymod.serverapi.server.bukkit.player.LabyModPlayer;
 import net.labymod.serverapi.server.common.AbstractServerLabyModProtocolService;
-import net.labymod.serverapi.server.spigot.event.LabyModPacketReceivedEvent;
-import net.labymod.serverapi.server.spigot.event.LabyModPacketSentEvent;
-import net.labymod.serverapi.server.spigot.handler.DefaultVersionLoginPacketHandler;
-import net.labymod.serverapi.server.spigot.listener.DefaultPlayerQuitListener;
-import net.labymod.serverapi.server.spigot.listener.DefaultPluginMessageListener;
-import net.labymod.serverapi.server.spigot.player.LabyModPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.messaging.Messenger;
@@ -134,7 +134,7 @@ public class LabyModProtocolService extends AbstractServerLabyModProtocolService
     }
 
     this.plugin = javaPlugin;
-    this.logger = new LabyModSpigotProtocolLogger(javaPlugin.getLogger());
+    this.logger = new LabyModBukkitProtocolLogger(javaPlugin.getLogger());
     Messenger messenger = this.plugin.getServer().getMessenger();
     this.registry().addRegisterListener(protocol -> {
       String identifier = protocol.identifier().toString();

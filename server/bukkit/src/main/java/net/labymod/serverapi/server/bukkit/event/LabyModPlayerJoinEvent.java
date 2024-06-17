@@ -1,7 +1,7 @@
-package net.labymod.serverapi.server.spigot.event;
+package net.labymod.serverapi.server.bukkit.event;
 
-import net.labymod.serverapi.server.spigot.LabyModProtocolService;
-import net.labymod.serverapi.server.spigot.player.LabyModPlayer;
+import net.labymod.serverapi.server.bukkit.LabyModProtocolService;
+import net.labymod.serverapi.server.bukkit.player.LabyModPlayer;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;

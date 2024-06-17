@@ -1,4 +1,4 @@
-package net.labymod.serverapi.server.spigot;
+package net.labymod.serverapi.server.bukkit;
 
 import org.bukkit.plugin.java.JavaPlugin;
 
