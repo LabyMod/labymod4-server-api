@@ -6,6 +6,8 @@ import net.labymod.serverapi.api.payload.io.PayloadWriter;
 import net.labymod.serverapi.core.model.feature.Emote;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -20,7 +22,7 @@ public class EmotePacket implements Packet {
 
   public EmotePacket(@NotNull Emote... emotes) {
     Objects.requireNonNull(emotes, "Emotes cannot be null");
-    this.emotes = List.of(emotes);
+    this.emotes = Collections.unmodifiableList(Arrays.asList(emotes));
   }
 
   @Override

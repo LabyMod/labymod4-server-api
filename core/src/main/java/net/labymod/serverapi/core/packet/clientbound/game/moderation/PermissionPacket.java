@@ -7,6 +7,8 @@ import net.labymod.serverapi.core.model.moderation.Permission;
 import net.labymod.serverapi.core.model.moderation.Permission.StatedPermission;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -20,7 +22,7 @@ public class PermissionPacket implements Packet {
   }
 
   public PermissionPacket(@NotNull StatedPermission... permissions) {
-    this(List.of(permissions));
+    this(Collections.unmodifiableList(Arrays.asList(permissions)));
   }
 
   @Override
@@ -36,7 +38,7 @@ public class PermissionPacket implements Packet {
   public void write(@NotNull PayloadWriter writer) {
     writer.writeCollection(this.permissions, actualPermission -> {
       writer.writeString(actualPermission.permission());
-      writer.writeBoolean(actualPermission.allowed());
+      writer.writeBoolean(actualPermission.isAllowed());
     });
   }
 

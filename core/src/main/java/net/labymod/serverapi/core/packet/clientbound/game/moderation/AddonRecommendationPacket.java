@@ -6,6 +6,8 @@ import net.labymod.serverapi.api.payload.io.PayloadWriter;
 import net.labymod.serverapi.core.model.moderation.RecommendedAddon;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -20,7 +22,7 @@ public class AddonRecommendationPacket extends IdentifiablePacket {
 
   public AddonRecommendationPacket(@NotNull RecommendedAddon... addons) {
     Objects.requireNonNull(addons, "Addons cannot be null");
-    this.addons = List.of(addons);
+    this.addons = Collections.unmodifiableList(Arrays.asList(addons));
   }
 
   @Override

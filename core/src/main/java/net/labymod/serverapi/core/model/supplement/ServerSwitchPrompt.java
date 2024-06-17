@@ -87,10 +87,11 @@ public class ServerSwitchPrompt {
       return true;
     }
 
-    if (!(o instanceof ServerSwitchPrompt that)) {
+    if (!(o instanceof ServerSwitchPrompt)) {
       return false;
     }
 
+    ServerSwitchPrompt that = (ServerSwitchPrompt) o;
     return this.showPreview == that.showPreview && Objects.equals(this.title, that.title)
         && Objects.equals(this.address, that.address);
   }

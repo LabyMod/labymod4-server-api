@@ -59,10 +59,11 @@ public class Permission {
       return true;
     }
 
-    if (!(o instanceof Permission that)) {
+    if (!(o instanceof Permission)) {
       return false;
     }
 
+    Permission that = (Permission) o;
     return this.identifier.equals(that.identifier);
   }
 
@@ -76,7 +77,31 @@ public class Permission {
     return "Permission{" + "identifier='" + this.identifier + '\'' + '}';
   }
 
-  public record StatedPermission(Permission permission, boolean allowed) {
+  public static class StatedPermission {
+
+    private final Permission permission;
+    private final boolean allowed;
+
+    private StatedPermission(@NotNull Permission permission, boolean allowed) {
+      this.permission = permission;
+      this.allowed = allowed;
+    }
+
+    public @NotNull Permission permission() {
+      return this.permission;
+    }
+
+    public boolean isAllowed() {
+      return this.allowed;
+    }
+
+    /**
+     * @deprecated use {@link #isAllowed()}
+     */
+    @Deprecated
+    public boolean allowed() {
+      return this.allowed;
+    }
 
     @Override
     public String toString() {

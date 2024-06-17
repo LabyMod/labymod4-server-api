@@ -122,10 +122,11 @@ public abstract class AbstractLabyModPlayer<T> {
       return true;
     }
 
-    if (!(o instanceof AbstractLabyModPlayer<?> that)) {
+    if (!(o instanceof AbstractLabyModPlayer<?>)) {
       return false;
     }
 
+    AbstractLabyModPlayer<?> that = (AbstractLabyModPlayer<?>) o;
     return Objects.equals(this.uniqueId, that.uniqueId);
   }
 

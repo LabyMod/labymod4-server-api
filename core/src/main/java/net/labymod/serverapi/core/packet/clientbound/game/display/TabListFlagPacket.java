@@ -6,6 +6,8 @@ import net.labymod.serverapi.api.payload.io.PayloadWriter;
 import net.labymod.serverapi.core.model.display.TabListFlag;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class TabListFlagPacket implements Packet {
@@ -17,7 +19,7 @@ public class TabListFlagPacket implements Packet {
   }
 
   public TabListFlagPacket(TabListFlag... flags) {
-    this.flags = List.of(flags);
+    this.flags = Collections.unmodifiableList(Arrays.asList(flags));
   }
 
   @Override
