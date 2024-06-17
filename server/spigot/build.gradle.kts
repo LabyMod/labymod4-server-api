@@ -9,6 +9,7 @@ repositories {
 dependencies {
     compileOnly("org.spigotmc:spigot-api:1.20.6-R0.1-SNAPSHOT")
     compile(project(":server-common"))
+    compile(project(":test"))
 }
 
 tasks.processResources {

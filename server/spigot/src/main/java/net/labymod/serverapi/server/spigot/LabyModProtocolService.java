@@ -25,12 +25,11 @@ import java.util.UUID;
 public class LabyModProtocolService extends AbstractServerLabyModProtocolService<LabyModPlayer> {
 
   private static final LabyModProtocolService INSTANCE = new LabyModProtocolService();
-  private ProtocolPlatformLogger logger;
+  private ProtocolPlatformLogger logger = NoOpProtocolPlatformLogger.get();
   private JavaPlugin plugin;
 
   private LabyModProtocolService() {
     super(Side.SERVER);
-    this.logger = NoOpProtocolPlatformLogger.get();
   }
 
   /**
