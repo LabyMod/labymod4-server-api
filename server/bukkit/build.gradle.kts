@@ -7,7 +7,8 @@ repositories {
 }
 
 dependencies {
-    compileOnly("org.spigotmc:spigot-api:1.20.6-R0.1-SNAPSHOT")
+    // this is the oldest available version of LabyMod 4. As of 1.20.6 nothing broke, so this should be fine.
+    compileOnly("org.bukkit:bukkit:1.8.8-R0.1-SNAPSHOT")
     compile(project(":server-common"))
     compile(project(":test"))
 }

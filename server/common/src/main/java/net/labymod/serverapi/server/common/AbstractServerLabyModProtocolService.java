@@ -17,12 +17,9 @@ public abstract class AbstractServerLabyModProtocolService<T extends AbstractLab
 
   /**
    * Creates a new labymod protocol service.
-   *
-   * @param side the side the protocol service is running on. {@link Side#CLIENT} for client-side
-   *             and {@link Side#SERVER} for server-side
    */
-  protected AbstractServerLabyModProtocolService(@NotNull Side side) {
-    super(side);
+  protected AbstractServerLabyModProtocolService() {
+    super(Side.SERVER);
     this.players = new HashMap<>();
   }
 

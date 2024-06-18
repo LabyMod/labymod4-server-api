@@ -53,9 +53,12 @@ public class EconomyDisplay {
     if (this == o) {
       return true;
     }
-    if (!(o instanceof EconomyDisplay that)) {
+
+    if (!(o instanceof EconomyDisplay)) {
       return false;
     }
+
+    EconomyDisplay that = (EconomyDisplay) o;
     return this.visible == that.visible && Double.compare(this.balance, that.balance) == 0
         && Objects.equals(this.key, that.key) && Objects.equals(this.iconUrl, that.iconUrl)
         && Objects.equals(this.decimalFormat, that.decimalFormat);
@@ -77,18 +80,52 @@ public class EconomyDisplay {
         '}';
   }
 
-  public record DecimalFormat(@NotNull String format, double divisor) {
+  public static class DecimalFormat {
+
+    private final String format;
+    private final double divisor;
+
+    public DecimalFormat(@NotNull String format, double divisor) {
+      Objects.requireNonNull(format, "Format must not be null");
+      this.format = format;
+      this.divisor = divisor;
+    }
 
     @Override
     public boolean equals(Object o) {
       if (this == o) {
         return true;
       }
-      if (!(o instanceof DecimalFormat that)) {
+
+      if (!(o instanceof DecimalFormat)) {
         return false;
       }
+
+      DecimalFormat that = (DecimalFormat) o;
       return Double.compare(this.divisor, that.divisor) == 0 && Objects.equals(this.format,
           that.format);
+    }
+
+    public String getFormat() {
+      return this.format;
+    }
+
+    public double getDivisor() {
+      return this.divisor;
+    }
+
+    /**
+     * @deprecated Use {@link #getFormat()}
+     */
+    public String format() {
+      return this.format;
+    }
+
+    /**
+     * @deprecated Use {@link #getDivisor()}
+     */
+    public double divisor() {
+      return this.divisor;
     }
 
     @Override

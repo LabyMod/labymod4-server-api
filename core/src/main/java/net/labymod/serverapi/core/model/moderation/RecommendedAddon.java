@@ -45,9 +45,12 @@ public class RecommendedAddon {
     if (this == o) {
       return true;
     }
-    if (!(o instanceof RecommendedAddon that)) {
+
+    if (!(o instanceof RecommendedAddon)) {
       return false;
     }
+
+    RecommendedAddon that = (RecommendedAddon) o;
     return this.required == that.required && Objects.equals(this.namespace, that.namespace);
   }
 

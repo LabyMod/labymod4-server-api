@@ -7,6 +7,8 @@ import net.labymod.serverapi.api.payload.io.PayloadWriter;
 import net.labymod.serverapi.core.model.display.Subtitle;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -19,7 +21,7 @@ public class SubtitlePacket implements Packet {
   }
 
   public SubtitlePacket(Subtitle... subtitles) {
-    this.subtitles = List.of(subtitles);
+    this.subtitles = Collections.unmodifiableList(Arrays.asList(subtitles));
   }
 
   @Override

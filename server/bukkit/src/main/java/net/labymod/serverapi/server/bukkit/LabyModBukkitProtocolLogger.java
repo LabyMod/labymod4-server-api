@@ -1,4 +1,4 @@
-package net.labymod.serverapi.server.spigot;
+package net.labymod.serverapi.server.bukkit;
 
 import net.labymod.serverapi.api.logger.ProtocolPlatformLogger;
 import org.jetbrains.annotations.NotNull;
@@ -6,11 +6,11 @@ import org.jetbrains.annotations.NotNull;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-class LabyModSpigotProtocolLogger implements ProtocolPlatformLogger {
+class LabyModBukkitProtocolLogger implements ProtocolPlatformLogger {
 
   private final Logger logger;
 
-  protected LabyModSpigotProtocolLogger(Logger logger) {
+  protected LabyModBukkitProtocolLogger(Logger logger) {
     this.logger = logger;
   }
 

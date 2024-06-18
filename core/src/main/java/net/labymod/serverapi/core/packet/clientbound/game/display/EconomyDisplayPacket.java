@@ -36,8 +36,8 @@ public class EconomyDisplayPacket implements Packet {
     writer.writeDouble(this.economy.getBalance());
     writer.writeOptionalString(this.economy.getIconUrl());
     writer.writeOptional(this.economy.getDecimalFormat(), decimalFormat -> {
-      writer.writeOptionalString(decimalFormat.format());
-      writer.writeDouble(decimalFormat.divisor());
+      writer.writeOptionalString(decimalFormat.getFormat());
+      writer.writeDouble(decimalFormat.getDivisor());
     });
   }
 

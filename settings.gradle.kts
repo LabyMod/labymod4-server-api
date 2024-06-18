@@ -4,7 +4,7 @@ include(":api")
 include(":core")
 include(":test")
 
-sequenceOf("common", "spigot").forEach {
+sequenceOf("common", "bukkit").forEach {
     val name = "server-$it"
 
     include(name)

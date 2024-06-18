@@ -8,6 +8,8 @@ import net.labymod.serverapi.core.model.feature.InteractionMenuEntry;
 import net.labymod.serverapi.core.model.feature.InteractionMenuEntry.InteractionMenuType;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -22,7 +24,7 @@ public class InteractionMenuPacket implements Packet {
 
   public InteractionMenuPacket(@NotNull InteractionMenuEntry... entries) {
     Objects.requireNonNull(entries, "Entries cannot be null");
-    this.entries = List.of(entries);
+    this.entries = Collections.unmodifiableList(Arrays.asList(entries));
   }
 
   @Override
