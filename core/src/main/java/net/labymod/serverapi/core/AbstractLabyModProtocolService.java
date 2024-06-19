@@ -24,6 +24,7 @@ public abstract class AbstractLabyModProtocolService extends AbstractProtocolSer
     super(side);
     this.labyModProtocol = new LabyModProtocol(this);
     this.registry().registerProtocol(this.labyModProtocol);
+    this.loadLabyModProtocolIntegrations(null);
   }
 
   /**
