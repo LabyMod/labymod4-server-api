@@ -5,9 +5,12 @@ import net.labymod.serverapi.core.integration.LabyModProtocolIntegration;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.ServiceLoader;
 import java.util.Set;
+import java.util.UUID;
 
 public abstract class AbstractLabyModProtocolService extends AbstractProtocolService {
 
@@ -68,5 +71,17 @@ public abstract class AbstractLabyModProtocolService extends AbstractProtocolSer
     }
 
     System.out.println("Found and loaded" + found + " Integrations.");
+  }
+
+  public @Nullable AbstractLabyModPlayer getPlayer(@NotNull UUID uniqueId) {
+    return null;
+  }
+
+  public boolean isUsingLabyMod(@NotNull UUID uniqueId) {
+    return false;
+  }
+
+  public Collection<? extends AbstractLabyModPlayer> getPlayers() {
+    return Collections.emptyList();
   }
 }

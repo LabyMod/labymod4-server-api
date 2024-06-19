@@ -1,12 +1,12 @@
-package net.labymod.serverapi.server.common.model.player;
+package net.labymod.serverapi.core;
 
 import net.labymod.serverapi.api.Protocol;
 import net.labymod.serverapi.api.model.component.ServerAPIComponent;
 import net.labymod.serverapi.api.packet.Packet;
-import net.labymod.serverapi.core.LabyModProtocol;
+import net.labymod.serverapi.core.integration.LabyModIntegrationPlayer;
+import net.labymod.serverapi.core.integration.LabyModProtocolIntegration;
 import net.labymod.serverapi.core.model.display.Subtitle;
 import net.labymod.serverapi.core.packet.clientbound.game.display.SubtitlePacket;
-import net.labymod.serverapi.server.common.AbstractServerLabyModProtocolService;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -14,34 +14,55 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.function.Consumer;
 
-public abstract class AbstractLabyModPlayer<T> {
+public abstract class AbstractLabyModPlayer<P extends AbstractLabyModPlayer<?>> {
 
-  private final AbstractServerLabyModProtocolService<?> protocolService;
-  private final UUID uniqueId;
-  private final T serverPlayer;
-  private final String labyModVersion;
-
+  protected final UUID uniqueId;
+  protected final String labyModVersion;
+  private final AbstractLabyModProtocolService protocolService;
+  private final List<LabyModIntegrationPlayer> integrationPlayers = new ArrayList<>();
   private Subtitle subtitle;
 
   protected AbstractLabyModPlayer(
-      AbstractServerLabyModProtocolService<?> protocolService,
+      AbstractLabyModProtocolService protocolService,
       UUID uniqueId,
-      T player,
       String labyModVersion
   ) {
     this.protocolService = protocolService;
     this.uniqueId = uniqueId;
-    this.serverPlayer = player;
     this.labyModVersion = labyModVersion;
+
+    for (LabyModProtocolIntegration integration : protocolService.integrations) {
+      LabyModIntegrationPlayer player = integration.createIntegrationPlayer(this);
+      if (player == null) {
+        continue;
+      }
+
+      LabyModIntegrationPlayer existingPlayer = this.getIntegrationPlayer(player.getClass());
+      if (existingPlayer == null) {
+        this.integrationPlayers.add(player);
+      } else {
+        protocolService.logger().warn(
+            "Tried to add integration player " + player + " (" + player.getClass().getName()
+                + ") to " + uniqueId + " but it's already registered"
+        );
+      }
+    }
+  }
+
+  public <T extends LabyModIntegrationPlayer> @Nullable T getIntegrationPlayer(Class<T> clazz) {
+    for (LabyModIntegrationPlayer integrationPlayer : this.integrationPlayers) {
+      if (clazz == integrationPlayer.getClass()) {
+        return (T) integrationPlayer;
+      }
+    }
+
+    return null;
   }
 
   public @NotNull UUID getUniqueId() {
     return this.uniqueId;
-  }
-
-  public @NotNull T getPlayer() {
-    return this.serverPlayer;
   }
 
   public @NotNull String getLabyModVersion() {
@@ -56,7 +77,7 @@ public abstract class AbstractLabyModPlayer<T> {
     this.setSubtitleInternal(Subtitle.create(this.uniqueId, component));
   }
 
-  public void resetSubtitle() {
+  public void resetSubtitle(Consumer<P> consumer) {
     this.setSubtitleInternal(null);
   }
 
@@ -88,50 +109,23 @@ public abstract class AbstractLabyModPlayer<T> {
 
     LabyModProtocol labyModProtocol = this.protocolService.labyModProtocol();
     SubtitlePacket packet = new SubtitlePacket(subtitle);
-    this.protocolService.forEachPlayer(player -> {
+    for (AbstractLabyModPlayer<?> player : this.protocolService.getPlayers()) {
       Subtitle playerSubtitle = player.getSubtitle();
       if (playerSubtitle != null) {
         subtitles.add(playerSubtitle);
       }
 
       if (player.equals(this)) {
-        return;
+        continue;
       }
 
       labyModProtocol.sendPacket(player.getUniqueId(), packet);
-    });
+    }
 
     if (subtitles.isEmpty()) {
       return;
     }
 
     this.sendPacket(new SubtitlePacket(subtitles));
-  }
-
-  @Override
-  public String toString() {
-    return "AbstractLabyModPlayer{" +
-        "uniqueId=" + this.uniqueId +
-        ", labyModVersion='" + this.labyModVersion + '\'' +
-        '}';
-  }
-
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) {
-      return true;
-    }
-
-    if (!(o instanceof AbstractLabyModPlayer<?>)) {
-      return false;
-    }
-
-    AbstractLabyModPlayer<?> that = (AbstractLabyModPlayer<?>) o;
-    return Objects.equals(this.uniqueId, that.uniqueId);
-  }
-
-  @Override
-  public int hashCode() {
-    return Objects.hashCode(this.uniqueId);
   }
 }

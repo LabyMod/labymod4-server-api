@@ -1,12 +1,12 @@
 package net.labymod.serverapi.server.bukkit.player;
 
 import net.labymod.serverapi.server.bukkit.LabyModProtocolService;
-import net.labymod.serverapi.server.common.model.player.AbstractLabyModPlayer;
+import net.labymod.serverapi.server.common.model.player.AbstractServerLabyModPlayer;
 import org.bukkit.entity.Player;
 
 import java.util.UUID;
 
-public class LabyModPlayer extends AbstractLabyModPlayer<Player> {
+public class LabyModPlayer extends AbstractServerLabyModPlayer<LabyModPlayer, Player> {
 
   public LabyModPlayer(
       LabyModProtocolService protocolService,

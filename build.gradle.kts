@@ -42,6 +42,7 @@ subprojects {
 
     repositories {
         mavenCentral()
+        mavenLocal()
     }
 
     dependencies {
@@ -129,7 +130,10 @@ subprojects {
         val commonOutputDir = project.rootProject.buildDir.resolve("commonOutput")
 
         // Copy regular JAR files
-        from(tasks.named("jar").map { it.outputs.files })
+        val shadowTask = tasks.findByName("shadowJar")
+
+        var buildTask = if (shadowTask != null) "shadowJar" else "jar"
+        from(tasks.named(buildTask).map { it.outputs.files })
 
         // Copy sources JAR files if they exist
         val sourcesJarTask = tasks.findByName("sourcesJar")
