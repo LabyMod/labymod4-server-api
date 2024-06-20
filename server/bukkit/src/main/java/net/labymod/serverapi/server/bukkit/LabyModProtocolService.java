@@ -12,7 +12,6 @@ import net.labymod.serverapi.server.bukkit.event.LabyModPacketSentEvent;
 import net.labymod.serverapi.server.bukkit.handler.DefaultVersionLoginPacketHandler;
 import net.labymod.serverapi.server.bukkit.listener.DefaultPlayerQuitListener;
 import net.labymod.serverapi.server.bukkit.listener.DefaultPluginMessageListener;
-import net.labymod.serverapi.server.bukkit.player.LabyModPlayer;
 import net.labymod.serverapi.server.common.AbstractServerLabyModProtocolService;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -139,7 +138,7 @@ public class LabyModProtocolService extends AbstractServerLabyModProtocolService
       String identifier = protocol.identifier().toString();
       messenger.registerOutgoingPluginChannel(this.plugin, identifier);
       messenger.registerIncomingPluginChannel(this.plugin, identifier,
-          new DefaultPluginMessageListener(this));
+          new DefaultPluginMessageListener(protocol));
     });
 
     this.initializeManaged();

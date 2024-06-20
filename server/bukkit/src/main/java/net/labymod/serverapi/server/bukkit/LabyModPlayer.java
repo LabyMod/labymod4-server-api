@@ -1,6 +1,5 @@
-package net.labymod.serverapi.server.bukkit.player;
+package net.labymod.serverapi.server.bukkit;
 
-import net.labymod.serverapi.server.bukkit.LabyModProtocolService;
 import net.labymod.serverapi.server.common.model.player.AbstractServerLabyModPlayer;
 import org.bukkit.entity.Player;
 

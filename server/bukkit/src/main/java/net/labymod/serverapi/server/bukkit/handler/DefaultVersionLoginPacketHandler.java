@@ -2,9 +2,9 @@ package net.labymod.serverapi.server.bukkit.handler;
 
 import net.labymod.serverapi.api.packet.PacketHandler;
 import net.labymod.serverapi.core.packet.serverbound.login.VersionLoginPacket;
+import net.labymod.serverapi.server.bukkit.LabyModPlayer;
 import net.labymod.serverapi.server.bukkit.LabyModProtocolService;
 import net.labymod.serverapi.server.bukkit.event.LabyModPlayerJoinEvent;
-import net.labymod.serverapi.server.bukkit.player.LabyModPlayer;
 import org.bukkit.Server;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;

@@ -2,8 +2,8 @@ package net.labymod.serverapi.server.bukkit.event;
 
 import net.labymod.serverapi.api.Protocol;
 import net.labymod.serverapi.api.packet.Packet;
+import net.labymod.serverapi.server.bukkit.LabyModPlayer;
 import net.labymod.serverapi.server.bukkit.LabyModProtocolService;
-import net.labymod.serverapi.server.bukkit.player.LabyModPlayer;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
