@@ -1,0 +1,4 @@
+name: LabyModServerAPI
+version: '${version}'
+main: net.labymod.serverapi.server.bungeecord.LabyModServerAPIPlugin
+api-version: '1.20'
