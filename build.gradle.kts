@@ -4,6 +4,7 @@ plugins {
     id("java")
     id("maven-publish")
     id("com.github.johnrengelman.shadow") version ("7.0.0") apply (false)
+    id("org.cadixdev.licenser") version ("0.6.1")
 }
 
 group = "net.labymod.serverapi"
@@ -35,6 +36,7 @@ tasks.named("build") {
 subprojects {
     plugins.apply("java-library")
     plugins.apply("maven-publish")
+    plugins.apply("org.cadixdev.licenser")
 
     group = rootProject.group
     version = rootProject.version
@@ -42,6 +44,12 @@ subprojects {
     val compile = configurations.create("compile")
     val api by configurations
     api.extendsFrom(compile)
+
+    license {
+        header(rootProject.file("LICENSE"))
+        newLine.set(true)
+        exclude("**/*.yml")
+    }
 
     repositories {
         mavenCentral()
@@ -68,6 +76,7 @@ subprojects {
     }
 
     tasks.jar {
+        dependsOn("updateLicenses")
         adjustArchiveFileName(archiveFileName)
 
         fun includeProjectDependencies(config: Configuration, visited: MutableSet<Project>) {
