@@ -165,13 +165,14 @@ subprojects {
 
             if (tasks.findByName("shadowJar") != null) {
                 tasks.named<ShadowJar>("shadowJar") {
-                    if (!isCommon) {
+                    if (isCommon) {
+                        mergeServiceFiles()
+                    } else {
                         dependsOn(":server-common:shadowJar")
                     }
 
                     adjustArchiveFileName(archiveBaseName)
                     archiveClassifier.set("")
-                    mergeServiceFiles()
                 }
             }
 
