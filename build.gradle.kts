@@ -149,10 +149,10 @@ subprojects {
         from(tasks.named(buildTask).map { it.outputs.files })
 
         // Copy sources JAR files if they exist
-        val sourcesJarTask = tasks.findByName("sourcesJar")
-        if (sourcesJarTask != null) {
-            from(sourcesJarTask.outputs.files)
-        }
+        // val sourcesJarTask = tasks.findByName("sourcesJar")
+        // if (sourcesJarTask != null) {
+        //     from(sourcesJarTask.outputs.files)
+        // }
 
         into(commonOutputDir)
     }
