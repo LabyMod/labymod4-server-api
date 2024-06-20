@@ -24,19 +24,33 @@ public abstract class AbstractServerLabyModProtocolService<T extends AbstractSer
     this.players = new HashMap<>();
   }
 
+  /**
+   * {@inheritDoc}
+   */
   public @Nullable T getPlayer(@NotNull UUID uniqueId) {
     return this.players.get(uniqueId);
   }
 
+  /**
+   * {@inheritDoc}
+   */
   public boolean isUsingLabyMod(@NotNull UUID uniqueId) {
     return this.players.containsKey(uniqueId);
   }
 
+  /**
+   * {@inheritDoc}
+   */
   @Override
   public Collection<T> getPlayers() {
     return this.players.values();
   }
 
+  /**
+   * Loops through all players and executed the supplied consumer
+   *
+   * @param action The action to execute
+   */
   public void forEachPlayer(@NotNull Consumer<T> action) {
     for (T value : this.players.values()) {
       action.accept(value);
