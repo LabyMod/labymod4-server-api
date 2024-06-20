@@ -43,6 +43,7 @@ subprojects {
     repositories {
         mavenCentral()
         mavenLocal()
+        maven("https://dist.labymod.net/api/v1/maven/release/")
     }
 
     dependencies {

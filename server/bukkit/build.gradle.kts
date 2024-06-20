@@ -37,5 +37,7 @@ tasks.shadowJar {
 }
 
 tasks.jar {
-    finalizedBy("shadowJar")
+    if (System.getenv("DEFAULT_BUILD") != "true") {
+        finalizedBy("shadowJar")
+    }
 }

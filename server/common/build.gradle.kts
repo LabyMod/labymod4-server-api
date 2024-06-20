@@ -5,9 +5,9 @@ plugins {
 
 dependencies {
     compile(project(":core"))
-    //api("net.labymod.serverapi.integration:voicechat:0.0.0") {
-    //    exclude("net.labymod.serverapi")
-    //}
+    api("net.labymod.serverapi.integration:voicechat:0.0.4") {
+        exclude("net.labymod.serverapi")
+    }
     //api("net.labymod.serverapi.integration:togglesneak:0.0.0") {
     //    exclude("net.labymod.serverapi")
     //}
@@ -29,5 +29,7 @@ tasks.shadowJar {
 }
 
 tasks.jar {
-    finalizedBy("shadowJar")
+    if (System.getenv("DEFAULT_BUILD") != "true") {
+        finalizedBy("shadowJar")
+    }
 }
