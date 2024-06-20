@@ -6,7 +6,9 @@ import net.labymod.serverapi.api.packet.Packet;
 import net.labymod.serverapi.core.integration.LabyModIntegrationPlayer;
 import net.labymod.serverapi.core.integration.LabyModProtocolIntegration;
 import net.labymod.serverapi.core.model.display.Subtitle;
+import net.labymod.serverapi.core.model.moderation.Permission;
 import net.labymod.serverapi.core.packet.clientbound.game.display.SubtitlePacket;
+import net.labymod.serverapi.core.packet.clientbound.game.moderation.PermissionPacket;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -92,6 +94,14 @@ public abstract class AbstractLabyModPlayer<P extends AbstractLabyModPlayer<?>> 
         protocol.sendPacket(this.uniqueId, packet);
       }
     }
+  }
+
+  public void sendPermissions(@NotNull Permission.StatedPermission... permissions) {
+    this.sendPacket(new PermissionPacket(permissions));
+  }
+
+  public void sendPermissions(@NotNull List<Permission.StatedPermission> permissions) {
+    this.sendPacket(new PermissionPacket(permissions));
   }
 
   private void setSubtitleInternal(Subtitle subtitle) {

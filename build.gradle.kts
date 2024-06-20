@@ -1,6 +1,9 @@
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+
 plugins {
     id("java")
     id("maven-publish")
+    id("com.github.johnrengelman.shadow") version ("7.0.0") apply (false)
 }
 
 group = "net.labymod.serverapi"
@@ -147,6 +150,35 @@ subprojects {
 
     tasks.named("build") {
         dependsOn("copyToCommonOutput")
+    }
+
+    if (name.startsWith("server-")) {
+        val isCommon = name == "server-common"
+        if (!isCommon) {
+            dependencies {
+                api(project(":server-common"))
+            }
+        }
+
+        if (System.getenv("DEFAULT_BUILD") != "true") {
+            plugins.apply("com.github.johnrengelman.shadow")
+
+            if (tasks.findByName("shadowJar") != null) {
+                tasks.named<ShadowJar>("shadowJar") {
+                    if (!isCommon) {
+                        dependsOn(":server-common:shadowJar")
+                    }
+
+                    adjustArchiveFileName(archiveBaseName)
+                    archiveClassifier.set("")
+                    mergeServiceFiles()
+                }
+            }
+
+            tasks.jar {
+                finalizedBy("shadowJar")
+            }
+        }
     }
 }
 
