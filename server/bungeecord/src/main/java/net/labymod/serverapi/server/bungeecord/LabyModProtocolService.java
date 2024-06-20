@@ -13,6 +13,7 @@ import net.labymod.serverapi.server.bungeecord.handler.DefaultVersionLoginPacket
 import net.labymod.serverapi.server.bungeecord.listener.DefaultPlayerQuitListener;
 import net.labymod.serverapi.server.bungeecord.listener.DefaultPluginMessageListener;
 import net.labymod.serverapi.server.common.AbstractServerLabyModProtocolService;
+import net.labymod.serverapi.server.common.JavaProtocolLogger;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
@@ -127,7 +128,7 @@ public class LabyModProtocolService extends AbstractServerLabyModProtocolService
     }
 
     this.plugin = plugin;
-    this.logger = new LabyModBungeeProtocolLogger(plugin.getLogger());
+    this.logger = new JavaProtocolLogger(plugin.getLogger());
     this.registry().addRegisterListener(
         protocol -> plugin.getProxy().getPluginManager().registerListener(
             plugin,

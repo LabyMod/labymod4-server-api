@@ -1,4 +1,4 @@
-package net.labymod.serverapi.server.bungeecord;
+package net.labymod.serverapi.server.common;
 
 import net.labymod.serverapi.api.logger.ProtocolPlatformLogger;
 import org.jetbrains.annotations.NotNull;
@@ -6,11 +6,11 @@ import org.jetbrains.annotations.NotNull;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-class LabyModBungeeProtocolLogger implements ProtocolPlatformLogger {
+public class JavaProtocolLogger implements ProtocolPlatformLogger {
 
   private final Logger logger;
 
-  protected LabyModBungeeProtocolLogger(Logger logger) {
+  public JavaProtocolLogger(Logger logger) {
     this.logger = logger;
   }
 

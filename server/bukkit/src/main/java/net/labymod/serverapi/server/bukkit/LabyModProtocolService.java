@@ -13,6 +13,7 @@ import net.labymod.serverapi.server.bukkit.handler.DefaultVersionLoginPacketHand
 import net.labymod.serverapi.server.bukkit.listener.DefaultPlayerQuitListener;
 import net.labymod.serverapi.server.bukkit.listener.DefaultPluginMessageListener;
 import net.labymod.serverapi.server.common.AbstractServerLabyModProtocolService;
+import net.labymod.serverapi.server.common.JavaProtocolLogger;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.messaging.Messenger;
@@ -132,7 +133,7 @@ public class LabyModProtocolService extends AbstractServerLabyModProtocolService
     }
 
     this.plugin = javaPlugin;
-    this.logger = new LabyModBukkitProtocolLogger(javaPlugin.getLogger());
+    this.logger = new JavaProtocolLogger(javaPlugin.getLogger());
     Messenger messenger = this.plugin.getServer().getMessenger();
     this.registry().addRegisterListener(protocol -> {
       String identifier = protocol.identifier().toString();
