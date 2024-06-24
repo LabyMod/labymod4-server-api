@@ -2,7 +2,7 @@ blank_issues_enabled: false
 contact_links:
   - name: Need Help?
     url: https://labymod.net/dc/dev
-    about: Join our Discord server to ask for help regarding the LabyMod 4 Server API.
+    about: Join our Discord Server for Developers to ask for help regarding the LabyMod 4 Server API.
   - name: LabyMod Developer Portal
     url: https://wiki.labymod.net/
     about: Check out our Developer Portal to understand the LabyMod 4 Server API better.
