@@ -19,6 +19,7 @@ The Server API is organized into several modules:
     - `bungeecord` - The platform-specific integration for Servers running on BungeeCord.
     - `common` - Contains shared classes and utilities used across different server implementations to ensure consistent
       behavior and reduce code duplication.
+  - `velocity` - The platform-specific integration for Servers running on Velocity.
 
 ## Integrations
 

@@ -3,7 +3,7 @@ rootProject.name = "labymod4-server-api"
 include(":api")
 include(":core")
 
-sequenceOf("common", "bukkit", "bungeecord").forEach {
+sequenceOf("common", "bukkit", "bungeecord", "velocity").forEach {
     val name = "server-$it"
 
     include(name)
