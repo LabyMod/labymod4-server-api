@@ -1,0 +1,41 @@
+name: "Request a new Feature"
+description: Request a new Feature for the LabyMod 4 Server API.
+labels: [
+  "pending",
+  "enhancement"
+]
+body:
+  - type: markdown
+    attributes:
+      value: |-
+        Please join our [Discord Server for Developers](https://labymod.net/dc/dev) if you have questions about the LabyMod 4 Server API.
+        
+        Keep in mind that this isn't the place to learn Java.  
+        Please head over to [Stack Overflow](https://stackoverflow.com/questions/tagged/java) for your general programming questions.
+  - type: checkboxes
+    attributes:
+      label: General Troubleshooting
+      description: Please confirm you checked the following before submitting your issue.
+      options:
+        - label: I am using the [latest version](https://github.com/LabyMod/labymod4-server-api/releases) of the LabyMod 4 Server API.
+          required: true
+        - label: I have checked for similar issues on the [Issue-tracker](https://github.com/LabyMod/labymod4-server-api/issues).
+          required: true
+        - label: I have checked for Pull Requests that might already address this issue.
+          required: true
+  - type: textarea
+    attributes:
+      label: "Feature Request"
+      description: "Provide a small description of the feature you want to have added."
+      placeholder: "The LabyMod 4 Server API should get ..."
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: "Example Use-Case"
+      description: |-
+        Provide some code or describe a possible use-case for this feature.
+        
+        The provided text will be rendered as Java code, so you don't have to provide a Code block for it.
+      placeholder: "public void newAwesomeMethod(){}"
+      render: java

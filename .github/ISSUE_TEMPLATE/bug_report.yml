@@ -1,0 +1,103 @@
+name: "Report a Bug"
+description: Found a Bug that needs to be fixed?
+labels: [
+  "pending",
+  "bug"
+]
+body:
+  - type: markdown
+    attributes:
+      value: |-
+        Please join our [Discord Server for Developers](https://labymod.net/dc/dev) if you have questions about the LabyMod 4 Server API.
+        
+        Keep in mind that this isn't the place to learn Java.  
+        Please head over to [Stack Overflow](https://stackoverflow.com/questions/tagged/java) for your general programming questions.
+  - type: checkboxes
+    attributes:
+      label: General Troubleshooting
+      description: Please confirm you checked the following before submitting your issue.
+      options:
+        - label: I am using the [latest version](https://github.com/LabyMod/labymod4-server-api/releases) of the LabyMod 4 Server API.
+          required: true
+        - label: I am using the latest version of LabyMod.
+          required: true
+        - label: I have checked for similar issues on the [Issue-tracker](https://github.com/LabyMod/labymod4-server-api/issues).
+          required: true
+        - label: I have checked for Pull Requests that might already address this issue.
+          required: true
+  - type: dropdown
+    id: platform
+    attributes:
+      label: "Platforms"
+      description: What platform are you experiencing the problem on?
+      multiple: true
+      options:
+        - Spigot / Bukkit
+        - BungeeCord
+        - Velocity
+        - Custom Server Platform
+        - Addon API
+        - Other (please specify in the additional information text field at the bottom)
+    validations:
+      required: true
+  - type: dropdown
+    id: version
+    attributes:
+      label: "Affected Minecraft Version(s)"
+      description: What Minecraft version(s) are you experiencing the problem on?
+      options:
+        - 1.8.9
+        - 1.12.2
+        - 1.16.5
+        - 1.17.1
+        - 1.18.2
+        - 1.19.2-1.19.4
+        - 1.20.1-1.20.4
+        - 1.20.5-1.20.6
+        - 1.21.x
+        - Other / Not Listed (please specify in the additional information text field at the bottom)
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: "Expected Behaviour"
+      description: "What did you expect to happen?"
+      placeholder: "I expected ... to happen"
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: "Code Example for Reproduction Steps"
+      description: |-
+        Please add the code you use to reproduce this problem.  
+        Make sure to remove or replace any sensitive data.
+        Leave this empty or put "N/A" if you don't have a reproducible setup.
+        
+        The provided text will be rendered as Java code, so you don't have to provide a Code block for it.
+      render: java
+      placeholder: |-
+        public void causeError() {
+            throw new Exception("Error!");
+        }
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: "Exception or Error"
+      description: |-
+        Share any Exception or Error you encountered.  
+        Make sure to put it into a code block for better formatting.
+        Leave this blank or put "N/A" if you don't have an Exception or Error.
+        
+        The provided text will be rendered as code, so you don't have to provide a Code block for it.
+      render: yesyes # Unknown code-names = no highlighting.
+      placeholder: "java.lang.NullPointerException: null"
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: "Additional Information"
+      description: |-
+        Add any additional information that might help us understand the problem better.  
+        This could be a more detailed explanation of the problem, a possible solution, or any other information you think is relevant.
+      placeholder: "I think the problem is caused by ..."
