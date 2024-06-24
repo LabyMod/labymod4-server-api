@@ -83,11 +83,10 @@ public class Permission {
       return true;
     }
 
-    if (!(o instanceof Permission)) {
+    if (!(o instanceof Permission that)) {
       return false;
     }
 
-    Permission that = (Permission) o;
     return this.identifier.equals(that.identifier);
   }
 

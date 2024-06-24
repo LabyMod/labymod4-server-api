@@ -36,7 +36,7 @@ the [LabyMod Developer Portal](https://wiki.labymod.net).
 
 ### Prerequisites
 
-- Java Development Kit (JDK) 8 or higher
+- Java Development Kit (JDK) 17 or higher
 
 ### Steps
 

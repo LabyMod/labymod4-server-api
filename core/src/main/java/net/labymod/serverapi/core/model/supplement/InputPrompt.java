@@ -126,11 +126,10 @@ public class InputPrompt {
       return true;
     }
 
-    if (!(o instanceof InputPrompt)) {
+    if (!(o instanceof InputPrompt that)) {
       return false;
     }
 
-    InputPrompt that = (InputPrompt) o;
     return this.maxLength == that.maxLength
         && Objects.equals(this.title, that.title)
         && Objects.equals(this.placeholder, that.placeholder)

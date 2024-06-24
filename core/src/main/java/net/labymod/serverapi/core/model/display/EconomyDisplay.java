@@ -78,11 +78,10 @@ public class EconomyDisplay {
       return true;
     }
 
-    if (!(o instanceof EconomyDisplay)) {
+    if (!(o instanceof EconomyDisplay that)) {
       return false;
     }
 
-    EconomyDisplay that = (EconomyDisplay) o;
     return this.visible == that.visible && Double.compare(this.balance, that.balance) == 0
         && Objects.equals(this.key, that.key) && Objects.equals(this.iconUrl, that.iconUrl)
         && Objects.equals(this.decimalFormat, that.decimalFormat);
@@ -121,11 +120,10 @@ public class EconomyDisplay {
         return true;
       }
 
-      if (!(o instanceof DecimalFormat)) {
+      if (!(o instanceof DecimalFormat that)) {
         return false;
       }
 
-      DecimalFormat that = (DecimalFormat) o;
       return Double.compare(this.divisor, that.divisor) == 0 && Objects.equals(this.format,
           that.format);
     }

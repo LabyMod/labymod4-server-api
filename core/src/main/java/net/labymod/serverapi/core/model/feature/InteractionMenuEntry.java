@@ -101,11 +101,10 @@ public class InteractionMenuEntry {
       return true;
     }
 
-    if (!(o instanceof InteractionMenuEntry)) {
+    if (!(o instanceof InteractionMenuEntry that)) {
       return false;
     }
 
-    InteractionMenuEntry that = (InteractionMenuEntry) o;
     return Objects.equals(this.displayName, that.displayName) && this.type == that.type
         && Objects.equals(this.value, that.value) && Objects.equals(this.iconUrl,
         that.iconUrl);

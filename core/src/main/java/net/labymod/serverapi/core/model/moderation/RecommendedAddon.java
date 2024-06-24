@@ -70,11 +70,10 @@ public class RecommendedAddon {
       return true;
     }
 
-    if (!(o instanceof RecommendedAddon)) {
+    if (!(o instanceof RecommendedAddon that)) {
       return false;
     }
 
-    RecommendedAddon that = (RecommendedAddon) o;
     return this.required == that.required && Objects.equals(this.namespace, that.namespace);
   }
 

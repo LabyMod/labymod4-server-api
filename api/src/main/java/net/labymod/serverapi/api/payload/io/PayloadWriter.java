@@ -187,8 +187,7 @@ public class PayloadWriter {
   public void writeComponent(@NotNull ServerAPIComponent component) {
     byte id = 0;
     Consumer<PayloadWriter> dataWriter = null;
-    if (component instanceof ServerAPITextComponent) {
-      ServerAPITextComponent textComponent = (ServerAPITextComponent) component;
+    if (component instanceof ServerAPITextComponent textComponent) {
       if (!textComponent.getText().isEmpty()) {
         id = 1;
         dataWriter = writer -> writer.writeString(textComponent.getText());
