@@ -139,6 +139,7 @@ public class EconomyDisplay {
     /**
      * @deprecated Use {@link #getFormat()}
      */
+    @Deprecated
     public String format() {
       return this.format;
     }
@@ -146,6 +147,7 @@ public class EconomyDisplay {
     /**
      * @deprecated Use {@link #getDivisor()}
      */
+    @Deprecated
     public double divisor() {
       return this.divisor;
     }

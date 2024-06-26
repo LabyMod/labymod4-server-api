@@ -171,7 +171,7 @@ public class LabyModProtocolService extends AbstractServerLabyModProtocolService
 
     this.plugin.getProxy().getPluginManager().registerListener(
         this.plugin,
-        new DefaultPlayerQuitListener(this.players)
+        new DefaultPlayerQuitListener(this)
     );
   }
 }

@@ -24,8 +24,10 @@
 
 package net.labymod.serverapi.server.common;
 
+import net.labymod.serverapi.api.Protocol;
 import net.labymod.serverapi.core.AbstractLabyModProtocolService;
 import net.labymod.serverapi.server.common.model.player.AbstractServerLabyModPlayer;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -78,6 +80,18 @@ public abstract class AbstractServerLabyModProtocolService<T extends AbstractSer
   public void forEachPlayer(@NotNull Consumer<T> action) {
     for (T value : this.players.values()) {
       action.accept(value);
+    }
+  }
+
+  /**
+   * Called when a player quits the server and removes cached values like the player instance and
+   * awaited responses.
+   */
+  @ApiStatus.Internal
+  public void handlePlayerQuit(@NotNull UUID uniqueId) {
+    this.players.remove(uniqueId);
+    for (Protocol protocol : this.registry().getProtocols()) {
+      protocol.clearAwaitingResponsesFor(uniqueId);
     }
   }
 }

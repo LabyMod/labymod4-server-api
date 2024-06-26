@@ -26,13 +26,20 @@ package net.labymod.serverapi.core;
 
 import net.labymod.serverapi.api.Protocol;
 import net.labymod.serverapi.api.model.component.ServerAPIComponent;
+import net.labymod.serverapi.api.packet.IdentifiablePacket;
 import net.labymod.serverapi.api.packet.Packet;
 import net.labymod.serverapi.core.integration.LabyModIntegrationPlayer;
 import net.labymod.serverapi.core.integration.LabyModProtocolIntegration;
 import net.labymod.serverapi.core.model.display.Subtitle;
 import net.labymod.serverapi.core.model.moderation.Permission;
+import net.labymod.serverapi.core.model.supplement.InputPrompt;
+import net.labymod.serverapi.core.model.supplement.ServerSwitchPrompt;
 import net.labymod.serverapi.core.packet.clientbound.game.display.SubtitlePacket;
 import net.labymod.serverapi.core.packet.clientbound.game.moderation.PermissionPacket;
+import net.labymod.serverapi.core.packet.clientbound.game.supplement.InputPromptPacket;
+import net.labymod.serverapi.core.packet.clientbound.game.supplement.ServerSwitchPromptPacket;
+import net.labymod.serverapi.core.packet.serverbound.game.supplement.InputPromptResponsePacket;
+import net.labymod.serverapi.core.packet.serverbound.game.supplement.ServerSwitchPromptResponsePacket;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -41,6 +48,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 
 public abstract class AbstractLabyModPlayer<P extends AbstractLabyModPlayer<?>> {
 
@@ -77,6 +85,13 @@ public abstract class AbstractLabyModPlayer<P extends AbstractLabyModPlayer<?>> 
     }
   }
 
+  /**
+   * Gets the integration player of the provided class
+   *
+   * @param clazz The class of the integration player
+   * @param <T>   The type of the integration player
+   * @return The integration player or null if not found
+   */
   public <T extends LabyModIntegrationPlayer> @Nullable T getIntegrationPlayer(Class<T> clazz) {
     for (LabyModIntegrationPlayer integrationPlayer : this.integrationPlayers) {
       if (clazz == integrationPlayer.getClass()) {
@@ -87,28 +102,51 @@ public abstract class AbstractLabyModPlayer<P extends AbstractLabyModPlayer<?>> 
     return null;
   }
 
+  /**
+   * @return The unique identifier of the player
+   */
   public @NotNull UUID getUniqueId() {
     return this.uniqueId;
   }
 
+  /**
+   * @return The LabyMod version of the player
+   */
   public @NotNull String getLabyModVersion() {
     return this.labyModVersion;
   }
 
+  /**
+   * @return the currently set subtitle
+   */
   public @Nullable Subtitle getSubtitle() {
     return this.subtitle;
   }
 
+  /**
+   * Sets the subtitle of the player and sends it to all other online players
+   *
+   * @param component The component to set as subtitle
+   */
   public void setSubtitle(@NotNull ServerAPIComponent component) {
     this.setSubtitleInternal(Subtitle.create(this.uniqueId, component));
   }
 
-  public void resetSubtitle(Consumer<P> consumer) {
-    this.setSubtitleInternal(null);
-  }
-
+  /**
+   * Sets the subtitle of the player and sends it to all other online players
+   *
+   * @param component The component to set as subtitle
+   * @param size      The size of the subtitle
+   */
   public void setSubtitle(@NotNull ServerAPIComponent component, double size) {
     this.setSubtitleInternal(Subtitle.create(this.uniqueId, component, size));
+  }
+
+  /**
+   * Resets the subtitle of the player and sends it to all other online players
+   */
+  public void resetSubtitle() {
+    this.setSubtitleInternal(null);
   }
 
   public void sendPacket(@NotNull Packet packet) {
@@ -120,15 +158,86 @@ public abstract class AbstractLabyModPlayer<P extends AbstractLabyModPlayer<?>> 
     }
   }
 
+  /**
+   * Sends the provided permissions to the player
+   *
+   * @param permissions The permissions to send
+   */
   public void sendPermissions(@NotNull Permission.StatedPermission... permissions) {
-    this.sendPacket(new PermissionPacket(permissions));
+    this.sendLabyModPacket(new PermissionPacket(permissions));
   }
 
+  /**
+   * Sends the provided permissions to the player
+   *
+   * @param permissions The permissions to send
+   */
   public void sendPermissions(@NotNull List<Permission.StatedPermission> permissions) {
-    this.sendPacket(new PermissionPacket(permissions));
+    this.sendLabyModPacket(new PermissionPacket(permissions));
   }
 
-  private void setSubtitleInternal(Subtitle subtitle) {
+  /**
+   * Opens the provided input prompt for the player
+   *
+   * @param inputPrompt The input prompt to open
+   */
+  public void openInputPrompt(@NotNull InputPrompt inputPrompt) {
+    this.sendLabyModPacket(new InputPromptPacket(inputPrompt));
+  }
+
+  /**
+   * Opens the provided input prompt for the player and handle the response via the provided
+   * consumer
+   *
+   * @param inputPrompt      The input prompt to open
+   * @param responseConsumer The consumer for the response
+   */
+  public void openInputPrompt(
+      @NotNull InputPrompt inputPrompt,
+      @NotNull Consumer<String> responseConsumer
+  ) {
+    Objects.requireNonNull(responseConsumer, "Response consumer cannot be null");
+    this.sendLabyModPacket(
+        new InputPromptPacket(inputPrompt),
+        InputPromptResponsePacket.class,
+        response -> {
+          responseConsumer.accept(response.getValue());
+          return false;
+        }
+    );
+  }
+
+  /**
+   * Opens the provided server switch prompt
+   *
+   * @param serverSwitchPrompt The server switch prompt to open
+   */
+  public void openServerSwitchPrompt(@NotNull ServerSwitchPrompt serverSwitchPrompt) {
+    this.sendLabyModPacket(new ServerSwitchPromptPacket(serverSwitchPrompt));
+  }
+
+  /**
+   * Opens the provided server switch prompt and handle the response via the provided consumer
+   *
+   * @param serverSwitchPrompt The server switch prompt to open
+   * @param responseConsumer   The consumer for the response
+   */
+  public void openServerSwitchPrompt(
+      @NotNull ServerSwitchPrompt serverSwitchPrompt,
+      @NotNull Consumer<ServerSwitchPromptResponsePacket> responseConsumer
+  ) {
+    Objects.requireNonNull(responseConsumer, "Response consumer cannot be null");
+    this.sendLabyModPacket(
+        new ServerSwitchPromptPacket(serverSwitchPrompt),
+        ServerSwitchPromptResponsePacket.class,
+        response -> {
+          responseConsumer.accept(response);
+          return false;
+        }
+    );
+  }
+
+  protected void setSubtitleInternal(@Nullable Subtitle subtitle) {
     if (Objects.equals(this.subtitle, subtitle)) {
       return;
     }
@@ -160,6 +269,23 @@ public abstract class AbstractLabyModPlayer<P extends AbstractLabyModPlayer<?>> 
       return;
     }
 
-    this.sendPacket(new SubtitlePacket(subtitles));
+    this.sendLabyModPacket(new SubtitlePacket(subtitles));
+  }
+
+  private void sendLabyModPacket(@NotNull Packet packet) {
+    this.protocolService.labyModProtocol.sendPacket(this.uniqueId, packet);
+  }
+
+  private <T extends IdentifiablePacket> void sendLabyModPacket(
+      @NotNull IdentifiablePacket packet,
+      @NotNull Class<T> responseClass,
+      @NotNull Predicate<T> responseConsumer
+  ) {
+    this.protocolService.labyModProtocol.sendPacket(
+        this.uniqueId,
+        packet,
+        responseClass,
+        responseConsumer
+    );
   }
 }

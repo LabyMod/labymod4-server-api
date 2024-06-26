@@ -27,21 +27,18 @@ package net.labymod.serverapi.server.velocity.listener;
 import com.velocitypowered.api.event.PostOrder;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.connection.DisconnectEvent;
-import net.labymod.serverapi.server.velocity.LabyModPlayer;
-
-import java.util.Map;
-import java.util.UUID;
+import net.labymod.serverapi.server.velocity.LabyModProtocolService;
 
 public class DefaultDisconnectListener {
 
-  private final Map<UUID, LabyModPlayer> players;
+  private final LabyModProtocolService protocolService;
 
-  public DefaultDisconnectListener(Map<UUID, LabyModPlayer> players) {
-    this.players = players;
+  public DefaultDisconnectListener(LabyModProtocolService protocolService) {
+    this.protocolService = protocolService;
   }
 
   @Subscribe(order = PostOrder.LATE)
   public void onDisconnect(DisconnectEvent event) {
-    this.players.remove(event.getPlayer().getUniqueId());
+    this.protocolService.handlePlayerQuit(event.getPlayer().getUniqueId());
   }
 }

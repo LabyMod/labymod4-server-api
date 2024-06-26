@@ -24,25 +24,22 @@
 
 package net.labymod.serverapi.server.bukkit.listener;
 
-import net.labymod.serverapi.server.bukkit.LabyModPlayer;
+import net.labymod.serverapi.server.bukkit.LabyModProtocolService;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerQuitEvent;
 
-import java.util.Map;
-import java.util.UUID;
-
 public class DefaultPlayerQuitListener implements Listener {
 
-  private final Map<UUID, LabyModPlayer> players;
+  private final LabyModProtocolService protocolService;
 
-  public DefaultPlayerQuitListener(Map<UUID, LabyModPlayer> players) {
-    this.players = players;
+  public DefaultPlayerQuitListener(LabyModProtocolService protocolService) {
+    this.protocolService = protocolService;
   }
 
   @EventHandler(priority = EventPriority.HIGHEST)
   public void onPlayerLeave(PlayerQuitEvent event) {
-    this.players.remove(event.getPlayer().getUniqueId());
+    this.protocolService.handlePlayerQuit(event.getPlayer().getUniqueId());
   }
 }

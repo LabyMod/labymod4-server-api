@@ -203,7 +203,7 @@ public class LabyModProtocolService extends AbstractServerLabyModProtocolService
 
     this.server.getEventManager().register(
         this.plugin,
-        new DefaultDisconnectListener(this.players)
+        new DefaultDisconnectListener(this)
     );
   }
 }

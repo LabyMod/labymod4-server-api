@@ -25,12 +25,14 @@
 package net.labymod.serverapi.api;
 
 import net.labymod.serverapi.api.packet.Direction;
+import net.labymod.serverapi.api.packet.IdentifiablePacket;
 import net.labymod.serverapi.api.packet.OnlyWriteConstructor;
 import net.labymod.serverapi.api.packet.Packet;
 import net.labymod.serverapi.api.packet.PacketHandler;
 import net.labymod.serverapi.api.payload.PayloadChannelIdentifier;
 import net.labymod.serverapi.api.payload.io.PayloadReader;
 import net.labymod.serverapi.api.payload.io.PayloadWriter;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import sun.misc.Unsafe;
@@ -49,6 +51,7 @@ public class Protocol {
   private final Set<ProtocolPacket> packets;
   private final AbstractProtocolService protocolService;
   private final AbstractProtocolService.Side protocolSide;
+  private final Set<AwaitingResponse> awaitingResponses;
 
   /**
    * Creates a new protocol.
@@ -67,6 +70,7 @@ public class Protocol {
     this.protocolService = protocolService;
     this.protocolSide = protocolService.getSide();
     this.packets = new HashSet<>();
+    this.awaitingResponses = new HashSet<>();
   }
 
   /**
@@ -234,6 +238,29 @@ public class Protocol {
   }
 
   /**
+   * Sends a packet to the recipient and waits for the provided response
+   *
+   * @param recipient        the recipient of the packet
+   * @param packet           the packet to send
+   * @param responseClass    the class of the response packet
+   * @param responseCallback the callback for the response packet. Return {@code true} to wait
+   *                         for another packet or {@code false} remove the callback.
+   * @param <R>              the type of the response packet
+   * @throws NullPointerException If the recipient, packet, response class or response callback is
+   *                              null.
+   */
+  public <R extends IdentifiablePacket> void sendPacket(
+      @NotNull UUID recipient,
+      @NotNull IdentifiablePacket packet,
+      @NotNull Class<R> responseClass,
+      @NotNull Predicate<R> responseCallback
+  ) {
+    Objects.requireNonNull(responseClass, "Response class cannot be null");
+    Objects.requireNonNull(responseCallback, "Response callback cannot be null");
+    this.sendPacketInternal(recipient, packet, responseClass, responseCallback);
+  }
+
+  /**
    * Sends a packet to the recipient.
    *
    * @param recipient the recipient of the packet
@@ -241,24 +268,19 @@ public class Protocol {
    * @throws NullPointerException If the recipient or packet is null.
    */
   public void sendPacket(@NotNull UUID recipient, @NotNull Packet packet) {
-    Objects.requireNonNull(recipient, "Recipient cannot be null");
-    Objects.requireNonNull(packet, "Packet cannot be null");
-    ProtocolPacket protocolPacket = this.getProtocolPacketByClass(packet.getClass());
-    if (protocolPacket == null) {
-      throw new IllegalArgumentException(
-          "No packet with the class " + packet.getClass().getSimpleName() + " in protocol "
-              + this.identifier + "found");
-    }
+    this.sendPacketInternal(recipient, packet, null, null);
+  }
 
-    if (this.protocolSide.isAcceptingDirection(protocolPacket.direction)) {
-      return;
+  /**
+   * Clears all awaiting responses for the recipient.
+   *
+   * @param recipient the recipient to clear the awaiting responses for
+   */
+  @ApiStatus.Internal
+  public void clearAwaitingResponsesFor(UUID recipient) {
+    synchronized (this.awaitingResponses) {
+      this.awaitingResponses.removeIf(response -> response.recipient.equals(recipient));
     }
-
-    PayloadWriter writer = new PayloadWriter();
-    writer.writeVarInt(protocolPacket.id);
-    packet.write(writer);
-    this.protocolService.send(this.identifier, recipient, writer);
-    this.protocolService.afterPacketSent(this, packet, recipient);
   }
 
   private ProtocolPacket getProtocolPacket(Predicate<ProtocolPacket> filter) {
@@ -280,11 +302,82 @@ public class Protocol {
   }
 
   private void handlePacket(ProtocolPacket protocolPacket, UUID sender, Packet packet) {
+    if (packet instanceof IdentifiablePacket identifiablePacket) {
+      AwaitingResponse responsePacket = null;
+      for (AwaitingResponse awaitingResponse : this.awaitingResponses) {
+        if (awaitingResponse.recipient.equals(sender)
+            && awaitingResponse.responseClass.equals(protocolPacket.packet)
+            && identifiablePacket.getIdentifier() == awaitingResponse.identifier) {
+          responsePacket = awaitingResponse;
+          break;
+        }
+      }
+
+      if (responsePacket != null) {
+        try {
+          if (!responsePacket.responseCallback.test(identifiablePacket)) {
+            this.awaitingResponses.remove(responsePacket);
+          }
+        } catch (Exception e) {
+          e.printStackTrace();
+        }
+      }
+    }
+
     for (PacketHandler handler : protocolPacket.handlers) {
       handler.handle(sender, packet);
     }
 
     this.protocolService.afterPacketHandled(this, packet, sender);
+  }
+
+  private void sendPacketInternal(
+      @NotNull UUID recipient,
+      @NotNull Packet packet,
+      @Nullable Class<? extends IdentifiablePacket> responseClass,
+      @Nullable Predicate<? extends IdentifiablePacket> responseCallback
+  ) {
+    Objects.requireNonNull(recipient, "Recipient cannot be null");
+    Objects.requireNonNull(packet, "Packet cannot be null");
+    ProtocolPacket protocolPacket = this.getProtocolPacketByClass(packet.getClass());
+    if (protocolPacket == null) {
+      throw new IllegalArgumentException(
+          "No packet with the class " + packet.getClass().getSimpleName() + " in protocol "
+              + this.identifier + "found");
+    }
+
+    if (this.protocolSide.isAcceptingDirection(protocolPacket.direction)) {
+      return;
+    }
+
+    PayloadWriter writer = new PayloadWriter();
+    writer.writeVarInt(protocolPacket.id);
+    packet.write(writer);
+    this.protocolService.send(this.identifier, recipient, writer);
+    if (responseClass != null && responseCallback != null
+        && packet instanceof IdentifiablePacket identifiablePacket) {
+      synchronized (this.awaitingResponses) {
+        this.awaitingResponses.add(new AwaitingResponse(
+            recipient,
+            identifiablePacket,
+            identifiablePacket.getIdentifier(),
+            responseClass,
+            responseCallback
+        ));
+      }
+    }
+
+    this.protocolService.afterPacketSent(this, packet, recipient);
+  }
+
+  private record AwaitingResponse(
+      UUID recipient,
+      IdentifiablePacket initialPacket,
+      int identifier,
+      Class responseClass,
+      Predicate responseCallback
+  ) {
+
   }
 
   private static class ProtocolPacket {
