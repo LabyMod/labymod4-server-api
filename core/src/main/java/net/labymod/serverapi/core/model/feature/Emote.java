@@ -40,8 +40,25 @@ public class Emote {
     this.emoteId = emoteId;
   }
 
-  public static Emote create(@NotNull UUID uniqueId, int emoteId) {
+  /**
+   * Plays the emote for the supplied npc.
+   *
+   * @param uniqueId The unique id of the npc.
+   * @param emoteId  The emote id.
+   * @return The emote instance.
+   */
+  public static Emote play(@NotNull UUID uniqueId, int emoteId) {
     return new Emote(uniqueId, emoteId);
+  }
+
+  /**
+   * Stops the current emote for the supplied npc.
+   *
+   * @param uniqueId The unique id of the npc.
+   * @return The emote instance.
+   */
+  public static Emote stop(@NotNull UUID uniqueId) {
+    return new Emote(uniqueId, -1);
   }
 
   public @NotNull UUID getUniqueId() {
@@ -50,6 +67,10 @@ public class Emote {
 
   public int getEmoteId() {
     return this.emoteId;
+  }
+
+  public boolean isStop() {
+    return this.emoteId == -1;
   }
 
   @Override

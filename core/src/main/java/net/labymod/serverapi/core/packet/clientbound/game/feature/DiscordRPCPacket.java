@@ -27,88 +27,65 @@ package net.labymod.serverapi.core.packet.clientbound.game.feature;
 import net.labymod.serverapi.api.packet.Packet;
 import net.labymod.serverapi.api.payload.io.PayloadReader;
 import net.labymod.serverapi.api.payload.io.PayloadWriter;
+import net.labymod.serverapi.core.model.feature.DiscordRPC;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+
+import java.util.Objects;
 
 public class DiscordRPCPacket implements Packet {
 
-  private String gameMode;
-  private long startTime;
-  private long endTime;
+  private DiscordRPC discordRPC;
 
-  private DiscordRPCPacket(@Nullable String gameMode, long startTime, long endTime) {
-    this.gameMode = gameMode;
-    this.startTime = startTime;
-    this.endTime = endTime;
-  }
-
-  public static DiscordRPCPacket createReset() {
-    return new DiscordRPCPacket(null, 0, 0);
-  }
-
-  public static DiscordRPCPacket create(String gameMode) {
-    return new DiscordRPCPacket(gameMode, 0, 0);
-  }
-
-  public static DiscordRPCPacket createWithStart(String gameMode, long startTime) {
-    return new DiscordRPCPacket(gameMode, startTime, 0);
-  }
-
-  public static DiscordRPCPacket createWithEnd(String gameMode, long endTime) {
-    return new DiscordRPCPacket(gameMode, 0, endTime);
+  public DiscordRPCPacket(@NotNull DiscordRPC discordRPC) {
+    Objects.requireNonNull(discordRPC, "DiscordRPC cannot be null");
+    this.discordRPC = discordRPC;
   }
 
   @Override
   public void read(@NotNull PayloadReader reader) {
-    this.gameMode = reader.readOptionalString();
-    if (reader.readBoolean()) {
-      this.startTime = reader.readLong();
+    String gameMode = reader.readOptionalString();
+    long startTime = reader.readBoolean() ? reader.readLong() : 0;
+    long endTime = reader.readBoolean() ? reader.readLong() : 0;
+
+    if (gameMode == null) {
+      this.discordRPC = DiscordRPC.createReset();
+      return;
     }
 
-    if (reader.readBoolean()) {
-      this.endTime = reader.readLong();
+    if (startTime != 0) {
+      this.discordRPC = DiscordRPC.createWithStart(gameMode, startTime);
+    } else if (endTime != 0) {
+      this.discordRPC = DiscordRPC.createWithEnd(gameMode, endTime);
+    } else {
+      this.discordRPC = DiscordRPC.create(gameMode);
     }
   }
 
   @Override
   public void write(@NotNull PayloadWriter writer) {
-    writer.writeOptionalString(this.gameMode);
+    writer.writeOptionalString(this.discordRPC.getGameMode());
 
-    boolean hasStartTime = this.startTime != 0;
+    boolean hasStartTime = this.discordRPC.hasStartTime();
     writer.writeBoolean(hasStartTime);
     if (hasStartTime) {
-      writer.writeLong(this.startTime);
+      writer.writeLong(this.discordRPC.getStartTime());
     }
 
-    boolean hasEndTime = this.endTime != 0;
+    boolean hasEndTime = this.discordRPC.hasEndTime();
     writer.writeBoolean(hasEndTime);
     if (hasEndTime) {
-      writer.writeLong(this.endTime);
+      writer.writeLong(this.discordRPC.getEndTime());
     }
   }
 
-  public boolean hasGameMode() {
-    return this.gameMode != null;
-  }
-
-  public @Nullable String getGameMode() {
-    return this.gameMode;
-  }
-
-  public long getStartTime() {
-    return this.startTime;
-  }
-
-  public long getEndTime() {
-    return this.endTime;
+  public DiscordRPC discordRPC() {
+    return this.discordRPC;
   }
 
   @Override
   public String toString() {
     return "DiscordRPCPacket{" +
-        "gameMode='" + this.gameMode + '\'' +
-        ", startTime=" + this.startTime +
-        ", endTime=" + this.endTime +
+        "discordRPC=" + this.discordRPC +
         '}';
   }
 }

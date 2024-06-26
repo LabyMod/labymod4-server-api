@@ -51,7 +51,7 @@ public class EmotePacket implements Packet {
 
   @Override
   public void read(@NotNull PayloadReader reader) {
-    this.emotes = reader.readList(() -> Emote.create(reader.readUUID(), reader.readVarInt()));
+    this.emotes = reader.readList(() -> Emote.play(reader.readUUID(), reader.readVarInt()));
   }
 
   @Override

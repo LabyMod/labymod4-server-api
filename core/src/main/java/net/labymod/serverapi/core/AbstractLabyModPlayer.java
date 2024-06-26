@@ -31,10 +31,16 @@ import net.labymod.serverapi.api.packet.Packet;
 import net.labymod.serverapi.core.integration.LabyModIntegrationPlayer;
 import net.labymod.serverapi.core.integration.LabyModProtocolIntegration;
 import net.labymod.serverapi.core.model.display.Subtitle;
+import net.labymod.serverapi.core.model.feature.DiscordRPC;
+import net.labymod.serverapi.core.model.feature.InteractionMenuEntry;
 import net.labymod.serverapi.core.model.moderation.Permission;
 import net.labymod.serverapi.core.model.supplement.InputPrompt;
 import net.labymod.serverapi.core.model.supplement.ServerSwitchPrompt;
 import net.labymod.serverapi.core.packet.clientbound.game.display.SubtitlePacket;
+import net.labymod.serverapi.core.packet.clientbound.game.display.TabListBannerPacket;
+import net.labymod.serverapi.core.packet.clientbound.game.feature.DiscordRPCPacket;
+import net.labymod.serverapi.core.packet.clientbound.game.feature.InteractionMenuPacket;
+import net.labymod.serverapi.core.packet.clientbound.game.feature.PlayingGameModePacket;
 import net.labymod.serverapi.core.packet.clientbound.game.moderation.PermissionPacket;
 import net.labymod.serverapi.core.packet.clientbound.game.supplement.InputPromptPacket;
 import net.labymod.serverapi.core.packet.clientbound.game.supplement.ServerSwitchPromptPacket;
@@ -129,7 +135,42 @@ public abstract class AbstractLabyModPlayer<P extends AbstractLabyModPlayer<?>> 
    * @param component The component to set as subtitle
    */
   public void setSubtitle(@NotNull ServerAPIComponent component) {
-    this.setSubtitleInternal(Subtitle.create(this.uniqueId, component));
+    this.setSubtitle(Subtitle.create(this.uniqueId, component));
+  }
+
+  public void setSubtitle(@Nullable Subtitle subtitle) {
+    if (Objects.equals(this.subtitle, subtitle)) {
+      return;
+    }
+
+    this.subtitle = subtitle;
+
+    List<Subtitle> subtitles = new ArrayList<>();
+    if (subtitle == null) {
+      subtitle = Subtitle.create(this.uniqueId, null);
+      subtitles.add(subtitle);
+    }
+
+    LabyModProtocol labyModProtocol = this.protocolService.labyModProtocol();
+    SubtitlePacket packet = new SubtitlePacket(subtitle);
+    for (AbstractLabyModPlayer<?> player : this.protocolService.getPlayers()) {
+      Subtitle playerSubtitle = player.getSubtitle();
+      if (playerSubtitle != null) {
+        subtitles.add(playerSubtitle);
+      }
+
+      if (player.equals(this)) {
+        continue;
+      }
+
+      labyModProtocol.sendPacket(player.getUniqueId(), packet);
+    }
+
+    if (subtitles.isEmpty()) {
+      return;
+    }
+
+    this.sendLabyModPacket(new SubtitlePacket(subtitles));
   }
 
   /**
@@ -139,16 +180,66 @@ public abstract class AbstractLabyModPlayer<P extends AbstractLabyModPlayer<?>> 
    * @param size      The size of the subtitle
    */
   public void setSubtitle(@NotNull ServerAPIComponent component, double size) {
-    this.setSubtitleInternal(Subtitle.create(this.uniqueId, component, size));
+    this.setSubtitle(Subtitle.create(this.uniqueId, component, size));
   }
 
   /**
    * Resets the subtitle of the player and sends it to all other online players
    */
   public void resetSubtitle() {
-    this.setSubtitleInternal(null);
+    this.setSubtitle((Subtitle) null);
   }
 
+  /**
+   * Sends the provided interaction menu entries to the player
+   *
+   * @param entries The entries to send
+   */
+  public void sendInteractionMenuEntries(@NotNull InteractionMenuEntry... entries) {
+    this.sendLabyModPacket(new InteractionMenuPacket(entries));
+  }
+
+  /**
+   * Sends the provided interaction menu entries to the player
+   *
+   * @param entries The entries to send
+   */
+  public void sendInteractionMenuEntries(@NotNull List<InteractionMenuEntry> entries) {
+    this.sendLabyModPacket(new InteractionMenuPacket(entries));
+  }
+
+  /**
+   * Sends the provided game mode to the LabyMod Chat friends of the player
+   *
+   * @param gameMode The game mode to send or {@code null} to unset
+   */
+  public void sendPlayingGameMode(@Nullable String gameMode) {
+    this.sendLabyModPacket(new PlayingGameModePacket(gameMode));
+  }
+
+  /**
+   * Sends the provided discord rpc to the player
+   *
+   * @param discordRPC The discord rpc to send
+   */
+  public void sendDiscordRPC(@NotNull DiscordRPC discordRPC) {
+    this.sendLabyModPacket(new DiscordRPCPacket(discordRPC));
+  }
+
+  /**
+   * Sends the provided icon url as tab list banner to the player
+   *
+   * @param iconUrl The icon url to send or {@code null} to unset the banner
+   */
+  public void sendTabListBanner(@Nullable String iconUrl) {
+    this.sendLabyModPacket(new TabListBannerPacket(iconUrl));
+  }
+
+  /**
+   * Sends the provided packet to the player
+   *
+   * @param packet The packet to send
+   */
   public void sendPacket(@NotNull Packet packet) {
     Class<? extends Packet> packetClass = packet.getClass();
     for (Protocol protocol : this.protocolService.registry().getProtocols()) {
@@ -235,41 +326,6 @@ public abstract class AbstractLabyModPlayer<P extends AbstractLabyModPlayer<?>> 
           return false;
         }
     );
-  }
-
-  protected void setSubtitleInternal(@Nullable Subtitle subtitle) {
-    if (Objects.equals(this.subtitle, subtitle)) {
-      return;
-    }
-
-    this.subtitle = subtitle;
-
-    List<Subtitle> subtitles = new ArrayList<>();
-    if (subtitle == null) {
-      subtitle = Subtitle.create(this.uniqueId, null);
-      subtitles.add(subtitle);
-    }
-
-    LabyModProtocol labyModProtocol = this.protocolService.labyModProtocol();
-    SubtitlePacket packet = new SubtitlePacket(subtitle);
-    for (AbstractLabyModPlayer<?> player : this.protocolService.getPlayers()) {
-      Subtitle playerSubtitle = player.getSubtitle();
-      if (playerSubtitle != null) {
-        subtitles.add(playerSubtitle);
-      }
-
-      if (player.equals(this)) {
-        continue;
-      }
-
-      labyModProtocol.sendPacket(player.getUniqueId(), packet);
-    }
-
-    if (subtitles.isEmpty()) {
-      return;
-    }
-
-    this.sendLabyModPacket(new SubtitlePacket(subtitles));
   }
 
   private void sendLabyModPacket(@NotNull Packet packet) {
