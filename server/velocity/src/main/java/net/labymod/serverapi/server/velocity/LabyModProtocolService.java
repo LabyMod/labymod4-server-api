@@ -198,7 +198,7 @@ public class LabyModProtocolService extends AbstractServerLabyModProtocolService
   private void initializeManaged() {
     this.labyModProtocol.registerHandler(
         VersionLoginPacket.class,
-        new DefaultVersionLoginPacketHandler(this, this.players, this.server)
+        new DefaultVersionLoginPacketHandler(this, this.server)
     );
 
     this.server.getEventManager().register(
