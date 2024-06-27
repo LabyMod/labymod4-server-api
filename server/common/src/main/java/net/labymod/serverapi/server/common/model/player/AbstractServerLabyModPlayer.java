@@ -25,7 +25,6 @@
 package net.labymod.serverapi.server.common.model.player;
 
 import net.labymod.serverapi.core.AbstractLabyModPlayer;
-import net.labymod.serverapi.core.model.display.Subtitle;
 import net.labymod.serverapi.server.common.AbstractServerLabyModProtocolService;
 
 import java.util.UUID;
@@ -34,7 +33,6 @@ public abstract class AbstractServerLabyModPlayer<P extends AbstractServerLabyMo
     extends AbstractLabyModPlayer<P> {
 
   private final T serverPlayer;
-  private Subtitle subtitle;
 
   protected AbstractServerLabyModPlayer(
       AbstractServerLabyModProtocolService<?> protocolService,
@@ -46,6 +44,9 @@ public abstract class AbstractServerLabyModPlayer<P extends AbstractServerLabyMo
     this.serverPlayer = player;
   }
 
+  /**
+   * @return The server player instance.
+   */
   public T getPlayer() {
     return this.serverPlayer;
   }

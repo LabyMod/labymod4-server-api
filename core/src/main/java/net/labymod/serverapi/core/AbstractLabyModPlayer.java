@@ -30,27 +30,38 @@ import net.labymod.serverapi.api.packet.IdentifiablePacket;
 import net.labymod.serverapi.api.packet.Packet;
 import net.labymod.serverapi.core.integration.LabyModIntegrationPlayer;
 import net.labymod.serverapi.core.integration.LabyModProtocolIntegration;
+import net.labymod.serverapi.core.model.display.EconomyDisplay;
 import net.labymod.serverapi.core.model.display.Subtitle;
+import net.labymod.serverapi.core.model.display.TabListFlag;
 import net.labymod.serverapi.core.model.feature.DiscordRPC;
 import net.labymod.serverapi.core.model.feature.InteractionMenuEntry;
 import net.labymod.serverapi.core.model.moderation.Permission;
+import net.labymod.serverapi.core.model.moderation.RecommendedAddon;
 import net.labymod.serverapi.core.model.supplement.InputPrompt;
 import net.labymod.serverapi.core.model.supplement.ServerSwitchPrompt;
+import net.labymod.serverapi.core.packet.clientbound.game.display.EconomyDisplayPacket;
 import net.labymod.serverapi.core.packet.clientbound.game.display.SubtitlePacket;
 import net.labymod.serverapi.core.packet.clientbound.game.display.TabListBannerPacket;
+import net.labymod.serverapi.core.packet.clientbound.game.display.TabListFlagPacket;
 import net.labymod.serverapi.core.packet.clientbound.game.feature.DiscordRPCPacket;
 import net.labymod.serverapi.core.packet.clientbound.game.feature.InteractionMenuPacket;
 import net.labymod.serverapi.core.packet.clientbound.game.feature.PlayingGameModePacket;
+import net.labymod.serverapi.core.packet.clientbound.game.feature.marker.AddMarkerPacket;
+import net.labymod.serverapi.core.packet.clientbound.game.feature.marker.MarkerPacket;
+import net.labymod.serverapi.core.packet.clientbound.game.moderation.AddonRecommendationPacket;
 import net.labymod.serverapi.core.packet.clientbound.game.moderation.PermissionPacket;
 import net.labymod.serverapi.core.packet.clientbound.game.supplement.InputPromptPacket;
 import net.labymod.serverapi.core.packet.clientbound.game.supplement.ServerSwitchPromptPacket;
+import net.labymod.serverapi.core.packet.serverbound.game.moderation.AddonRecommendationResponsePacket;
 import net.labymod.serverapi.core.packet.serverbound.game.supplement.InputPromptResponsePacket;
 import net.labymod.serverapi.core.packet.serverbound.game.supplement.ServerSwitchPromptResponsePacket;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.function.Consumer;
@@ -62,7 +73,10 @@ public abstract class AbstractLabyModPlayer<P extends AbstractLabyModPlayer<?>> 
   protected final String labyModVersion;
   private final AbstractLabyModProtocolService protocolService;
   private final List<LabyModIntegrationPlayer> integrationPlayers = new ArrayList<>();
+  private final Map<String, EconomyDisplay> economies = new HashMap<>(2);
+
   private Subtitle subtitle;
+  private TabListFlag flag;
 
   protected AbstractLabyModPlayer(
       AbstractLabyModProtocolService protocolService,
@@ -125,69 +139,195 @@ public abstract class AbstractLabyModPlayer<P extends AbstractLabyModPlayer<?>> 
   /**
    * @return the currently set subtitle
    */
-  public @Nullable Subtitle getSubtitle() {
+  public @NotNull Subtitle subtitle() {
+    if (this.subtitle == null) {
+      this.subtitle = Subtitle.create(this.uniqueId, null);
+    }
+
     return this.subtitle;
   }
 
   /**
-   * Sets the subtitle of the player and sends it to all other online players
-   *
-   * @param component The component to set as subtitle
+   * @return whether the player has a subtitle set
    */
-  public void setSubtitle(@NotNull ServerAPIComponent component) {
-    this.setSubtitle(Subtitle.create(this.uniqueId, component));
+  public boolean hasSubtitle() {
+    return this.subtitle != null && this.subtitle.getText() != null;
   }
 
-  public void setSubtitle(@Nullable Subtitle subtitle) {
-    if (Objects.equals(this.subtitle, subtitle)) {
-      return;
-    }
-
-    this.subtitle = subtitle;
-
-    List<Subtitle> subtitles = new ArrayList<>();
-    if (subtitle == null) {
-      subtitle = Subtitle.create(this.uniqueId, null);
-      subtitles.add(subtitle);
-    }
-
-    LabyModProtocol labyModProtocol = this.protocolService.labyModProtocol();
-    SubtitlePacket packet = new SubtitlePacket(subtitle);
-    for (AbstractLabyModPlayer<?> player : this.protocolService.getPlayers()) {
-      Subtitle playerSubtitle = player.getSubtitle();
-      if (playerSubtitle != null) {
-        subtitles.add(playerSubtitle);
-      }
-
-      if (player.equals(this)) {
-        continue;
-      }
-
-      labyModProtocol.sendPacket(player.getUniqueId(), packet);
-    }
-
-    if (subtitles.isEmpty()) {
-      return;
-    }
-
-    this.sendLabyModPacket(new SubtitlePacket(subtitles));
+  /**
+   * Updates the text of the subtitle
+   *
+   * @param text The text to set as subtitle
+   */
+  public void updateSubtitle(@NotNull ServerAPIComponent text) {
+    this.updateSubtitle(subtitle -> subtitle.text(text));
   }
 
   /**
    * Sets the subtitle of the player and sends it to all other online players
    *
-   * @param component The component to set as subtitle
-   * @param size      The size of the subtitle
+   * @param text The component to set as subtitle
+   * @param size The size of the subtitle
    */
-  public void setSubtitle(@NotNull ServerAPIComponent component, double size) {
-    this.setSubtitle(Subtitle.create(this.uniqueId, component, size));
+  public void updateSubtitle(@NotNull ServerAPIComponent text, double size) {
+    this.updateSubtitle(subtitle -> subtitle.text(text).size(size));
   }
 
   /**
    * Resets the subtitle of the player and sends it to all other online players
    */
   public void resetSubtitle() {
-    this.setSubtitle((Subtitle) null);
+    this.updateSubtitle(subtitle -> subtitle.text(null));
+  }
+
+  /**
+   * Updates or creates a new subtitle and calls the consumer
+   *
+   * @param consumer The consumer to call
+   */
+  public void updateSubtitle(Consumer<Subtitle> consumer) {
+    if (this.subtitle == null) {
+      this.subtitle = Subtitle.create(this.uniqueId, null);
+    }
+
+    ServerAPIComponent prevText = this.subtitle.getText();
+    double prevSize = this.subtitle.getSize();
+    consumer.accept(this.subtitle);
+    if (this.subtitle.getSize() == prevSize && Objects.equals(prevText, this.subtitle.getText())) {
+      return;
+    }
+
+    LabyModProtocol labyModProtocol = this.protocolService.labyModProtocol();
+    SubtitlePacket packet = new SubtitlePacket(this.subtitle);
+    for (AbstractLabyModPlayer<?> player : this.protocolService.getPlayers()) {
+      labyModProtocol.sendPacket(player.getUniqueId(), packet);
+    }
+  }
+
+  /**
+   * Gives LabyMod the instruction to send placed markers by the player as
+   * {@link net.labymod.serverapi.core.packet.serverbound.game.feature.marker.ClientAddMarkerPacket}
+   *
+   * @param sendType the way the client will send markers. See {@link MarkerPacket.MarkerSendType}
+   */
+  public void sendMarkerSendType(MarkerPacket.MarkerSendType sendType) {
+    this.sendPacket(new MarkerPacket(sendType));
+  }
+
+  /**
+   * Sends a marker to the player
+   *
+   * @param sender The unique identifier of the sender
+   * @param x      The x coordinate of the marker
+   * @param y      The y coordinate of the marker
+   * @param z      The z coordinate of the marker
+   * @param large  Whether the marker should be large
+   * @param target The unique identifier of the target player or null
+   */
+  public void sendMarker(
+      @NotNull UUID sender,
+      int x,
+      int y,
+      int z,
+      boolean large,
+      @Nullable UUID target
+  ) {
+    this.sendPacket(new AddMarkerPacket(sender, x, y, z, large, target));
+  }
+
+  /**
+   * @return the tab list flag of the player or null if not set
+   */
+  public @Nullable TabListFlag getTabListFlag() {
+    return this.flag;
+  }
+
+  /**
+   * Sets the country code for the
+   * {@link net.labymod.serverapi.core.packet.clientbound.game.display.TabListFlagPacket}. This
+   * will send the country code to every player on the server.
+   *
+   * @param countryCode the country code to send
+   */
+  public void setTabListFlag(@NotNull TabListFlag.TabListFlagCountryCode countryCode) {
+    this.flag = TabListFlag.create(this.uniqueId, countryCode);
+    LabyModProtocol labyModProtocol = this.protocolService.labyModProtocol();
+    TabListFlagPacket packet = new TabListFlagPacket(this.flag);
+    for (AbstractLabyModPlayer<?> player : this.protocolService.getPlayers()) {
+      labyModProtocol.sendPacket(player.getUniqueId(), packet);
+    }
+  }
+
+  /**
+   * @return The display for the bank economy
+   */
+  public @NotNull EconomyDisplay bankEconomy() {
+    return this.economies.computeIfAbsent("bank", EconomyDisplay::new);
+  }
+
+  /**
+   * @return The display for the cash economy
+   */
+  public @NotNull EconomyDisplay cashEconomy() {
+    return this.economies.computeIfAbsent("cash", EconomyDisplay::new);
+  }
+
+  /**
+   * Gets the economy display for the provided key
+   *
+   * @param key The key of the economy display
+   * @return The economy display or null if not found
+   */
+  public @Nullable EconomyDisplay getEconomy(@NotNull String key) {
+    Objects.requireNonNull(key, "Key cannot be null");
+    return this.economies.get(key);
+  }
+
+  /**
+   * Gets or creates the economy display for the provided key, calls the consumer and sends
+   * {@link EconomyDisplayPacket} to the player
+   *
+   * @param key      The key of the economy display
+   * @param consumer The consumer to call
+   */
+  public void updateEconomy(@NotNull String key, @NotNull Consumer<EconomyDisplay> consumer) {
+    Objects.requireNonNull(key, "Key cannot be null");
+    Objects.requireNonNull(consumer, "Consumer cannot be null");
+
+    EconomyDisplay display = this.economies.computeIfAbsent(key, EconomyDisplay::new);
+    consumer.accept(display);
+    this.sendLabyModPacket(new EconomyDisplayPacket(display));
+  }
+
+  /**
+   * Gets or creates the display for the bank economy, calls the consumer and sends
+   * {@link EconomyDisplayPacket} to the player
+   *
+   * @param consumer The consumer to call
+   */
+  public void updateBankEconomy(@NotNull Consumer<EconomyDisplay> consumer) {
+    this.updateEconomy("bank", consumer);
+  }
+
+  /**
+   * Gets or creates the display for the cash economy, calls the consumer and sends
+   * {@link EconomyDisplayPacket} to the player
+   *
+   * @param consumer The consumer to call
+   */
+  public void updateCashEconomy(@NotNull Consumer<EconomyDisplay> consumer) {
+    this.updateEconomy("cash", consumer);
+  }
+
+  /**
+   * Sends the provided economy display to the player and stores it, so that it can be accessed
+   * via {@link #getEconomy(String)}
+   *
+   * @param display The economy display to send
+   */
+  public void sendEconomy(EconomyDisplay display) {
+    this.economies.put(display.getKey(), display);
+    this.sendLabyModPacket(new EconomyDisplayPacket(display));
   }
 
   /**
@@ -328,11 +468,42 @@ public abstract class AbstractLabyModPlayer<P extends AbstractLabyModPlayer<?>> 
     );
   }
 
-  private void sendLabyModPacket(@NotNull Packet packet) {
+  /**
+   * Sends the provided recommended addons to the player
+   *
+   * @param addons The recommended addons
+   */
+  public void sendAddonRecommendations(@NotNull List<RecommendedAddon> addons) {
+    this.sendLabyModPacket(new AddonRecommendationPacket(addons));
+  }
+
+  /**
+   * Sends the provided recommended addons to the player and handle the response via the provided
+   * consumer
+   *
+   * @param addons           The recommended addons
+   * @param responseConsumer The consumer for the response
+   */
+  public void sendAddonRecommendations(
+      @NotNull List<RecommendedAddon> addons,
+      @NotNull Consumer<AddonRecommendationResponsePacket> responseConsumer
+  ) {
+    Objects.requireNonNull(responseConsumer, "Response consumer cannot be null");
+    this.sendLabyModPacket(
+        new AddonRecommendationPacket(addons),
+        AddonRecommendationResponsePacket.class,
+        response -> {
+          responseConsumer.accept(response);
+          return response.isInitial();
+        }
+    );
+  }
+
+  protected void sendLabyModPacket(@NotNull Packet packet) {
     this.protocolService.labyModProtocol.sendPacket(this.uniqueId, packet);
   }
 
-  private <T extends IdentifiablePacket> void sendLabyModPacket(
+  protected <T extends IdentifiablePacket> void sendLabyModPacket(
       @NotNull IdentifiablePacket packet,
       @NotNull Class<T> responseClass,
       @NotNull Predicate<T> responseConsumer

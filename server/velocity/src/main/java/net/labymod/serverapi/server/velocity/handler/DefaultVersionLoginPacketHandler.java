@@ -33,30 +33,25 @@ import net.labymod.serverapi.server.velocity.LabyModProtocolService;
 import net.labymod.serverapi.server.velocity.event.LabyModPlayerJoinEvent;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
 public class DefaultVersionLoginPacketHandler implements PacketHandler<VersionLoginPacket> {
 
   private final LabyModProtocolService protocolService;
-  private final Map<UUID, LabyModPlayer> players;
   private final ProxyServer server;
 
   public DefaultVersionLoginPacketHandler(
       LabyModProtocolService protocolService,
-      Map<UUID, LabyModPlayer> players,
       ProxyServer server
   ) {
     this.protocolService = protocolService;
-    this.players = players;
     this.server = server;
   }
 
   @Override
   public void handle(@NotNull UUID uuid, @NotNull VersionLoginPacket versionLoginPacket) {
-    final LabyModPlayer existingLabyModPlayer = this.players.get(uuid);
-    if (existingLabyModPlayer != null) {
+    if (this.protocolService.getPlayer(uuid) != null) {
       // warn
       return;
     }
@@ -73,7 +68,7 @@ public class DefaultVersionLoginPacketHandler implements PacketHandler<VersionLo
         versionLoginPacket.getVersion()
     );
 
-    this.players.put(uuid, labyModPlayer);
+    this.protocolService.handlePlayerJoin(labyModPlayer);
     this.server.getEventManager().fire(new LabyModPlayerJoinEvent(
         this.protocolService,
         labyModPlayer

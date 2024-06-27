@@ -30,6 +30,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
+import java.util.Objects;
 
 public class ServerAPIBaseComponent<T extends ServerAPIBaseComponent<?>>
     implements ServerAPIComponent {
@@ -177,5 +178,24 @@ public class ServerAPIBaseComponent<T extends ServerAPIBaseComponent<?>>
         ", decorations=" + this.decorations +
         ", children=" + this.children +
         '}';
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+
+    if (!(o instanceof ServerAPIBaseComponent<?> that)) {
+      return false;
+    }
+
+    return Objects.equals(this.textColor, that.textColor) && Objects.equals(
+        this.decorations, that.decorations) && Objects.equals(this.children, that.children);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(this.textColor, this.decorations, this.children);
   }
 }

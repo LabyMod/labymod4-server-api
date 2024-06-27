@@ -32,11 +32,11 @@ import java.util.Objects;
 public class EconomyDisplay {
 
   private final String key;
-  private final boolean visible;
-  private final double balance;
+  private boolean visible;
+  private double balance;
 
-  private final String iconUrl;
-  private final DecimalFormat decimalFormat;
+  private String iconUrl;
+  private DecimalFormat decimalFormat;
 
   public EconomyDisplay(
       @NotNull String key,
@@ -45,11 +45,21 @@ public class EconomyDisplay {
       @Nullable String iconUrl,
       @Nullable DecimalFormat decimalFormat
   ) {
+    Objects.requireNonNull(key, "Key must not be null");
+
     this.key = key;
     this.visible = visible;
     this.balance = balance;
     this.iconUrl = iconUrl;
     this.decimalFormat = decimalFormat;
+  }
+
+  public EconomyDisplay(@NotNull String key) {
+    this(key, true, 0, null, null);
+  }
+
+  public EconomyDisplay(@NotNull String key, double balance) {
+    this(key, true, balance, null, null);
   }
 
   public String getKey() {
@@ -70,6 +80,26 @@ public class EconomyDisplay {
 
   public DecimalFormat getDecimalFormat() {
     return this.decimalFormat;
+  }
+
+  public EconomyDisplay visible(boolean visible) {
+    this.visible = visible;
+    return this;
+  }
+
+  public EconomyDisplay balance(double balance) {
+    this.balance = balance;
+    return this;
+  }
+
+  public EconomyDisplay iconUrl(@Nullable String iconUrl) {
+    this.iconUrl = iconUrl;
+    return this;
+  }
+
+  public EconomyDisplay decimalFormat(@Nullable DecimalFormat decimalFormat) {
+    this.decimalFormat = decimalFormat;
+    return this;
   }
 
   @Override

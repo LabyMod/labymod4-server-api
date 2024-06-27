@@ -34,29 +34,24 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Map;
 import java.util.UUID;
 
 public class DefaultVersionLoginPacketHandler implements PacketHandler<VersionLoginPacket> {
 
   private final LabyModProtocolService protocolService;
-  private final Map<UUID, LabyModPlayer> players;
   private final JavaPlugin javaPlugin;
 
   public DefaultVersionLoginPacketHandler(
       LabyModProtocolService protocolService,
-      Map<UUID, LabyModPlayer> players,
       JavaPlugin javaPlugin
   ) {
     this.protocolService = protocolService;
-    this.players = players;
     this.javaPlugin = javaPlugin;
   }
 
   @Override
   public void handle(@NotNull UUID uuid, @NotNull VersionLoginPacket versionLoginPacket) {
-    final LabyModPlayer existingLabyModPlayer = this.players.get(uuid);
-    if (existingLabyModPlayer != null) {
+    if (this.protocolService.getPlayer(uuid) != null) {
       // warn
       return;
     }
@@ -74,7 +69,7 @@ public class DefaultVersionLoginPacketHandler implements PacketHandler<VersionLo
         versionLoginPacket.getVersion()
     );
 
-    this.players.put(uuid, labyModPlayer);
+    this.protocolService.handlePlayerJoin(labyModPlayer);
     server.getPluginManager().callEvent(new LabyModPlayerJoinEvent(
         this.protocolService,
         labyModPlayer

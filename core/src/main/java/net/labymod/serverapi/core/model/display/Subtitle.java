@@ -34,14 +34,14 @@ import java.util.UUID;
 public class Subtitle {
 
   private final UUID uniqueId;
-  private final ServerAPIComponent text;
+  private ServerAPIComponent text;
   private double size;
 
   private Subtitle(@NotNull UUID uniqueId, @Nullable ServerAPIComponent text, double size) {
     Objects.requireNonNull(uniqueId, "UniqueId is null");
     this.uniqueId = uniqueId;
     this.text = text;
-    this.setSize(size);
+    this.size(size);
   }
 
   private Subtitle(@NotNull UUID uniqueId, @Nullable ServerAPIComponent text) {
@@ -64,11 +64,15 @@ public class Subtitle {
     return this.uniqueId;
   }
 
+  public @Nullable ServerAPIComponent getText() {
+    return this.text;
+  }
+
   public double getSize() {
     return this.size;
   }
 
-  private void setSize(double size) {
+  public Subtitle size(double size) {
     if (size < 0.25) {
       size = 0.25;
     }
@@ -78,10 +82,20 @@ public class Subtitle {
     }
 
     this.size = size;
+    return this;
   }
 
-  public @Nullable ServerAPIComponent getText() {
-    return this.text;
+  public Subtitle text(@Nullable ServerAPIComponent text) {
+    this.text = text;
+    return this;
+  }
+
+  /**
+   * @deprecated Use {@link #size(double)} instead.
+   */
+  @Deprecated
+  private void setSize(double size) {
+    this.size(size);
   }
 
   @Override

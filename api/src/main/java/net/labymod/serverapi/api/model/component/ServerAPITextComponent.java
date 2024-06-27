@@ -53,4 +53,26 @@ public class ServerAPITextComponent extends ServerAPIBaseComponent<ServerAPIText
         "text='" + this.text + '\'' +
         "} " + super.toString();
   }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+
+    if (!(o instanceof ServerAPITextComponent that)) {
+      return false;
+    }
+
+    if (!super.equals(o)) {
+      return false;
+    }
+
+    return Objects.equals(this.text, that.text);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(super.hashCode(), this.text);
+  }
 }

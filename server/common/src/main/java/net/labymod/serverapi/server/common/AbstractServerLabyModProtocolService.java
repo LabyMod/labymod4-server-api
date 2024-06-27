@@ -26,13 +26,19 @@ package net.labymod.serverapi.server.common;
 
 import net.labymod.serverapi.api.Protocol;
 import net.labymod.serverapi.core.AbstractLabyModProtocolService;
+import net.labymod.serverapi.core.model.display.Subtitle;
+import net.labymod.serverapi.core.model.display.TabListFlag;
+import net.labymod.serverapi.core.packet.clientbound.game.display.SubtitlePacket;
+import net.labymod.serverapi.core.packet.clientbound.game.display.TabListFlagPacket;
 import net.labymod.serverapi.server.common.model.player.AbstractServerLabyModPlayer;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.function.Consumer;
@@ -53,6 +59,7 @@ public abstract class AbstractServerLabyModProtocolService<T extends AbstractSer
   /**
    * {@inheritDoc}
    */
+  @Override
   public @Nullable T getPlayer(@NotNull UUID uniqueId) {
     return this.players.get(uniqueId);
   }
@@ -60,6 +67,7 @@ public abstract class AbstractServerLabyModProtocolService<T extends AbstractSer
   /**
    * {@inheritDoc}
    */
+  @Override
   public boolean isUsingLabyMod(@NotNull UUID uniqueId) {
     return this.players.containsKey(uniqueId);
   }
@@ -92,6 +100,31 @@ public abstract class AbstractServerLabyModProtocolService<T extends AbstractSer
     this.players.remove(uniqueId);
     for (Protocol protocol : this.registry().getProtocols()) {
       protocol.clearAwaitingResponsesFor(uniqueId);
+    }
+  }
+
+  @ApiStatus.Internal
+  public void handlePlayerJoin(@NotNull T labyModPlayer) {
+    this.players.put(labyModPlayer.getUniqueId(), labyModPlayer);
+    List<Subtitle> subtitles = new ArrayList<>();
+    List<TabListFlag> flags = new ArrayList<>();
+    this.forEachPlayer(player -> {
+      if (player.hasSubtitle()) {
+        subtitles.add(player.subtitle());
+      }
+
+      TabListFlag tabListFlag = player.getTabListFlag();
+      if (tabListFlag != null) {
+        flags.add(tabListFlag);
+      }
+    });
+
+    if (!subtitles.isEmpty()) {
+      this.labyModProtocol.sendPacket(labyModPlayer.getUniqueId(), new SubtitlePacket(subtitles));
+    }
+
+    if (!flags.isEmpty()) {
+      this.labyModProtocol.sendPacket(labyModPlayer.getUniqueId(), new TabListFlagPacket(flags));
     }
   }
 }
