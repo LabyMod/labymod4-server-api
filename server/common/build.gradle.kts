@@ -15,8 +15,10 @@ val integration = configurations.create("integration") {
 val api by configurations
 api.extendsFrom(integration)
 
+val integrationVersion = "1.0.0"
+
 dependencies {
     compile(project(":core"))
-    integration("net.labymod.serverapi.integration:voicechat:0.0.6")
-    integration("net.labymod.serverapi.integration:betterperspective:0.0.6")
+    integration("net.labymod.serverapi.integration:voicechat:$integrationVersion")
+    integration("net.labymod.serverapi.integration:betterperspective:$integrationVersion")
 }
