@@ -26,6 +26,7 @@ package net.labymod.serverapi.core.packet.serverbound.game.feature.marker;
 
 import net.labymod.serverapi.api.payload.io.PayloadReader;
 import net.labymod.serverapi.api.payload.io.PayloadWriter;
+import net.labymod.serverapi.core.packet.clientbound.game.feature.marker.AddMarkerPacket;
 import net.labymod.serverapi.core.packet.common.game.feature.marker.AbstractMarkerPacket;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -62,6 +63,22 @@ public class ClientAddMarkerPacket extends AbstractMarkerPacket {
 
   public int getVersion() {
     return this.version;
+  }
+
+  /**
+   * Maps this packet to a {@link AddMarkerPacket}.
+   *
+   * @param sender The sender of the marker
+   * @return a client-bound add marker packet
+   */
+  public AddMarkerPacket toAddMarkerPacket(UUID sender) {
+    return new AddMarkerPacket(sender,
+        this.getX(),
+        this.getY(),
+        this.getZ(),
+        this.isLarge(),
+        this.getTarget()
+    );
   }
 
   @Override
