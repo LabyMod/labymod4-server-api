@@ -26,12 +26,12 @@ The Server API is organized into several modules:
 The API is designed to be extended by so-called "integrations". Integrations are modules that provide additional
 functionality to the Server API. Official integrations can be
 found [here](https://github.com/LabyMod/labymod4-server-api-integrations). <br/> An explanation of how to create your
-own integration can be found on the [LabyMod Developer Portal](https://wiki.labymod.net).
+own integration can be found on the [LabyMod Developer Portal](https://dev.labymod.net/pages/server/).
 
 ## Usage
 
 An extensive guide on how to use the LabyMod 4 Server API can be found on
-the [LabyMod Developer Portal](https://wiki.labymod.net). Alternatively, feel free to ask for help on
+the [LabyMod Developer Portal](https://dev.labymod.net/pages/server/). Alternatively, feel free to ask for help on
 our [Discord Server for Developers](https://labymod.net/dc/dev).
 
 ## Building
