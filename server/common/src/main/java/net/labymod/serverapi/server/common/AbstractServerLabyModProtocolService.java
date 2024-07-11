@@ -30,6 +30,8 @@ import net.labymod.serverapi.core.model.display.Subtitle;
 import net.labymod.serverapi.core.model.display.TabListFlag;
 import net.labymod.serverapi.core.packet.clientbound.game.display.SubtitlePacket;
 import net.labymod.serverapi.core.packet.clientbound.game.display.TabListFlagPacket;
+import net.labymod.serverapi.core.packet.serverbound.game.moderation.AddonStateChangedPacket;
+import net.labymod.serverapi.server.common.handler.DefaultAddonStateChangedPacketHandler;
 import net.labymod.serverapi.server.common.model.player.AbstractServerLabyModPlayer;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
@@ -54,6 +56,8 @@ public abstract class AbstractServerLabyModProtocolService<T extends AbstractSer
   protected AbstractServerLabyModProtocolService() {
     super(Side.SERVER);
     this.players = new HashMap<>();
+
+    this.registerDefaultHandlers();
   }
 
   /**
@@ -126,5 +130,12 @@ public abstract class AbstractServerLabyModProtocolService<T extends AbstractSer
     if (!flags.isEmpty()) {
       this.labyModProtocol.sendPacket(labyModPlayer.getUniqueId(), new TabListFlagPacket(flags));
     }
+  }
+
+  protected void registerDefaultHandlers() {
+    this.labyModProtocol.registerHandler(
+        AddonStateChangedPacket.class,
+        new DefaultAddonStateChangedPacketHandler(this)
+    );
   }
 }
