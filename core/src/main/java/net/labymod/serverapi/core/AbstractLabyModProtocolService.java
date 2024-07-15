@@ -121,7 +121,6 @@ public abstract class AbstractLabyModProtocolService extends AbstractProtocolSer
    *                    class loader returned by {@link #getIntegrationClassLoader()} is used.
    */
   protected void loadLabyModProtocolIntegrations(@Nullable ClassLoader classLoader) {
-    System.out.println("Loading LabyMod Protocol Integrations...");
     ServiceLoader<LabyModProtocolIntegration> serviceLoader;
     if (classLoader == null) {
       serviceLoader = ServiceLoader.load(
@@ -132,24 +131,14 @@ public abstract class AbstractLabyModProtocolService extends AbstractProtocolSer
       serviceLoader = ServiceLoader.load(LabyModProtocolIntegration.class, classLoader);
     }
 
-    int found = 0;
     for (LabyModProtocolIntegration labyModProtocolIntegration : serviceLoader) {
       try {
-        System.out.println(
-            "Loading LabyModProtocolIntegration: " + labyModProtocolIntegration.getClass()
-                .getName());
         labyModProtocolIntegration.initialize(this);
         this.integrations.add(labyModProtocolIntegration);
-        System.out.println(
-            "Loaded LabyModProtocolIntegration: " + labyModProtocolIntegration.getClass()
-                .getName());
-        found++;
       } catch (Exception e) {
         e.printStackTrace();
       }
     }
-
-    System.out.println("Found and loaded" + found + " Integrations.");
   }
 
   /**

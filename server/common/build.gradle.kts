@@ -19,6 +19,6 @@ val integrationVersion = "1.0.0"
 
 dependencies {
     compile(project(":core"))
-    integration("net.labymod.serverapi.integration:voicechat:$integrationVersion")
-    integration("net.labymod.serverapi.integration:betterperspective:$integrationVersion")
+    //integration("net.labymod.serverapi.integration:voicechat:$integrationVersion")
+    //integration("net.labymod.serverapi.integration:betterperspective:$integrationVersion")
 }

@@ -71,6 +71,11 @@ public class Protocol {
     this.protocolSide = protocolService.getSide();
     this.packets = new HashSet<>();
     this.awaitingResponses = new HashSet<>();
+
+    if (this.identifier.toString().length() > 20) {
+      this.protocolService.logger().warn("The identifier of the protocol " + this.identifier + " "
+          + "is longer than 20 characters. This will cause issues with 1.8 & 1.12.2 users.");
+    }
   }
 
   /**
@@ -302,7 +307,8 @@ public class Protocol {
   }
 
   private void handlePacket(ProtocolPacket protocolPacket, UUID sender, Packet packet) {
-    if (packet instanceof IdentifiablePacket identifiablePacket) {
+    if (packet instanceof IdentifiablePacket) {
+      IdentifiablePacket identifiablePacket = (IdentifiablePacket) packet;
       AwaitingResponse responsePacket = null;
       for (AwaitingResponse awaitingResponse : this.awaitingResponses) {
         if (awaitingResponse.recipient.equals(sender)
@@ -355,7 +361,8 @@ public class Protocol {
     packet.write(writer);
     this.protocolService.send(this.identifier, recipient, writer);
     if (responseClass != null && responseCallback != null
-        && packet instanceof IdentifiablePacket identifiablePacket) {
+        && packet instanceof IdentifiablePacket) {
+      IdentifiablePacket identifiablePacket = (IdentifiablePacket) packet;
       synchronized (this.awaitingResponses) {
         this.awaitingResponses.add(new AwaitingResponse(
             recipient,
@@ -370,14 +377,79 @@ public class Protocol {
     this.protocolService.afterPacketSent(this, packet, recipient);
   }
 
-  private record AwaitingResponse(
-      UUID recipient,
-      IdentifiablePacket initialPacket,
-      int identifier,
-      Class responseClass,
-      Predicate responseCallback
-  ) {
+  private final class AwaitingResponse {
 
+    private final UUID recipient;
+    private final IdentifiablePacket initialPacket;
+    private final int identifier;
+    private final Class responseClass;
+    private final Predicate responseCallback;
+
+    private AwaitingResponse(
+        UUID recipient,
+        IdentifiablePacket initialPacket,
+        int identifier,
+        Class responseClass,
+        Predicate responseCallback
+    ) {
+      this.recipient = recipient;
+      this.initialPacket = initialPacket;
+      this.identifier = identifier;
+      this.responseClass = responseClass;
+      this.responseCallback = responseCallback;
+    }
+
+    public UUID recipient() {
+      return this.recipient;
+    }
+
+    public IdentifiablePacket initialPacket() {
+      return this.initialPacket;
+    }
+
+    public int identifier() {
+      return this.identifier;
+    }
+
+    public Class responseClass() {
+      return this.responseClass;
+    }
+
+    public Predicate responseCallback() {
+      return this.responseCallback;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+      if (obj == this) {
+        return true;
+      }
+      if (obj == null || obj.getClass() != this.getClass()) {
+        return false;
+      }
+      AwaitingResponse that = (AwaitingResponse) obj;
+      return Objects.equals(this.recipient, that.recipient) &&
+          Objects.equals(this.initialPacket, that.initialPacket) &&
+          this.identifier == that.identifier &&
+          Objects.equals(this.responseClass, that.responseClass) &&
+          Objects.equals(this.responseCallback, that.responseCallback);
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hash(this.recipient, this.initialPacket, this.identifier, this.responseClass,
+          this.responseCallback);
+    }
+
+    @Override
+    public String toString() {
+      return "AwaitingResponse[" +
+          "recipient=" + this.recipient + ", " +
+          "initialPacket=" + this.initialPacket + ", " +
+          "identifier=" + this.identifier + ", " +
+          "responseClass=" + this.responseClass + ", " +
+          "responseCallback=" + this.responseCallback + ']';
+    }
   }
 
   private static class ProtocolPacket {

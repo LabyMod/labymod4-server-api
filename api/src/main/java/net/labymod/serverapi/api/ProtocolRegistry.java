@@ -57,6 +57,7 @@ public class ProtocolRegistry {
   public void registerProtocol(@NotNull Protocol protocol) {
     Objects.requireNonNull(protocol, "Protocol cannot be null");
     this.protocols.add(protocol);
+    System.out.println("Registered protocol: " + protocol.identifier());
 
     for (Consumer<Protocol> registerListener : this.registerListeners) {
       registerListener.accept(protocol);
