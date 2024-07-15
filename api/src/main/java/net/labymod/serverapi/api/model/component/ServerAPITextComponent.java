@@ -60,7 +60,7 @@ public class ServerAPITextComponent extends ServerAPIBaseComponent<ServerAPIText
       return true;
     }
 
-    if (!(o instanceof ServerAPITextComponent that)) {
+    if (!(o instanceof ServerAPITextComponent)) {
       return false;
     }
 
@@ -68,6 +68,7 @@ public class ServerAPITextComponent extends ServerAPIBaseComponent<ServerAPIText
       return false;
     }
 
+    ServerAPITextComponent that = (ServerAPITextComponent) o;
     return Objects.equals(this.text, that.text);
   }
 

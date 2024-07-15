@@ -15,7 +15,7 @@ val integration = configurations.create("integration") {
 val api by configurations
 api.extendsFrom(integration)
 
-val integrationVersion = "1.0.0"
+val integrationVersion = "1.0.1"
 
 dependencies {
     compile(project(":core"))

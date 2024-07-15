@@ -48,7 +48,7 @@ public class AddonProtocol extends Protocol {
   ) {
     super(
         protocolService,
-        PayloadChannelIdentifier.create("labymod", "neo/addon/" + namespace)
+        PayloadChannelIdentifier.create("labymod", namespace)
     );
     Objects.requireNonNull(namespace, "Namespace cannot be null");
     this.namespace = namespace;

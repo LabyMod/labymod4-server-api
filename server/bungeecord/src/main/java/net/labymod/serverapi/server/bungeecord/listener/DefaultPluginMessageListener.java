@@ -43,10 +43,11 @@ public class DefaultPluginMessageListener implements Listener {
 
   @EventHandler(priority = EventPriority.HIGHEST)
   public void onPluginMessage(PluginMessageEvent event) {
-    if (!(event.getSender() instanceof ProxiedPlayer player)) {
+    if (!(event.getSender() instanceof ProxiedPlayer)) {
       return;
     }
 
+    ProxiedPlayer player = (ProxiedPlayer) event.getSender();
     String channel = event.getTag();
     if (!channel.equals(this.protocol.identifier().toString())) {
       return;

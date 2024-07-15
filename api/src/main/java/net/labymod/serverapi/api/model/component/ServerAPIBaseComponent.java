@@ -186,10 +186,11 @@ public class ServerAPIBaseComponent<T extends ServerAPIBaseComponent<?>>
       return true;
     }
 
-    if (!(o instanceof ServerAPIBaseComponent<?> that)) {
+    if (!(o instanceof ServerAPIBaseComponent<?>)) {
       return false;
     }
 
+    ServerAPIBaseComponent<?> that = (ServerAPIBaseComponent<?>) o;
     return Objects.equals(this.textColor, that.textColor) && Objects.equals(
         this.decorations, that.decorations) && Objects.equals(this.children, that.children);
   }

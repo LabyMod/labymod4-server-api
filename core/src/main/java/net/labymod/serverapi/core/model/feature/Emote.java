@@ -79,10 +79,11 @@ public class Emote {
       return true;
     }
 
-    if (!(o instanceof Emote emote)) {
+    if (!(o instanceof Emote)) {
       return false;
     }
 
+    Emote emote = (Emote) o;
     return this.emoteId == emote.emoteId && Objects.equals(this.uniqueId, emote.uniqueId);
   }
 

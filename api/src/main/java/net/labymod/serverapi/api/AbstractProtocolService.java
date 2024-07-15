@@ -125,7 +125,7 @@ public abstract class AbstractProtocolService {
     // NO-OP
   }
 
-  protected enum Side {
+  public enum Side {
     CLIENT(Direction.CLIENTBOUND),
     SERVER(Direction.SERVERBOUND),
     ;

@@ -107,9 +107,12 @@ public class DiscordRPC {
     if (this == o) {
       return true;
     }
-    if (!(o instanceof DiscordRPC that)) {
+
+    if (!(o instanceof DiscordRPC)) {
       return false;
     }
+
+    DiscordRPC that = (DiscordRPC) o;
     return this.startTime == that.startTime && this.endTime == that.endTime && Objects.equals(
         this.gameMode, that.gameMode);
   }
