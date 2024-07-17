@@ -27,6 +27,7 @@ package net.labymod.serverapi.server.common.handler;
 import net.labymod.serverapi.api.packet.PacketHandler;
 import net.labymod.serverapi.core.packet.serverbound.game.moderation.AddonStateChangedPacket;
 import net.labymod.serverapi.server.common.AbstractServerLabyModProtocolService;
+import net.labymod.serverapi.server.common.model.addon.InstalledAddonsResponse;
 import net.labymod.serverapi.server.common.model.player.AbstractServerLabyModPlayer;
 import org.jetbrains.annotations.NotNull;
 
@@ -49,6 +50,11 @@ public class DefaultAddonStateChangedPacketHandler
       return;
     }
 
-    player.installedAddons().addAddon(packet.getNamespace(), packet.isEnabled());
+    InstalledAddonsResponse installedAddonsResponse = player.installedAddons();
+    if (!installedAddonsResponse.getRequested().contains(packet.getNamespace())) {
+      return;
+    }
+
+    installedAddonsResponse.addAddon(packet.getNamespace(), packet.isEnabled());
   }
 }

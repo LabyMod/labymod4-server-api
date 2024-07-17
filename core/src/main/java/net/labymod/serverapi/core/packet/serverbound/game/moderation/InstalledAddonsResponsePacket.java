@@ -62,6 +62,7 @@ public class InstalledAddonsResponsePacket extends IdentifiablePacket {
 
   @Override
   public void write(@NotNull PayloadWriter writer) {
+    super.write(writer);
     writer.writeCollection(this.installedAddons.getEnabled(), writer::writeString);
     writer.writeCollection(this.installedAddons.getDisabled(), writer::writeString);
   }

@@ -90,6 +90,6 @@ public class LabyModProtocol extends Protocol {
     //this.registerPacket(32, ServerEventPacket.class, Direction.CLIENTBOUND);
     this.registerPacket(33, InstalledAddonsRequestPacket.class, Direction.CLIENTBOUND);
     this.registerPacket(34, InstalledAddonsResponsePacket.class, Direction.SERVERBOUND);
-    this.registerPacket(35, AddonStateChangedPacket.class, Direction.CLIENTBOUND);
+    this.registerPacket(35, AddonStateChangedPacket.class, Direction.SERVERBOUND);
   }
 }

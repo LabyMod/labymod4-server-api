@@ -25,6 +25,7 @@
 package net.labymod.serverapi.core.packet.clientbound.game.moderation;
 
 import net.labymod.serverapi.api.packet.IdentifiablePacket;
+import net.labymod.serverapi.api.packet.OnlyWriteConstructor;
 import net.labymod.serverapi.api.payload.io.PayloadReader;
 import net.labymod.serverapi.api.payload.io.PayloadWriter;
 import org.jetbrains.annotations.NotNull;
@@ -60,6 +61,7 @@ public class InstalledAddonsRequestPacket extends IdentifiablePacket {
   /**
    * Creates a packet that requests the installed & enabled state of ALL addons.
    */
+  @OnlyWriteConstructor
   public InstalledAddonsRequestPacket() {
     this(Collections.emptyList());
   }

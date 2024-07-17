@@ -31,6 +31,7 @@ import net.labymod.serverapi.server.common.AbstractServerLabyModProtocolService;
 import net.labymod.serverapi.server.common.model.addon.InstalledAddonsResponse;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.function.Consumer;
@@ -65,11 +66,11 @@ public abstract class AbstractServerLabyModPlayer<P extends AbstractServerLabyMo
   }
 
   public void requestInstalledAddons() {
-    this.requestInstalledAddons(List.of(), null);
+    this.requestInstalledAddons(new ArrayList<>(), null);
   }
 
   public void requestInstalledAddons(Consumer<InstalledAddonsResponse> response) {
-    this.requestInstalledAddons(List.of(), response);
+    this.requestInstalledAddons(new ArrayList<>(), response);
   }
 
   public void requestInstalledAddons(@NotNull List<String> addonsToRequest) {
@@ -82,7 +83,7 @@ public abstract class AbstractServerLabyModPlayer<P extends AbstractServerLabyMo
   ) {
     this.installedAddonsResponse.setRequestedAddons(addonsToRequest);
     this.sendLabyModPacket(
-        new InstalledAddonsRequestPacket(),
+        new InstalledAddonsRequestPacket(addonsToRequest),
         InstalledAddonsResponsePacket.class,
         packet -> {
           this.installedAddonsResponse.handleResponse(packet);
