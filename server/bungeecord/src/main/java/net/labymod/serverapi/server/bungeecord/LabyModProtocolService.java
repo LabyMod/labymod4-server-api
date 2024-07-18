@@ -31,6 +31,7 @@ import net.labymod.serverapi.api.packet.Packet;
 import net.labymod.serverapi.api.payload.PayloadChannelIdentifier;
 import net.labymod.serverapi.api.payload.io.PayloadWriter;
 import net.labymod.serverapi.core.packet.serverbound.login.VersionLoginPacket;
+import net.labymod.serverapi.server.bungeecord.event.LabyModInstalledAddonsUpdateEvent;
 import net.labymod.serverapi.server.bungeecord.event.LabyModPacketReceivedEvent;
 import net.labymod.serverapi.server.bungeecord.event.LabyModPacketSentEvent;
 import net.labymod.serverapi.server.bungeecord.handler.DefaultVersionLoginPacketHandler;
@@ -38,8 +39,10 @@ import net.labymod.serverapi.server.bungeecord.listener.DefaultPlayerQuitListene
 import net.labymod.serverapi.server.bungeecord.listener.DefaultPluginMessageListener;
 import net.labymod.serverapi.server.common.AbstractServerLabyModProtocolService;
 import net.labymod.serverapi.server.common.JavaProtocolLogger;
+import net.labymod.serverapi.server.common.model.player.AbstractServerLabyModPlayer;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Plugin;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
@@ -143,6 +146,17 @@ public class LabyModProtocolService extends AbstractServerLabyModProtocolService
   @Override
   public boolean isInitialized() {
     return this.plugin != null;
+  }
+
+  @Override
+  @ApiStatus.Internal
+  public void handleInstalledAddonsUpdate(AbstractServerLabyModPlayer<?, ?> labyModPlayer) {
+    if (this.plugin != null) {
+      this.plugin.getProxy().getPluginManager().callEvent(new LabyModInstalledAddonsUpdateEvent(
+          this,
+          (LabyModPlayer) labyModPlayer
+      ));
+    }
   }
 
   private void initializePlugin(@NotNull Plugin plugin) {

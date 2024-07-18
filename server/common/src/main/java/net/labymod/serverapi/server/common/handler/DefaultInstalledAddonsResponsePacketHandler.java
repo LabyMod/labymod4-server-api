@@ -25,32 +25,37 @@
 package net.labymod.serverapi.server.common.handler;
 
 import net.labymod.serverapi.api.packet.PacketHandler;
-import net.labymod.serverapi.core.packet.serverbound.game.moderation.AddonStateChangedPacket;
+import net.labymod.serverapi.core.packet.serverbound.game.moderation.InstalledAddonsResponsePacket;
 import net.labymod.serverapi.server.common.AbstractServerLabyModProtocolService;
+import net.labymod.serverapi.server.common.model.addon.InstalledAddonsResponse;
 import net.labymod.serverapi.server.common.model.player.AbstractServerLabyModPlayer;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
 
-public class DefaultAddonStateChangedPacketHandler
-    implements PacketHandler<AddonStateChangedPacket> {
+public class DefaultInstalledAddonsResponsePacketHandler
+    implements PacketHandler<InstalledAddonsResponsePacket> {
 
   private final AbstractServerLabyModProtocolService<?> protocolService;
 
-  public DefaultAddonStateChangedPacketHandler(
+  public DefaultInstalledAddonsResponsePacketHandler(
       AbstractServerLabyModProtocolService<?> protocolService
   ) {
     this.protocolService = protocolService;
   }
 
   @Override
-  public void handle(@NotNull UUID sender, @NotNull AddonStateChangedPacket packet) {
+  public void handle(@NotNull UUID sender, @NotNull InstalledAddonsResponsePacket packet) {
     AbstractServerLabyModPlayer<?, ?> player = this.protocolService.getPlayer(sender);
     if (player == null) {
       return;
     }
 
-    player.installedAddons().addAddon(packet.getNamespace(), packet.isEnabled());
+    InstalledAddonsResponse installedAddons = player.installedAddons();
+    if (!installedAddons.hasResponse()) {
+      installedAddons.handleResponse(packet);
+    }
+
     this.protocolService.handleInstalledAddonsUpdate(player);
   }
 }

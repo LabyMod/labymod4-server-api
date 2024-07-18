@@ -34,11 +34,14 @@ import net.labymod.serverapi.api.payload.PayloadChannelIdentifier;
 import net.labymod.serverapi.api.payload.io.PayloadWriter;
 import net.labymod.serverapi.core.packet.serverbound.login.VersionLoginPacket;
 import net.labymod.serverapi.server.common.AbstractServerLabyModProtocolService;
+import net.labymod.serverapi.server.common.model.player.AbstractServerLabyModPlayer;
+import net.labymod.serverapi.server.velocity.event.LabyModInstalledAddonsUpdateEvent;
 import net.labymod.serverapi.server.velocity.event.LabyModPacketReceivedEvent;
 import net.labymod.serverapi.server.velocity.event.LabyModPacketSentEvent;
 import net.labymod.serverapi.server.velocity.handler.DefaultVersionLoginPacketHandler;
 import net.labymod.serverapi.server.velocity.listener.DefaultDisconnectListener;
 import net.labymod.serverapi.server.velocity.listener.DefaultPluginMessageListener;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 
@@ -163,6 +166,17 @@ public class LabyModProtocolService extends AbstractServerLabyModProtocolService
   @Override
   public boolean isInitialized() {
     return this.plugin != null;
+  }
+
+  @Override
+  @ApiStatus.Internal
+  public void handleInstalledAddonsUpdate(AbstractServerLabyModPlayer<?, ?> labyModPlayer) {
+    if (this.server != null) {
+      this.server.getEventManager().fire(new LabyModInstalledAddonsUpdateEvent(
+          this,
+          (LabyModPlayer) labyModPlayer
+      ));
+    }
   }
 
   private void initializePlugin(

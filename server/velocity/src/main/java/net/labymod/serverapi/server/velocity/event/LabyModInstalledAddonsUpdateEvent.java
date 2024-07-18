@@ -22,35 +22,44 @@
  * SOFTWARE.
  */
 
-package net.labymod.serverapi.server.common.handler;
+package net.labymod.serverapi.server.velocity.event;
 
-import net.labymod.serverapi.api.packet.PacketHandler;
-import net.labymod.serverapi.core.packet.serverbound.game.moderation.AddonStateChangedPacket;
-import net.labymod.serverapi.server.common.AbstractServerLabyModProtocolService;
-import net.labymod.serverapi.server.common.model.player.AbstractServerLabyModPlayer;
+import com.velocitypowered.api.event.annotation.AwaitingEvent;
+import net.labymod.serverapi.server.common.model.addon.InstalledAddonsResponse;
+import net.labymod.serverapi.server.velocity.LabyModPlayer;
+import net.labymod.serverapi.server.velocity.LabyModProtocolService;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.UUID;
+@AwaitingEvent
+public class LabyModInstalledAddonsUpdateEvent {
 
-public class DefaultAddonStateChangedPacketHandler
-    implements PacketHandler<AddonStateChangedPacket> {
+  private final LabyModProtocolService protocolService;
+  private final LabyModPlayer labyModPlayer;
 
-  private final AbstractServerLabyModProtocolService<?> protocolService;
-
-  public DefaultAddonStateChangedPacketHandler(
-      AbstractServerLabyModProtocolService<?> protocolService
+  public LabyModInstalledAddonsUpdateEvent(
+      @NotNull LabyModProtocolService protocolService,
+      @NotNull LabyModPlayer labyModPlayer
   ) {
     this.protocolService = protocolService;
+    this.labyModPlayer = labyModPlayer;
+  }
+
+  public @NotNull LabyModProtocolService protocolService() {
+    return this.protocolService;
+  }
+
+  public @NotNull LabyModPlayer labyModPlayer() {
+    return this.labyModPlayer;
+  }
+
+  public @NotNull InstalledAddonsResponse installedAddons() {
+    return this.labyModPlayer.installedAddons();
   }
 
   @Override
-  public void handle(@NotNull UUID sender, @NotNull AddonStateChangedPacket packet) {
-    AbstractServerLabyModPlayer<?, ?> player = this.protocolService.getPlayer(sender);
-    if (player == null) {
-      return;
-    }
-
-    player.installedAddons().addAddon(packet.getNamespace(), packet.isEnabled());
-    this.protocolService.handleInstalledAddonsUpdate(player);
+  public String toString() {
+    return "LabyModInstalledAddonsUpdateEvent{" +
+        ", labyModPlayer=" + this.labyModPlayer +
+        "}";
   }
 }

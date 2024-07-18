@@ -35,6 +35,7 @@ import java.util.List;
 public class InstalledAddonsResponse extends InstalledAddons {
 
   private boolean hasResponse;
+  private boolean hasRequested;
   private List<String> requestedAddons = new ArrayList<>();
 
   public InstalledAddonsResponse() {
@@ -45,23 +46,64 @@ public class InstalledAddonsResponse extends InstalledAddons {
     return this.hasResponse;
   }
 
+  public boolean hasRequested() {
+    return this.hasRequested;
+  }
+
   public List<String> getRequested() {
     return this.requestedAddons;
   }
 
   @ApiStatus.Internal
   public void handleResponse(InstalledAddonsResponsePacket packet) {
-    this.enabledAddons.addAll(packet.installedAddons().getEnabled());
-    this.disabledAddons.addAll(packet.installedAddons().getDisabled());
+    InstalledAddons installedAddons = packet.installedAddons();
+    for (String enabledAddon : installedAddons.getEnabled()) {
+      this.disabledAddons.remove(enabledAddon);
+      if (!this.enabledAddons.contains(enabledAddon)) {
+        this.enabledAddons.add(enabledAddon);
+      }
+    }
+
+    for (String disabledAddon : installedAddons.getDisabled()) {
+      this.enabledAddons.remove(disabledAddon);
+      if (!this.disabledAddons.contains(disabledAddon)) {
+        this.disabledAddons.add(disabledAddon);
+      }
+    }
+
     this.hasResponse = true;
   }
 
   @ApiStatus.Internal
   public void setRequestedAddons(@NotNull List<String> requestedAddons) {
+    if (this.hasRequested) {
+      if (this.requestedAddons.isEmpty()) {
+        // Server already requested updates on all addons, no need to specify further
+        return;
+      }
+
+      if (requestedAddons.isEmpty()) {
+        // Server requested updates on all addons
+        this.requestedAddons.clear();
+        return;
+      }
+
+      // Server requested updates on specific addons
+      boolean addedRequest = false;
+      for (String requestedAddon : requestedAddons) {
+        if (!this.requestedAddons.contains(requestedAddon)) {
+          this.requestedAddons.add(requestedAddon);
+          addedRequest = true;
+        }
+      }
+
+      if (addedRequest) {
+        return;
+      }
+    }
+
+    this.hasRequested = true;
     this.requestedAddons = requestedAddons;
-    this.enabledAddons.clear();
-    this.disabledAddons.clear();
-    this.hasResponse = false;
   }
 
   @ApiStatus.Internal
