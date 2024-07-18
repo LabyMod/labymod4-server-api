@@ -27,15 +27,17 @@ package net.labymod.serverapi.core.packet.serverbound.game.moderation;
 import net.labymod.serverapi.api.packet.IdentifiablePacket;
 import net.labymod.serverapi.api.payload.io.PayloadReader;
 import net.labymod.serverapi.api.payload.io.PayloadWriter;
-import net.labymod.serverapi.core.model.moderation.InstalledAddons;
+import net.labymod.serverapi.core.model.moderation.InstalledAddon;
+import net.labymod.serverapi.core.model.moderation.InstalledAddon.AddonVersion;
 import net.labymod.serverapi.core.packet.clientbound.game.moderation.InstalledAddonsRequestPacket;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
 import java.util.Objects;
 
 public class InstalledAddonsResponsePacket extends IdentifiablePacket {
 
-  private InstalledAddons installedAddons;
+  private List<InstalledAddon> installedAddons;
 
   // Constructor for reading
   protected InstalledAddonsResponsePacket() {
@@ -44,30 +46,44 @@ public class InstalledAddonsResponsePacket extends IdentifiablePacket {
 
   public InstalledAddonsResponsePacket(
       @NotNull InstalledAddonsRequestPacket initiator,
-      @NotNull InstalledAddons installedAddons
+      @NotNull List<InstalledAddon> installedAddons
   ) {
     super(initiator);
     Objects.requireNonNull(installedAddons, "Installed Addons cannot be null");
     this.installedAddons = installedAddons;
   }
 
+  static InstalledAddon readInstalledAddon(PayloadReader reader) {
+    return new InstalledAddon(
+        reader.readString(),
+        new AddonVersion(reader.readVarInt(), reader.readVarInt(), reader.readVarInt()),
+        reader.readBoolean(),
+        reader.readBoolean()
+    );
+  }
+
+  static void writeInstalledAddon(PayloadWriter writer, InstalledAddon installedAddon) {
+    writer.writeString(installedAddon.getNamespace());
+    writer.writeVarInt(installedAddon.getVersion().getMajor());
+    writer.writeVarInt(installedAddon.getVersion().getMinor());
+    writer.writeVarInt(installedAddon.getVersion().getPatch());
+    writer.writeBoolean(installedAddon.isEnabled());
+    writer.writeBoolean(installedAddon.isLocal());
+  }
+
   @Override
   public void read(@NotNull PayloadReader reader) {
     super.read(reader);
-    this.installedAddons = new InstalledAddons(
-        reader.readList(reader::readString),
-        reader.readList(reader::readString)
-    );
+    this.installedAddons = reader.readList(() -> readInstalledAddon(reader));
   }
 
   @Override
   public void write(@NotNull PayloadWriter writer) {
     super.write(writer);
-    writer.writeCollection(this.installedAddons.getEnabled(), writer::writeString);
-    writer.writeCollection(this.installedAddons.getDisabled(), writer::writeString);
+    writer.writeCollection(this.installedAddons, addon -> writeInstalledAddon(writer, addon));
   }
 
-  public @NotNull InstalledAddons installedAddons() {
+  public @NotNull List<InstalledAddon> getInstalledAddons() {
     return this.installedAddons;
   }
 

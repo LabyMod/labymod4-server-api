@@ -35,7 +35,6 @@ import net.labymod.serverapi.core.model.display.Subtitle;
 import net.labymod.serverapi.core.model.display.TabListFlag;
 import net.labymod.serverapi.core.model.feature.DiscordRPC;
 import net.labymod.serverapi.core.model.feature.InteractionMenuEntry;
-import net.labymod.serverapi.core.model.moderation.InstalledAddons;
 import net.labymod.serverapi.core.model.moderation.Permission;
 import net.labymod.serverapi.core.model.moderation.RecommendedAddon;
 import net.labymod.serverapi.core.model.supplement.InputPrompt;
@@ -563,6 +562,4 @@ public abstract class AbstractLabyModPlayer<P extends AbstractLabyModPlayer<?>> 
         responseConsumer
     );
   }
-
-  public abstract @NotNull InstalledAddons installedAddons();
 }

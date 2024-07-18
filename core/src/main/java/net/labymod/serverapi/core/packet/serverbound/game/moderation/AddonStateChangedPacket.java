@@ -27,6 +27,7 @@ package net.labymod.serverapi.core.packet.serverbound.game.moderation;
 import net.labymod.serverapi.api.packet.Packet;
 import net.labymod.serverapi.api.payload.io.PayloadReader;
 import net.labymod.serverapi.api.payload.io.PayloadWriter;
+import net.labymod.serverapi.core.model.moderation.InstalledAddon;
 import net.labymod.serverapi.core.packet.clientbound.game.moderation.InstalledAddonsRequestPacket;
 import org.jetbrains.annotations.NotNull;
 
@@ -39,40 +40,31 @@ import java.util.Objects;
  */
 public class AddonStateChangedPacket implements Packet {
 
-  private String namespace;
-  private boolean enabled;
+  private InstalledAddon addon;
 
-  public AddonStateChangedPacket(@NotNull String namespace, boolean enabled) {
-    Objects.requireNonNull(namespace, "Namespace cannot be null");
-    this.namespace = namespace;
-    this.enabled = enabled;
+  public AddonStateChangedPacket(@NotNull InstalledAddon addon) {
+    Objects.requireNonNull(addon, "Addon cannot be null");
+    this.addon = addon;
   }
 
   @Override
   public void read(@NotNull PayloadReader reader) {
-    this.namespace = reader.readString();
-    this.enabled = reader.readBoolean();
+    this.addon = InstalledAddonsResponsePacket.readInstalledAddon(reader);
   }
 
   @Override
   public void write(@NotNull PayloadWriter writer) {
-    writer.writeString(this.namespace);
-    writer.writeBoolean(this.enabled);
+    InstalledAddonsResponsePacket.writeInstalledAddon(writer, this.addon);
   }
 
-  public @NotNull String getNamespace() {
-    return this.namespace;
-  }
-
-  public boolean isEnabled() {
-    return this.enabled;
+  public @NotNull InstalledAddon addon() {
+    return this.addon;
   }
 
   @Override
   public String toString() {
     return "AddonStateChangedPacket{" +
-        "namespace='" + this.namespace + '\'' +
-        ", enabled=" + this.enabled +
+        "addon=" + this.addon +
         '}';
   }
 }

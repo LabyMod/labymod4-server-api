@@ -24,23 +24,24 @@
 
 package net.labymod.serverapi.server.common.model.addon;
 
-import net.labymod.serverapi.core.model.moderation.InstalledAddons;
+import net.labymod.serverapi.core.model.moderation.InstalledAddon;
 import net.labymod.serverapi.core.packet.serverbound.game.moderation.InstalledAddonsResponsePacket;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-public class InstalledAddonsResponse extends InstalledAddons {
+public class InstalledAddonsResponse {
 
+  private final Map<String, InstalledAddon> installedAddons = new HashMap<>();
   private boolean hasResponse;
   private boolean hasRequested;
   private List<String> requestedAddons = new ArrayList<>();
-
-  public InstalledAddonsResponse() {
-    super(new ArrayList<>(), new ArrayList<>());
-  }
 
   public boolean hasResponse() {
     return this.hasResponse;
@@ -54,21 +55,42 @@ public class InstalledAddonsResponse extends InstalledAddons {
     return this.requestedAddons;
   }
 
+  public @Nullable InstalledAddon get(String namespace) {
+    return this.installedAddons.get(namespace);
+  }
+
+  public boolean isInstalled(String namespace) {
+    return this.get(namespace) != null;
+  }
+
+  public @NotNull Collection<InstalledAddon> getInstalledAddons() {
+    return this.installedAddons.values();
+  }
+
+  public boolean isEnabled(String namespace) {
+    InstalledAddon installedAddon = this.get(namespace);
+    return installedAddon != null && installedAddon.isEnabled();
+  }
+
+  public boolean isDisabled(String namespace) {
+    InstalledAddon installedAddon = this.get(namespace);
+    return installedAddon != null && !installedAddon.isEnabled();
+  }
+
+  public @Nullable InstalledAddon.AddonVersion getVersion(String namespace) {
+    InstalledAddon installedAddon = this.get(namespace);
+    return installedAddon != null ? installedAddon.getVersion() : null;
+  }
+
+  public boolean isLocal(String namespace) {
+    InstalledAddon installedAddon = this.get(namespace);
+    return installedAddon != null && installedAddon.isLocal();
+  }
+
   @ApiStatus.Internal
   public void handleResponse(InstalledAddonsResponsePacket packet) {
-    InstalledAddons installedAddons = packet.installedAddons();
-    for (String enabledAddon : installedAddons.getEnabled()) {
-      this.disabledAddons.remove(enabledAddon);
-      if (!this.enabledAddons.contains(enabledAddon)) {
-        this.enabledAddons.add(enabledAddon);
-      }
-    }
-
-    for (String disabledAddon : installedAddons.getDisabled()) {
-      this.enabledAddons.remove(disabledAddon);
-      if (!this.disabledAddons.contains(disabledAddon)) {
-        this.disabledAddons.add(disabledAddon);
-      }
+    for (InstalledAddon installedAddon : packet.getInstalledAddons()) {
+      this.installedAddons.put(installedAddon.getNamespace(), installedAddon);
     }
 
     this.hasResponse = true;
@@ -107,19 +129,17 @@ public class InstalledAddonsResponse extends InstalledAddons {
   }
 
   @ApiStatus.Internal
-  public void addAddon(String namespace, boolean enabled) {
-    List<String> removeFrom = enabled ? this.disabledAddons : this.enabledAddons;
-    List<String> addTo = enabled ? this.enabledAddons : this.disabledAddons;
-    removeFrom.remove(namespace);
-    if (!addTo.contains(namespace)) {
-      addTo.add(namespace);
-    }
+  public void updateAddon(InstalledAddon installedAddon) {
+    this.installedAddons.put(installedAddon.getNamespace(), installedAddon);
   }
 
   @Override
   public String toString() {
     return "InstalledAddonsResponse{" +
-        "hasResponse=" + this.hasResponse +
-        "} " + super.toString();
+        "installedAddons=" + this.installedAddons +
+        ", hasResponse=" + this.hasResponse +
+        ", hasRequested=" + this.hasRequested +
+        ", requestedAddons=" + this.requestedAddons +
+        '}';
   }
 }

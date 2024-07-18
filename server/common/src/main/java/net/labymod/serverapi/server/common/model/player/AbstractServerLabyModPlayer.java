@@ -60,7 +60,6 @@ public abstract class AbstractServerLabyModPlayer<P extends AbstractServerLabyMo
     return this.serverPlayer;
   }
 
-  @Override
   public @NotNull InstalledAddonsResponse installedAddons() {
     return this.installedAddonsResponse;
   }

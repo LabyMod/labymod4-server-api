@@ -50,7 +50,7 @@ public class DefaultAddonStateChangedPacketHandler
       return;
     }
 
-    player.installedAddons().addAddon(packet.getNamespace(), packet.isEnabled());
+    player.installedAddons().updateAddon(packet.addon());
     this.protocolService.handleInstalledAddonsUpdate(player);
   }
 }
