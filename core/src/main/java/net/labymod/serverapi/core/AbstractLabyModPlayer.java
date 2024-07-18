@@ -239,8 +239,8 @@ public abstract class AbstractLabyModPlayer<P extends AbstractLabyModPlayer<?>> 
    * Reverts the forced disable state for all addons disabled via {@link #disableAddons(List)}
    */
   public void revertDisabledAddons() {
-    this.disabledAddons.clear();
     this.sendPacket(AddonDisablePacket.revert(this.disabledAddons));
+    this.disabledAddons.clear();
   }
 
   /**
