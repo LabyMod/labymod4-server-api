@@ -37,12 +37,16 @@ import net.labymod.serverapi.core.packet.clientbound.game.feature.InteractionMen
 import net.labymod.serverapi.core.packet.clientbound.game.feature.PlayingGameModePacket;
 import net.labymod.serverapi.core.packet.clientbound.game.feature.marker.AddMarkerPacket;
 import net.labymod.serverapi.core.packet.clientbound.game.feature.marker.MarkerPacket;
+import net.labymod.serverapi.core.packet.clientbound.game.moderation.AddonDisablePacket;
 import net.labymod.serverapi.core.packet.clientbound.game.moderation.AddonRecommendationPacket;
+import net.labymod.serverapi.core.packet.clientbound.game.moderation.InstalledAddonsRequestPacket;
 import net.labymod.serverapi.core.packet.clientbound.game.moderation.PermissionPacket;
 import net.labymod.serverapi.core.packet.clientbound.game.supplement.InputPromptPacket;
 import net.labymod.serverapi.core.packet.clientbound.game.supplement.ServerSwitchPromptPacket;
 import net.labymod.serverapi.core.packet.serverbound.game.feature.marker.ClientAddMarkerPacket;
 import net.labymod.serverapi.core.packet.serverbound.game.moderation.AddonRecommendationResponsePacket;
+import net.labymod.serverapi.core.packet.serverbound.game.moderation.AddonStateChangedPacket;
+import net.labymod.serverapi.core.packet.serverbound.game.moderation.InstalledAddonsResponsePacket;
 import net.labymod.serverapi.core.packet.serverbound.game.supplement.InputPromptResponsePacket;
 import net.labymod.serverapi.core.packet.serverbound.game.supplement.ServerSwitchPromptResponsePacket;
 import net.labymod.serverapi.core.packet.serverbound.login.VersionLoginPacket;
@@ -75,7 +79,7 @@ public class LabyModProtocol extends Protocol {
     this.registerPacket(21, ServerSwitchPromptResponsePacket.class, Direction.SERVERBOUND);
     this.registerPacket(22, InputPromptPacket.class, Direction.CLIENTBOUND);
     this.registerPacket(23, InputPromptResponsePacket.class, Direction.SERVERBOUND);
-    //this.registerPacket(24, AddonDisablePacket.class, Direction.CLIENTBOUND);
+    this.registerPacket(24, AddonDisablePacket.class, Direction.CLIENTBOUND);
     this.registerPacket(25, AddonRecommendationPacket.class, Direction.CLIENTBOUND);
     this.registerPacket(26, AddonRecommendationResponsePacket.class, Direction.SERVERBOUND);
     this.registerPacket(27, MarkerPacket.class, Direction.CLIENTBOUND);
@@ -84,5 +88,8 @@ public class LabyModProtocol extends Protocol {
     //this.registerPacket(30, ChatFilterPacket.class, Direction.CLIENTBOUND);
     //this.registerPacket(31, ChatFilterRemovePacket.class, Direction.CLIENTBOUND);
     //this.registerPacket(32, ServerEventPacket.class, Direction.CLIENTBOUND);
+    this.registerPacket(33, InstalledAddonsRequestPacket.class, Direction.CLIENTBOUND);
+    this.registerPacket(34, InstalledAddonsResponsePacket.class, Direction.SERVERBOUND);
+    this.registerPacket(35, AddonStateChangedPacket.class, Direction.SERVERBOUND);
   }
 }

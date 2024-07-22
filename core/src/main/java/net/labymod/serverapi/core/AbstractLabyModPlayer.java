@@ -48,6 +48,7 @@ import net.labymod.serverapi.core.packet.clientbound.game.feature.InteractionMen
 import net.labymod.serverapi.core.packet.clientbound.game.feature.PlayingGameModePacket;
 import net.labymod.serverapi.core.packet.clientbound.game.feature.marker.AddMarkerPacket;
 import net.labymod.serverapi.core.packet.clientbound.game.feature.marker.MarkerPacket;
+import net.labymod.serverapi.core.packet.clientbound.game.moderation.AddonDisablePacket;
 import net.labymod.serverapi.core.packet.clientbound.game.moderation.AddonRecommendationPacket;
 import net.labymod.serverapi.core.packet.clientbound.game.moderation.PermissionPacket;
 import net.labymod.serverapi.core.packet.clientbound.game.supplement.InputPromptPacket;
@@ -74,6 +75,7 @@ public abstract class AbstractLabyModPlayer<P extends AbstractLabyModPlayer<?>> 
   private final AbstractLabyModProtocolService protocolService;
   private final List<LabyModIntegrationPlayer> integrationPlayers = new ArrayList<>();
   private final Map<String, EconomyDisplay> economies = new HashMap<>(2);
+  private final List<String> disabledAddons = new ArrayList<>();
 
   private Subtitle subtitle;
   private TabListFlag flag;
@@ -202,6 +204,51 @@ public abstract class AbstractLabyModPlayer<P extends AbstractLabyModPlayer<?>> 
     for (AbstractLabyModPlayer<?> player : this.protocolService.getPlayers()) {
       labyModProtocol.sendPacket(player.getUniqueId(), packet);
     }
+  }
+
+  /**
+   * Forcefully disables the provided addons.
+   *
+   * @param addonsToDisable the addons to disable
+   */
+  public void disableAddons(List<String> addonsToDisable) {
+    for (String addon : addonsToDisable) {
+      if (!this.disabledAddons.contains(addon)) {
+        this.disabledAddons.add(addon);
+      }
+    }
+
+    this.sendPacket(AddonDisablePacket.disable(addonsToDisable));
+  }
+
+  /**
+   * Reverts the forced disable state for the provided addons
+   *
+   * @param addonsToRevert the addons to revert
+   */
+  public void revertDisabledAddons(List<String> addonsToRevert) {
+    for (String addon : addonsToRevert) {
+      this.disabledAddons.remove(addon);
+    }
+
+    this.sendPacket(AddonDisablePacket.revert(addonsToRevert));
+  }
+
+  /**
+   * Reverts the forced disable state for all addons disabled via {@link #disableAddons(List)}
+   */
+  public void revertDisabledAddons() {
+    this.sendPacket(AddonDisablePacket.revert(this.disabledAddons));
+    this.disabledAddons.clear();
+  }
+
+  /**
+   * Gets all forcefully disabled addons disabled via {@link #disableAddons(List)}
+   *
+   * @return the disabled addons
+   */
+  public List<String> getDisabledAddons() {
+    return this.disabledAddons;
   }
 
   /**

@@ -325,13 +325,19 @@ public class Protocol {
             this.awaitingResponses.remove(responsePacket);
           }
         } catch (Exception e) {
-          e.printStackTrace();
+          this.protocolService.logger().warn(
+              "Failed to handle packet response " + packet.getClass().getSimpleName(), e);
         }
       }
     }
 
     for (PacketHandler handler : protocolPacket.handlers) {
-      handler.handle(sender, packet);
+      try {
+        handler.handle(sender, packet);
+      } catch (Exception e) {
+        this.protocolService.logger().warn(
+            "Failed to handle packet " + packet.getClass().getSimpleName(), e);
+      }
     }
 
     this.protocolService.afterPacketHandled(this, packet, sender);

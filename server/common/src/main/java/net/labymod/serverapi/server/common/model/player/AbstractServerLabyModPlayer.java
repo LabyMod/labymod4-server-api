@@ -25,14 +25,22 @@
 package net.labymod.serverapi.server.common.model.player;
 
 import net.labymod.serverapi.core.AbstractLabyModPlayer;
+import net.labymod.serverapi.core.packet.clientbound.game.moderation.InstalledAddonsRequestPacket;
+import net.labymod.serverapi.core.packet.serverbound.game.moderation.InstalledAddonsResponsePacket;
 import net.labymod.serverapi.server.common.AbstractServerLabyModProtocolService;
+import net.labymod.serverapi.server.common.model.addon.InstalledAddonsResponse;
+import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
+import java.util.function.Consumer;
 
 public abstract class AbstractServerLabyModPlayer<P extends AbstractServerLabyModPlayer<?, ?>, T>
     extends AbstractLabyModPlayer<P> {
 
   private final T serverPlayer;
+  private final InstalledAddonsResponse installedAddonsResponse;
 
   protected AbstractServerLabyModPlayer(
       AbstractServerLabyModProtocolService<?> protocolService,
@@ -42,6 +50,7 @@ public abstract class AbstractServerLabyModPlayer<P extends AbstractServerLabyMo
   ) {
     super(protocolService, uniqueId, labyModVersion);
     this.serverPlayer = player;
+    this.installedAddonsResponse = new InstalledAddonsResponse();
   }
 
   /**
@@ -49,5 +58,40 @@ public abstract class AbstractServerLabyModPlayer<P extends AbstractServerLabyMo
    */
   public T getPlayer() {
     return this.serverPlayer;
+  }
+
+  public @NotNull InstalledAddonsResponse installedAddons() {
+    return this.installedAddonsResponse;
+  }
+
+  public void requestInstalledAddons() {
+    this.requestInstalledAddons(new ArrayList<>(), null);
+  }
+
+  public void requestInstalledAddons(Consumer<InstalledAddonsResponse> response) {
+    this.requestInstalledAddons(new ArrayList<>(), response);
+  }
+
+  public void requestInstalledAddons(@NotNull List<String> addonsToRequest) {
+    this.requestInstalledAddons(addonsToRequest, null);
+  }
+
+  public void requestInstalledAddons(
+      @NotNull List<String> addonsToRequest,
+      Consumer<InstalledAddonsResponse> response
+  ) {
+    this.installedAddonsResponse.setRequestedAddons(addonsToRequest);
+    this.sendLabyModPacket(
+        new InstalledAddonsRequestPacket(addonsToRequest),
+        InstalledAddonsResponsePacket.class,
+        packet -> {
+          this.installedAddonsResponse.handleResponse(packet);
+          if (response != null) {
+            response.accept(this.installedAddonsResponse);
+          }
+
+          return false;
+        }
+    );
   }
 }
