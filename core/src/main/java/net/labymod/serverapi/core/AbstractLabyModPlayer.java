@@ -60,6 +60,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -222,6 +223,15 @@ public abstract class AbstractLabyModPlayer<P extends AbstractLabyModPlayer<?>> 
   }
 
   /**
+   * Forcefully disables the provided addons.
+   *
+   * @param addonsToDisable the addons to disable
+   */
+  public void disableAddons(String... addonsToDisable) {
+    this.disableAddons(Arrays.asList(addonsToDisable));
+  }
+
+  /**
    * Reverts the forced disable state for the provided addons
    *
    * @param addonsToRevert the addons to revert
@@ -232,6 +242,15 @@ public abstract class AbstractLabyModPlayer<P extends AbstractLabyModPlayer<?>> 
     }
 
     this.sendPacket(AddonDisablePacket.revert(addonsToRevert));
+  }
+
+  /**
+   * Reverts the forced disable state for the provided addons
+   *
+   * @param addonsToRevert the addons to revert
+   */
+  public void revertDisabledAddons(String... addonsToRevert) {
+    this.revertDisabledAddons(Arrays.asList(addonsToRevert));
   }
 
   /**
@@ -522,6 +541,29 @@ public abstract class AbstractLabyModPlayer<P extends AbstractLabyModPlayer<?>> 
    */
   public void sendAddonRecommendations(@NotNull List<RecommendedAddon> addons) {
     this.sendLabyModPacket(new AddonRecommendationPacket(addons));
+  }
+
+  /**
+   * Sends the provided recommended addons to the player
+   *
+   * @param addons The recommended addons
+   */
+  public void sendAddonRecommendations(@NotNull RecommendedAddon... addons) {
+    this.sendLabyModPacket(new AddonRecommendationPacket(addons));
+  }
+
+  /**
+   * Sends the provided recommended addons to the player and handle the response via the provided
+   * consumer
+   *
+   * @param responseConsumer The consumer for the response
+   * @param addons           The recommended addons
+   */
+  public void sendAddonRecommendations(
+      @NotNull Consumer<AddonRecommendationResponsePacket> responseConsumer,
+      @NotNull RecommendedAddon... addons
+  ) {
+    this.sendAddonRecommendations(Arrays.asList(addons), responseConsumer);
   }
 
   /**

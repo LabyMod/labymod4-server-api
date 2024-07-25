@@ -32,6 +32,7 @@ import net.labymod.serverapi.server.common.model.addon.InstalledAddonsResponse;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 import java.util.function.Consumer;
@@ -60,22 +61,67 @@ public abstract class AbstractServerLabyModPlayer<P extends AbstractServerLabyMo
     return this.serverPlayer;
   }
 
+  /**
+   * @return the installed addons of the user. The object is empty until one of the request
+   * methods is called.
+   */
   public @NotNull InstalledAddonsResponse installedAddons() {
     return this.installedAddonsResponse;
   }
 
+  /**
+   * Requests ALL installed addons from the user.
+   */
   public void requestInstalledAddons() {
     this.requestInstalledAddons(new ArrayList<>(), null);
   }
 
+  /**
+   * Requests ALL installed addons from the user.
+   *
+   * @param response the response consumer. Called when the response is received.
+   */
   public void requestInstalledAddons(Consumer<InstalledAddonsResponse> response) {
     this.requestInstalledAddons(new ArrayList<>(), response);
   }
 
+  /**
+   * Requests the installed state of the provided addons.
+   *
+   * @param addonsToRequest The addons to request the installed state of.
+   */
+  public void requestInstalledAddons(String... addonsToRequest) {
+    this.requestInstalledAddons(Arrays.asList(addonsToRequest), null);
+  }
+
+  /**
+   * Requests the installed state of the provided addons.
+   *
+   * @param addonsToRequest The addons to request the installed state of.
+   */
   public void requestInstalledAddons(@NotNull List<String> addonsToRequest) {
     this.requestInstalledAddons(addonsToRequest, null);
   }
 
+  /**
+   * Requests the installed state of the provided addons.
+   *
+   * @param response        the response consumer. Called when the response is received.
+   * @param addonsToRequest The addons to request the installed state of.
+   */
+  public void requestInstalledAddons(
+      Consumer<InstalledAddonsResponse> response,
+      String... addonsToRequest
+  ) {
+    this.requestInstalledAddons(Arrays.asList(addonsToRequest), response);
+  }
+
+  /**
+   * Requests the installed state of the provided addons.
+   *
+   * @param addonsToRequest The addons to request the installed state of.
+   * @param response        the response consumer. Called when the response is received.
+   */
   public void requestInstalledAddons(
       @NotNull List<String> addonsToRequest,
       Consumer<InstalledAddonsResponse> response
