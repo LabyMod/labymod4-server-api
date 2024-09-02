@@ -86,13 +86,6 @@ public class Protocol {
   }
 
   /**
-   * @return the protocol service of the protocol.
-   */
-  public final @NotNull AbstractProtocolService protocolService() {
-    return this.protocolService;
-  }
-
-  /**
    * Registers a packet to the protocol.
    *
    * @param id          The id of the packet.
