@@ -358,7 +358,13 @@ public class Protocol {
               + this.identifier + "found");
     }
 
-    if (this.protocolSide.isAcceptingDirection(protocolPacket.direction)) {
+    Direction direction = protocolPacket.direction;
+    if (direction != Direction.BOTH && this.protocolSide.isAcceptingDirection(direction)) {
+      this.protocolService.logger().warn(
+          "Attempted to send packet " + packet.getClass().getSimpleName()
+              + " in the wrong direction (packet direction: " + direction + ", protocol side: "
+              + this.protocolSide + ")"
+      );
       return;
     }
 
@@ -381,6 +387,61 @@ public class Protocol {
     }
 
     this.protocolService.afterPacketSent(this, packet, recipient);
+  }
+
+  private static class ProtocolPacket {
+
+    private static final UnsafeProvider UNSAFE_PROVIDER = new UnsafeProvider();
+
+    private final int id;
+    private final Class<? extends Packet> packet;
+    private final Set<PacketHandler> handlers;
+    private final Direction direction;
+
+    private boolean fromConstructor = true;
+    private Constructor<? extends Packet> constructor;
+
+    private ProtocolPacket(int id, Class<? extends Packet> packet, Direction direction) {
+      this.id = id;
+      this.packet = packet;
+      this.direction = direction;
+      this.handlers = new HashSet<>();
+    }
+
+    private Packet createPacket() throws Exception {
+      if (this.constructor == null && this.fromConstructor) {
+        try {
+          this.constructor = this.packet.getDeclaredConstructor();
+          this.constructor.setAccessible(true);
+          this.fromConstructor = !this.constructor.isAnnotationPresent(
+              OnlyWriteConstructor.class
+          );
+        } catch (Exception e) {
+          this.fromConstructor = false;
+        }
+      }
+
+      if (this.fromConstructor) {
+        return this.constructor.newInstance();
+      }
+
+      return (Packet) UNSAFE_PROVIDER.unsafe.allocateInstance(this.packet);
+    }
+  }
+
+  private static final class UnsafeProvider {
+
+    private final Unsafe unsafe;
+
+    private UnsafeProvider() {
+      try {
+        Field field = Unsafe.class.getDeclaredField("theUnsafe");
+        field.setAccessible(true);
+        this.unsafe = (Unsafe) field.get(null);
+      } catch (Exception exception) {
+        throw new IllegalStateException("Failed to get unsafe instance", exception);
+      }
+    }
   }
 
   private final class AwaitingResponse {
@@ -455,61 +516,6 @@ public class Protocol {
           "identifier=" + this.identifier + ", " +
           "responseClass=" + this.responseClass + ", " +
           "responseCallback=" + this.responseCallback + ']';
-    }
-  }
-
-  private static class ProtocolPacket {
-
-    private static final UnsafeProvider UNSAFE_PROVIDER = new UnsafeProvider();
-
-    private final int id;
-    private final Class<? extends Packet> packet;
-    private final Set<PacketHandler> handlers;
-    private final Direction direction;
-
-    private boolean fromConstructor = true;
-    private Constructor<? extends Packet> constructor;
-
-    private ProtocolPacket(int id, Class<? extends Packet> packet, Direction direction) {
-      this.id = id;
-      this.packet = packet;
-      this.direction = direction;
-      this.handlers = new HashSet<>();
-    }
-
-    private Packet createPacket() throws Exception {
-      if (this.constructor == null && this.fromConstructor) {
-        try {
-          this.constructor = this.packet.getDeclaredConstructor();
-          this.constructor.setAccessible(true);
-          this.fromConstructor = !this.constructor.isAnnotationPresent(
-              OnlyWriteConstructor.class
-          );
-        } catch (Exception e) {
-          this.fromConstructor = false;
-        }
-      }
-
-      if (this.fromConstructor) {
-        return this.constructor.newInstance();
-      }
-
-      return (Packet) UNSAFE_PROVIDER.unsafe.allocateInstance(this.packet);
-    }
-  }
-
-  private static final class UnsafeProvider {
-
-    private final Unsafe unsafe;
-
-    private UnsafeProvider() {
-      try {
-        Field field = Unsafe.class.getDeclaredField("theUnsafe");
-        field.setAccessible(true);
-        this.unsafe = (Unsafe) field.get(null);
-      } catch (Exception exception) {
-        throw new IllegalStateException("Failed to get unsafe instance", exception);
-      }
     }
   }
 }
