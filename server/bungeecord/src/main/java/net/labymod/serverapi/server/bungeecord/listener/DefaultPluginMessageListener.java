@@ -55,10 +55,7 @@ public class DefaultPluginMessageListener implements Listener {
 
     try {
       PayloadReader reader = new PayloadReader(event.getData());
-      Packet packet = this.protocol.handleIncomingPayload(player.getUniqueId(), reader);
-      if (packet != null) {
-        event.setCancelled(true);
-      }
+      this.protocol.handleIncomingPayload(player.getUniqueId(), reader);
     } catch (Exception e) {
       e.printStackTrace();
     }
