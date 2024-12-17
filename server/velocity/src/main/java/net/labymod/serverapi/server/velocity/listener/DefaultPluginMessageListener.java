@@ -57,7 +57,7 @@ public class DefaultPluginMessageListener {
       PayloadReader reader = new PayloadReader(event.getData());
       Packet packet = this.protocol.handleIncomingPayload(player.getUniqueId(), reader);
       if (packet != null) {
-        event.setResult(PluginMessageEvent.ForwardResult.handled());
+        event.setResult(PluginMessageEvent.ForwardResult.forward());
       }
     } catch (Exception e) {
       e.printStackTrace();
