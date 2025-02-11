@@ -61,7 +61,7 @@ public class PermissionPacket implements Packet {
   @Override
   public void write(@NotNull PayloadWriter writer) {
     writer.writeCollection(this.permissions, actualPermission -> {
-      writer.writeString(actualPermission.permission());
+        writer.writeString(actualPermission.permission().getIdentifier());
       writer.writeBoolean(actualPermission.isAllowed());
     });
   }
