@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2024 LabyMedia GmbH
+ * Copyright (c) 2025 LabyMedia GmbH
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -40,7 +40,7 @@ public record DefaultVersionLoginPacketHandler(
 ) implements PacketHandler<VersionLoginPacket> {
     @Override
     public void handle(@NotNull UUID sender, @NotNull VersionLoginPacket packet) {
-        if (protocolService.getPlayer(sender) != null) {
+        if (this.protocolService.getPlayer(sender) != null) {
             // player is already connected
             return;
         }
@@ -51,15 +51,15 @@ public record DefaultVersionLoginPacketHandler(
         }
 
         LabyModPlayer labyModPlayer = new LabyModPlayer(
-                protocolService,
+            this.protocolService,
                 sender,
                 player,
                 packet.getVersion()
         );
 
-        protocolService.handlePlayerJoin(labyModPlayer);
+      this.protocolService.handlePlayerJoin(labyModPlayer);
         MinecraftServer.getGlobalEventHandler().call(new LabyModPlayerJoinEvent(
-                protocolService,
+            this.protocolService,
                 labyModPlayer
         ));
     }

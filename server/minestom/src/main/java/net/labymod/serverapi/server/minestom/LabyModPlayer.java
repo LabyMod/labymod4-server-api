@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2024 LabyMedia GmbH
+ * Copyright (c) 2025 LabyMedia GmbH
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,8 +24,6 @@
 
 package net.labymod.serverapi.server.minestom;
 
-import net.labymod.serverapi.core.AbstractLabyModPlayer;
-import net.labymod.serverapi.core.AbstractLabyModProtocolService;
 import net.labymod.serverapi.server.common.AbstractServerLabyModProtocolService;
 import net.labymod.serverapi.server.common.model.player.AbstractServerLabyModPlayer;
 import net.minestom.server.entity.Player;

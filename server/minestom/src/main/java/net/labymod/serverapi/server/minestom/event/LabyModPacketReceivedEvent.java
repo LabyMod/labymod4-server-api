@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2024 LabyMedia GmbH
+ * Copyright (c) 2025 LabyMedia GmbH
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -33,8 +33,6 @@ import net.minestom.server.event.trait.PlayerEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.UUID;
-
 public record LabyModPacketReceivedEvent(
         LabyModProtocolService protocolService,
         Protocol protocol,
@@ -47,7 +45,7 @@ public record LabyModPacketReceivedEvent(
     }
 
     public @Nullable LabyModPlayer getLabyModPlayer() {
-        return player;
+        return this.player;
     }
 
     public @NotNull Protocol protocol() {
@@ -60,6 +58,6 @@ public record LabyModPacketReceivedEvent(
 
     @Override
     public @NotNull Player getPlayer() {
-        return player.getPlayer();
+        return this.player.getPlayer();
     }
 }
