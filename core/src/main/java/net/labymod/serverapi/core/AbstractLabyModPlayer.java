@@ -53,6 +53,7 @@ import net.labymod.serverapi.core.packet.clientbound.game.moderation.AddonRecomm
 import net.labymod.serverapi.core.packet.clientbound.game.moderation.PermissionPacket;
 import net.labymod.serverapi.core.packet.clientbound.game.supplement.InputPromptPacket;
 import net.labymod.serverapi.core.packet.clientbound.game.supplement.ServerSwitchPromptPacket;
+import net.labymod.serverapi.core.packet.clientbound.game.supplement.UpdateReadTimeoutPacket;
 import net.labymod.serverapi.core.packet.serverbound.game.moderation.AddonRecommendationResponsePacket;
 import net.labymod.serverapi.core.packet.serverbound.game.supplement.InputPromptResponsePacket;
 import net.labymod.serverapi.core.packet.serverbound.game.supplement.ServerSwitchPromptResponsePacket;
@@ -439,6 +440,15 @@ public abstract class AbstractLabyModPlayer<P extends AbstractLabyModPlayer<?>> 
    */
   public void sendTabListBanner(@Nullable String iconUrl) {
     this.sendLabyModPacket(new TabListBannerPacket(iconUrl));
+  }
+
+  /**
+   * Update read timeout of player
+   *
+   * @param seconds The read timeout of the client in seconds
+   */
+  public void updateReadTimeout(int seconds) {
+    this.sendLabyModPacket(new UpdateReadTimeoutPacket(seconds));
   }
 
   /**

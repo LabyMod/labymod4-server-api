@@ -43,6 +43,7 @@ import net.labymod.serverapi.core.packet.clientbound.game.moderation.InstalledAd
 import net.labymod.serverapi.core.packet.clientbound.game.moderation.PermissionPacket;
 import net.labymod.serverapi.core.packet.clientbound.game.supplement.InputPromptPacket;
 import net.labymod.serverapi.core.packet.clientbound.game.supplement.ServerSwitchPromptPacket;
+import net.labymod.serverapi.core.packet.clientbound.game.supplement.UpdateReadTimeoutPacket;
 import net.labymod.serverapi.core.packet.serverbound.game.feature.marker.ClientAddMarkerPacket;
 import net.labymod.serverapi.core.packet.serverbound.game.moderation.AddonRecommendationResponsePacket;
 import net.labymod.serverapi.core.packet.serverbound.game.moderation.AddonStateChangedPacket;
@@ -91,5 +92,6 @@ public class LabyModProtocol extends Protocol {
     this.registerPacket(33, InstalledAddonsRequestPacket.class, Direction.CLIENTBOUND);
     this.registerPacket(34, InstalledAddonsResponsePacket.class, Direction.SERVERBOUND);
     this.registerPacket(35, AddonStateChangedPacket.class, Direction.SERVERBOUND);
+    this.registerPacket(36, UpdateReadTimeoutPacket.class, Direction.CLIENTBOUND);
   }
 }
