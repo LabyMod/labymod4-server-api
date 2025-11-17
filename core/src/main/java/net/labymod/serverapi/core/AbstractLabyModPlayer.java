@@ -465,6 +465,14 @@ public abstract class AbstractLabyModPlayer<P extends AbstractLabyModPlayer<?>> 
   }
 
   /**
+   * Updates the visibility of the LabyMod user indicator
+   * @param visible Whether the LabyMod user indicator should be visible
+   */
+  public void updateLabyModUserIndicatorVisibility(boolean visible) {
+    this.sendLabyModPacket(new UpdateLabyModUserIndicatorVisibilityPacket(visible));
+  }
+
+  /**
    * Sends the provided packet to the player
    *
    * @param packet The packet to send
