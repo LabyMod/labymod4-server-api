@@ -30,9 +30,7 @@ import net.labymod.serverapi.api.packet.IdentifiablePacket;
 import net.labymod.serverapi.api.packet.Packet;
 import net.labymod.serverapi.core.integration.LabyModIntegrationPlayer;
 import net.labymod.serverapi.core.integration.LabyModProtocolIntegration;
-import net.labymod.serverapi.core.model.display.EconomyDisplay;
-import net.labymod.serverapi.core.model.display.Subtitle;
-import net.labymod.serverapi.core.model.display.TabListFlag;
+import net.labymod.serverapi.core.model.display.*;
 import net.labymod.serverapi.core.model.feature.DiscordRPC;
 import net.labymod.serverapi.core.model.feature.InteractionMenuEntry;
 import net.labymod.serverapi.core.model.moderation.Permission;
@@ -43,9 +41,7 @@ import net.labymod.serverapi.core.packet.clientbound.game.display.EconomyDisplay
 import net.labymod.serverapi.core.packet.clientbound.game.display.SubtitlePacket;
 import net.labymod.serverapi.core.packet.clientbound.game.display.TabListBannerPacket;
 import net.labymod.serverapi.core.packet.clientbound.game.display.TabListFlagPacket;
-import net.labymod.serverapi.core.packet.clientbound.game.feature.DiscordRPCPacket;
-import net.labymod.serverapi.core.packet.clientbound.game.feature.InteractionMenuPacket;
-import net.labymod.serverapi.core.packet.clientbound.game.feature.PlayingGameModePacket;
+import net.labymod.serverapi.core.packet.clientbound.game.feature.*;
 import net.labymod.serverapi.core.packet.clientbound.game.feature.marker.AddMarkerPacket;
 import net.labymod.serverapi.core.packet.clientbound.game.feature.marker.MarkerPacket;
 import net.labymod.serverapi.core.packet.clientbound.game.moderation.AddonDisablePacket;
@@ -449,6 +445,23 @@ public abstract class AbstractLabyModPlayer<P extends AbstractLabyModPlayer<?>> 
    */
   public void updateReadTimeout(int seconds) {
     this.sendLabyModPacket(new UpdateReadTimeoutPacket(seconds));
+  }
+
+  /**
+   * Registers the provided server badges to the player.
+   * Use {@link #bindBadges(List)} to bind the registered badges to a player.
+   * @param badges The badges to register
+   */
+  public void registerBadges(List<ServerBadge> badges) {
+    this.sendLabyModPacket(new ServerBadgePacket(badges));
+  }
+
+  /**
+   * Bind the registered badges (of {@link #registerBadges(List)}) to a player
+   * @param badges The badges to bind
+   */
+  public void bindBadges(List<ServerUserBadge> badges) {
+    this.sendLabyModPacket(new ServerUserBadgePacket(badges));
   }
 
   /**

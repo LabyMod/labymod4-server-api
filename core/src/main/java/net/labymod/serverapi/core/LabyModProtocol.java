@@ -31,10 +31,7 @@ import net.labymod.serverapi.core.packet.clientbound.game.display.EconomyDisplay
 import net.labymod.serverapi.core.packet.clientbound.game.display.SubtitlePacket;
 import net.labymod.serverapi.core.packet.clientbound.game.display.TabListBannerPacket;
 import net.labymod.serverapi.core.packet.clientbound.game.display.TabListFlagPacket;
-import net.labymod.serverapi.core.packet.clientbound.game.feature.DiscordRPCPacket;
-import net.labymod.serverapi.core.packet.clientbound.game.feature.EmotePacket;
-import net.labymod.serverapi.core.packet.clientbound.game.feature.InteractionMenuPacket;
-import net.labymod.serverapi.core.packet.clientbound.game.feature.PlayingGameModePacket;
+import net.labymod.serverapi.core.packet.clientbound.game.feature.*;
 import net.labymod.serverapi.core.packet.clientbound.game.feature.marker.AddMarkerPacket;
 import net.labymod.serverapi.core.packet.clientbound.game.feature.marker.MarkerPacket;
 import net.labymod.serverapi.core.packet.clientbound.game.moderation.AddonDisablePacket;
@@ -93,5 +90,7 @@ public class LabyModProtocol extends Protocol {
     this.registerPacket(34, InstalledAddonsResponsePacket.class, Direction.SERVERBOUND);
     this.registerPacket(35, AddonStateChangedPacket.class, Direction.SERVERBOUND);
     this.registerPacket(36, UpdateReadTimeoutPacket.class, Direction.CLIENTBOUND);
+    this.registerPacket(37, ServerBadgePacket.class, Direction.CLIENTBOUND);
+    this.registerPacket(38, ServerUserBadgePacket.class, Direction.CLIENTBOUND);
   }
 }
