@@ -34,6 +34,10 @@ import net.labymod.serverapi.core.packet.clientbound.game.display.TabListFlagPac
 import net.labymod.serverapi.core.packet.clientbound.game.feature.*;
 import net.labymod.serverapi.core.packet.clientbound.game.feature.marker.AddMarkerPacket;
 import net.labymod.serverapi.core.packet.clientbound.game.feature.marker.MarkerPacket;
+import net.labymod.serverapi.core.packet.clientbound.game.feature.texteffect.TextEffectClearPacket;
+import net.labymod.serverapi.core.packet.clientbound.game.feature.texteffect.TextEffectRegistrationPacket;
+import net.labymod.serverapi.core.packet.clientbound.game.feature.texteffect.TextEffectRulesPacket;
+import net.labymod.serverapi.core.packet.clientbound.game.feature.texteffect.TextEffectUpdatePacket;
 import net.labymod.serverapi.core.packet.clientbound.game.moderation.AddonDisablePacket;
 import net.labymod.serverapi.core.packet.clientbound.game.moderation.AddonRecommendationPacket;
 import net.labymod.serverapi.core.packet.clientbound.game.moderation.InstalledAddonsRequestPacket;
@@ -93,5 +97,11 @@ public class LabyModProtocol extends Protocol {
     this.registerPacket(37, ServerBadgePacket.class, Direction.CLIENTBOUND);
     this.registerPacket(38, ServerUserBadgePacket.class, Direction.CLIENTBOUND);
     this.registerPacket(39, UpdateLabyModUserIndicatorVisibilityPacket.class, Direction.CLIENTBOUND);
+
+    // Text Effects
+    this.registerPacket(40, TextEffectRegistrationPacket.class, Direction.CLIENTBOUND);
+    this.registerPacket(41, TextEffectRulesPacket.class, Direction.CLIENTBOUND);
+    this.registerPacket(42, TextEffectUpdatePacket.class, Direction.CLIENTBOUND);
+    this.registerPacket(43, TextEffectClearPacket.class, Direction.CLIENTBOUND);
   }
 }

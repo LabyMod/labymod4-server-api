@@ -44,6 +44,13 @@ import net.labymod.serverapi.core.packet.clientbound.game.display.TabListFlagPac
 import net.labymod.serverapi.core.packet.clientbound.game.feature.*;
 import net.labymod.serverapi.core.packet.clientbound.game.feature.marker.AddMarkerPacket;
 import net.labymod.serverapi.core.packet.clientbound.game.feature.marker.MarkerPacket;
+import net.labymod.serverapi.core.packet.clientbound.game.feature.texteffect.TextEffectClearPacket;
+import net.labymod.serverapi.core.packet.clientbound.game.feature.texteffect.TextEffectRegistrationPacket;
+import net.labymod.serverapi.core.packet.clientbound.game.feature.texteffect.TextEffectRulesPacket;
+import net.labymod.serverapi.core.packet.clientbound.game.feature.texteffect.TextEffectUpdatePacket;
+import net.labymod.serverapi.core.model.feature.texteffect.TextEffect;
+import net.labymod.serverapi.core.model.feature.texteffect.TextEffectRule;
+import net.labymod.serverapi.core.model.feature.texteffect.TextEffectUpdate;
 import net.labymod.serverapi.core.packet.clientbound.game.moderation.AddonDisablePacket;
 import net.labymod.serverapi.core.packet.clientbound.game.moderation.AddonRecommendationPacket;
 import net.labymod.serverapi.core.packet.clientbound.game.moderation.PermissionPacket;
@@ -471,6 +478,121 @@ public abstract class AbstractLabyModPlayer<P extends AbstractLabyModPlayer<?>> 
   public void updateLabyModUserIndicatorVisibility(boolean visible) {
     this.sendLabyModPacket(new UpdateLabyModUserIndicatorVisibilityPacket(visible));
   }
+
+  // region Text Effects
+
+  /**
+   * Registers custom text effects with the player's client.
+   *
+   * @param effects The text effects to register
+   */
+  public void registerTextEffects(@NotNull TextEffect... effects) {
+    this.sendLabyModPacket(new TextEffectRegistrationPacket(effects));
+  }
+
+  /**
+   * Registers custom text effects with the player's client.
+   *
+   * @param effects The text effects to register
+   */
+  public void registerTextEffects(@NotNull List<TextEffect> effects) {
+    this.sendLabyModPacket(new TextEffectRegistrationPacket(effects));
+  }
+
+  /**
+   * Sends text effect rules to the player, defining when effects should be applied.
+   *
+   * @param rules The text effect rules to send
+   */
+  public void sendTextEffectRules(@NotNull TextEffectRule... rules) {
+    this.sendLabyModPacket(new TextEffectRulesPacket(rules));
+  }
+
+  /**
+   * Sends text effect rules to the player, defining when effects should be applied.
+   *
+   * @param rules The text effect rules to send
+   */
+  public void sendTextEffectRules(@NotNull List<TextEffectRule> rules) {
+    this.sendLabyModPacket(new TextEffectRulesPacket(rules));
+  }
+
+  /**
+   * Sends dynamic updates to text effects or rules.
+   *
+   * @param updates The updates to send
+   */
+  public void sendTextEffectUpdates(@NotNull TextEffectUpdate... updates) {
+    this.sendLabyModPacket(new TextEffectUpdatePacket(updates));
+  }
+
+  /**
+   * Sends dynamic updates to text effects or rules.
+   *
+   * @param updates The updates to send
+   */
+  public void sendTextEffectUpdates(@NotNull List<TextEffectUpdate> updates) {
+    this.sendLabyModPacket(new TextEffectUpdatePacket(updates));
+  }
+
+  /**
+   * Clears all server-registered text effects and rules from the player.
+   */
+  public void clearAllTextEffects() {
+    this.sendLabyModPacket(TextEffectClearPacket.clearAll());
+  }
+
+  /**
+   * Clears all server-registered text effects from the player.
+   */
+  public void clearTextEffects() {
+    this.sendLabyModPacket(TextEffectClearPacket.clearAllEffects());
+  }
+
+  /**
+   * Clears specific text effects by their IDs.
+   *
+   * @param effectIds The IDs of the effects to clear
+   */
+  public void clearTextEffects(@NotNull String... effectIds) {
+    this.sendLabyModPacket(TextEffectClearPacket.clearEffects(effectIds));
+  }
+
+  /**
+   * Clears specific text effects by their IDs.
+   *
+   * @param effectIds The IDs of the effects to clear
+   */
+  public void clearTextEffects(@NotNull List<String> effectIds) {
+    this.sendLabyModPacket(TextEffectClearPacket.clearEffects(effectIds));
+  }
+
+  /**
+   * Clears all server-registered text effect rules from the player.
+   */
+  public void clearTextEffectRules() {
+    this.sendLabyModPacket(TextEffectClearPacket.clearAllRules());
+  }
+
+  /**
+   * Clears specific text effect rules by their IDs.
+   *
+   * @param ruleIds The IDs of the rules to clear
+   */
+  public void clearTextEffectRules(@NotNull String... ruleIds) {
+    this.sendLabyModPacket(TextEffectClearPacket.clearRules(ruleIds));
+  }
+
+  /**
+   * Clears specific text effect rules by their IDs.
+   *
+   * @param ruleIds The IDs of the rules to clear
+   */
+  public void clearTextEffectRules(@NotNull List<String> ruleIds) {
+    this.sendLabyModPacket(TextEffectClearPacket.clearRules(ruleIds));
+  }
+
+  // endregion
 
   /**
    * Sends the provided packet to the player
