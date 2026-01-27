@@ -25,7 +25,6 @@
 package net.labymod.serverapi.server.bungeecord.listener;
 
 import net.labymod.serverapi.api.Protocol;
-import net.labymod.serverapi.api.packet.Packet;
 import net.labymod.serverapi.api.payload.io.PayloadReader;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.event.PluginMessageEvent;
@@ -55,10 +54,7 @@ public class DefaultPluginMessageListener implements Listener {
 
     try {
       PayloadReader reader = new PayloadReader(event.getData());
-      Packet packet = this.protocol.handleIncomingPayload(player.getUniqueId(), reader);
-      if (packet != null) {
-        event.setCancelled(true);
-      }
+      this.protocol.handleIncomingPayload(player.getUniqueId(), reader);
     } catch (Exception e) {
       e.printStackTrace();
     }
