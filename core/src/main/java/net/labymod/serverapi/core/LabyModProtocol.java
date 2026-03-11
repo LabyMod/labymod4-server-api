@@ -93,5 +93,6 @@ public class LabyModProtocol extends Protocol {
     this.registerPacket(37, ServerBadgePacket.class, Direction.CLIENTBOUND);
     this.registerPacket(38, ServerUserBadgePacket.class, Direction.CLIENTBOUND);
     this.registerPacket(39, UpdateLabyModUserIndicatorVisibilityPacket.class, Direction.CLIENTBOUND);
+    this.registerPacket(40, UpdateFeaturePacket.class, Direction.CLIENTBOUND);
   }
 }
