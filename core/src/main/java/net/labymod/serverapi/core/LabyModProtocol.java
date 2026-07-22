@@ -32,6 +32,7 @@ import net.labymod.serverapi.core.packet.clientbound.game.display.SubtitlePacket
 import net.labymod.serverapi.core.packet.clientbound.game.display.TabListBannerPacket;
 import net.labymod.serverapi.core.packet.clientbound.game.display.TabListFlagPacket;
 import net.labymod.serverapi.core.packet.clientbound.game.feature.*;
+import net.labymod.serverapi.core.packet.clientbound.game.feature.media.MediaPlayerPacket;
 import net.labymod.serverapi.core.packet.clientbound.game.feature.marker.AddMarkerPacket;
 import net.labymod.serverapi.core.packet.clientbound.game.feature.marker.MarkerPacket;
 import net.labymod.serverapi.core.packet.clientbound.game.moderation.AddonDisablePacket;
@@ -94,5 +95,6 @@ public class LabyModProtocol extends Protocol {
     this.registerPacket(38, ServerUserBadgePacket.class, Direction.CLIENTBOUND);
     this.registerPacket(39, UpdateLabyModUserIndicatorVisibilityPacket.class, Direction.CLIENTBOUND);
     this.registerPacket(40, UpdateFeaturePacket.class, Direction.CLIENTBOUND);
+    this.registerPacket(41, MediaPlayerPacket.class, Direction.CLIENTBOUND);
   }
 }
