@@ -1,10 +1,11 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+import org.gradle.api.file.DuplicatesStrategy
+import org.gradle.api.tasks.SourceSetContainer
 
 plugins {
     id("java")
     id("maven-publish")
-    id("com.github.johnrengelman.shadow") version ("7.0.0") apply (false)
-    id("org.cadixdev.licenser") version ("0.6.1")
+    id("com.gradleup.shadow") version ("9.6.1") apply false
 }
 
 group = "net.labymod.serverapi"
@@ -19,7 +20,7 @@ dependencies {
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.8.1")
 }
 
-val commonOutputDir = "${buildDir}/commonOutput"
+val commonOutputDir = layout.buildDirectory.dir("commonOutput")
 
 tasks.register<Delete>("cleanCommonOutput") {
     delete(commonOutputDir)
@@ -36,20 +37,14 @@ tasks.named("build") {
 subprojects {
     plugins.apply("java-library")
     plugins.apply("maven-publish")
-    plugins.apply("org.cadixdev.licenser")
+    apply(from = rootProject.file("gradle/license-headers.gradle.kts"))
 
     group = rootProject.group
     version = rootProject.version
 
     val compile = configurations.create("compile")
-    val api by configurations
+    val api = configurations.getByName("api")
     api.extendsFrom(compile)
-
-    license {
-        header(rootProject.file("LICENSE"))
-        newLine.set(true)
-        exclude("**/*.yml")
-    }
 
     repositories {
         mavenCentral()
@@ -82,17 +77,18 @@ subprojects {
         fun includeProjectDependencies(config: Configuration, visited: MutableSet<Project>) {
             config.dependencies.forEach { dependency ->
                 if (dependency is ProjectDependency) {
-                    val project = dependency.dependencyProject
-                    if (visited.add(project)) {
-                        from(project.sourceSets["main"].output)
-                        includeProjectDependencies(project.configurations["compile"], visited)
+                    val dependencyProject = rootProject.findProject(dependency.path)
+                        ?: throw GradleException("Could not find project dependency '${dependency.path}'")
+                    if (visited.add(dependencyProject)) {
+                        from(dependencyProject.extensions.getByType<SourceSetContainer>().getByName("main").output)
+                        includeProjectDependencies(dependencyProject.configurations.getByName("compile"), visited)
                     }
                 }
             }
         }
 
         if (System.getenv("DEFAULT_BUILD") != "true") {
-            includeProjectDependencies(configurations["compile"], mutableSetOf())
+            includeProjectDependencies(configurations.getByName("compile"), mutableSetOf())
         }
     }
 
@@ -139,28 +135,6 @@ subprojects {
         }
     }
 
-    tasks.register<Copy>("copyToCommonOutput") {
-        val commonOutputDir = project.rootProject.buildDir.resolve("commonOutput")
-
-        // Copy regular JAR files
-        val shadowTask = tasks.findByName("shadowJar")
-
-        var buildTask = if (shadowTask != null) "shadowJar" else "jar"
-        from(tasks.named(buildTask).map { it.outputs.files })
-
-        // Copy sources JAR files if they exist
-        // val sourcesJarTask = tasks.findByName("sourcesJar")
-        // if (sourcesJarTask != null) {
-        //     from(sourcesJarTask.outputs.files)
-        // }
-
-        into(commonOutputDir)
-    }
-
-    tasks.named("build") {
-        dependsOn("copyToCommonOutput")
-    }
-
     if (name.startsWith("server-")) {
         val isCommon = name == "server-common"
         if (!isCommon) {
@@ -170,11 +144,14 @@ subprojects {
         }
 
         if (System.getenv("DEFAULT_BUILD") != "true") {
-            plugins.apply("com.github.johnrengelman.shadow")
+            plugins.apply("com.gradleup.shadow")
 
             if (tasks.findByName("shadowJar") != null) {
                 tasks.named<ShadowJar>("shadowJar") {
                     if (isCommon) {
+                        filesMatching("META-INF/services/**") {
+                            duplicatesStrategy = DuplicatesStrategy.INCLUDE
+                        }
                         mergeServiceFiles()
                     } else {
                         dependsOn(":server-common:shadowJar")
@@ -189,6 +166,25 @@ subprojects {
                 finalizedBy("shadowJar")
             }
         }
+    }
+
+    tasks.register<Copy>("copyToCommonOutput") {
+        val commonOutputDir = rootProject.layout.buildDirectory.dir("commonOutput")
+        val buildTask = if (tasks.findByName("shadowJar") != null) "shadowJar" else "jar"
+
+        from(tasks.named(buildTask).map { it.outputs.files })
+
+        // Copy sources JAR files if they exist
+        // val sourcesJarTask = tasks.findByName("sourcesJar")
+        // if (sourcesJarTask != null) {
+        //     from(sourcesJarTask.outputs.files)
+        // }
+
+        into(commonOutputDir)
+    }
+
+    tasks.named("build") {
+        dependsOn("copyToCommonOutput")
     }
 }
 

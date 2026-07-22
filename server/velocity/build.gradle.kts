@@ -16,19 +16,21 @@ dependencies {
     annotationProcessor("com.velocitypowered:velocity-api:3.3.0-SNAPSHOT")
 }
 
-var generateJavaTask = tasks.create("generateJava", Copy::class) {
+val generatedJavaDir = layout.buildDirectory.dir("generated/java")
+
+val generateJavaTask = tasks.register<Copy>("generateJava") {
     val properties = mapOf("version" to project.version.toString())
     inputs.properties(properties)
 
     from("src/template/java")
-    into("${project.layout.buildDirectory.get().asFile}/generated/java")
+    into(generatedJavaDir)
 
     expand(properties)
 }
 
 
 sourceSets.findByName("main")?.apply {
-    this.java.srcDirs("${project.buildDir}/generated/java")
+    this.java.srcDir(generatedJavaDir)
 }
 
 tasks.named("checkLicenseMain") {
