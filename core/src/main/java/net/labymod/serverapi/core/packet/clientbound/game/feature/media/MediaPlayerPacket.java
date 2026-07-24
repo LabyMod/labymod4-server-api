@@ -38,6 +38,7 @@ public class MediaPlayerPacket implements Packet {
   private String canvasId;
   private String url;
   private long positionMillis;
+  private boolean playing;
 
   public MediaPlayerPacket(
       @NotNull MediaPlayerAction action,
@@ -52,10 +53,21 @@ public class MediaPlayerPacket implements Packet {
       @Nullable String url,
       long positionMillis
   ) {
+    this(action, canvasId, url, positionMillis, false);
+  }
+
+  public MediaPlayerPacket(
+      @NotNull MediaPlayerAction action,
+      @NotNull String canvasId,
+      @Nullable String url,
+      long positionMillis,
+      boolean playing
+  ) {
     this.action = Objects.requireNonNull(action, "Action");
     this.canvasId = Objects.requireNonNull(canvasId, "Canvas id");
     this.url = url;
     this.positionMillis = positionMillis;
+    this.playing = playing;
   }
 
   public static MediaPlayerPacket register(@NotNull String canvasId) {
@@ -86,12 +98,28 @@ public class MediaPlayerPacket implements Packet {
     return new MediaPlayerPacket(MediaPlayerAction.STOP, canvasId);
   }
 
+  public static MediaPlayerPacket sync(
+      @NotNull String canvasId,
+      @Nullable String url,
+      long positionMillis,
+      boolean playing
+  ) {
+    return new MediaPlayerPacket(
+        MediaPlayerAction.SYNC,
+        canvasId,
+        url,
+        positionMillis,
+        playing
+    );
+  }
+
   @Override
   public void read(@NotNull PayloadReader reader) {
     this.action = MediaPlayerAction.values()[reader.readVarInt()];
     this.canvasId = reader.readString();
     this.url = reader.readOptional(reader::readString);
     this.positionMillis = reader.readLong();
+    this.playing = reader.readBoolean();
   }
 
   @Override
@@ -100,6 +128,7 @@ public class MediaPlayerPacket implements Packet {
     writer.writeString(this.canvasId);
     writer.writeOptionalString(this.url);
     writer.writeLong(this.positionMillis);
+    writer.writeBoolean(this.playing);
   }
 
   public @NotNull MediaPlayerAction getAction() {
@@ -116,5 +145,9 @@ public class MediaPlayerPacket implements Packet {
 
   public long getPositionMillis() {
     return this.positionMillis;
+  }
+
+  public boolean isPlaying() {
+    return this.playing;
   }
 }

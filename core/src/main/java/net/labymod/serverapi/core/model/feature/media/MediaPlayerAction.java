@@ -31,5 +31,6 @@ public enum MediaPlayerAction {
   PAUSE,
   RESUME,
   SEEK,
-  STOP
+  STOP,
+  SYNC
 }
