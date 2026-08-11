@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2024 LabyMedia GmbH
+ * Copyright (c) 2025 LabyMedia GmbH
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -25,16 +25,13 @@
 package net.labymod.serverapi.server.minestom;
 
 import net.labymod.serverapi.api.Protocol;
-import net.labymod.serverapi.api.logger.NoOpProtocolPlatformLogger;
 import net.labymod.serverapi.api.logger.ProtocolPlatformLogger;
 import net.labymod.serverapi.api.packet.Packet;
 import net.labymod.serverapi.api.payload.PayloadChannelIdentifier;
 import net.labymod.serverapi.api.payload.io.PayloadReader;
 import net.labymod.serverapi.api.payload.io.PayloadWriter;
-import net.labymod.serverapi.core.AbstractLabyModProtocolService;
 import net.labymod.serverapi.core.packet.serverbound.login.VersionLoginPacket;
 import net.labymod.serverapi.server.common.AbstractServerLabyModProtocolService;
-import net.labymod.serverapi.server.common.JavaProtocolLogger;
 import net.labymod.serverapi.server.common.model.player.AbstractServerLabyModPlayer;
 import net.labymod.serverapi.server.minestom.event.LabyModInstalledAddonsUpdateEvent;
 import net.labymod.serverapi.server.minestom.event.LabyModPacketReceivedEvent;
@@ -46,7 +43,6 @@ import net.minestom.server.event.player.PlayerDisconnectEvent;
 import net.minestom.server.event.player.PlayerPluginMessageEvent;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
-import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Objects;
@@ -71,25 +67,25 @@ public class LabyModProtocolService extends AbstractServerLabyModProtocolService
     }
 
     private void init() {
-        if (initialized) {
+        if (this.initialized) {
             throw new IllegalStateException("This protocol service is already initialized.");
         }
 
-        labyModProtocol.registerHandler(
+      this.labyModProtocol.registerHandler(
                 VersionLoginPacket.class,
                 new DefaultVersionLoginPacketHandler(this)
         );
 
         this.registry().addRegisterListener(
                 protocol -> {
-                    MinecraftServer.getGlobalEventHandler().addListener(PlayerPluginMessageEvent.class, event -> onPluginMessage(event, protocol));
+                    MinecraftServer.getGlobalEventHandler().addListener(PlayerPluginMessageEvent.class, event -> this.onPluginMessage(event, protocol));
                 }
         );
         MinecraftServer.getGlobalEventHandler().addListener(PlayerDisconnectEvent.class, event -> {
-            handlePlayerQuit(event.getPlayer().getUuid());
+          this.handlePlayerQuit(event.getPlayer().getUuid());
         });
 
-        initialized = true;
+      this.initialized = true;
     }
 
     /**
@@ -127,7 +123,7 @@ public class LabyModProtocolService extends AbstractServerLabyModProtocolService
                 new LabyModPacketReceivedEvent(
                         this,
                         protocol,
-                        getPlayer(sender),
+                    this.getPlayer(sender),
                         packet
                 )
         );
@@ -139,7 +135,7 @@ public class LabyModProtocolService extends AbstractServerLabyModProtocolService
                 new LabyModPacketSentEvent(
                         this,
                         protocol,
-                        getPlayer(recipient),
+                    this.getPlayer(recipient),
                         packet
                 )
         );
@@ -150,7 +146,7 @@ public class LabyModProtocolService extends AbstractServerLabyModProtocolService
      */
     @Override
     public @NotNull ProtocolPlatformLogger logger() {
-        return logger;
+        return this.logger;
     }
 
     /**

@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2024 LabyMedia GmbH
+ * Copyright (c) 2025 LabyMedia GmbH
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -61,7 +61,7 @@ public class PermissionPacket implements Packet {
   @Override
   public void write(@NotNull PayloadWriter writer) {
     writer.writeCollection(this.permissions, actualPermission -> {
-      writer.writeString(actualPermission.permission());
+        writer.writeString(actualPermission.permission().getIdentifier());
       writer.writeBoolean(actualPermission.isAllowed());
     });
   }

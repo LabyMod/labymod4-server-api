@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2024 LabyMedia GmbH
+ * Copyright (c) 2025 LabyMedia GmbH
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -30,9 +30,7 @@ import net.labymod.serverapi.api.packet.IdentifiablePacket;
 import net.labymod.serverapi.api.packet.Packet;
 import net.labymod.serverapi.core.integration.LabyModIntegrationPlayer;
 import net.labymod.serverapi.core.integration.LabyModProtocolIntegration;
-import net.labymod.serverapi.core.model.display.EconomyDisplay;
-import net.labymod.serverapi.core.model.display.Subtitle;
-import net.labymod.serverapi.core.model.display.TabListFlag;
+import net.labymod.serverapi.core.model.display.*;
 import net.labymod.serverapi.core.model.feature.DiscordRPC;
 import net.labymod.serverapi.core.model.feature.InteractionMenuEntry;
 import net.labymod.serverapi.core.model.moderation.Permission;
@@ -43,9 +41,7 @@ import net.labymod.serverapi.core.packet.clientbound.game.display.EconomyDisplay
 import net.labymod.serverapi.core.packet.clientbound.game.display.SubtitlePacket;
 import net.labymod.serverapi.core.packet.clientbound.game.display.TabListBannerPacket;
 import net.labymod.serverapi.core.packet.clientbound.game.display.TabListFlagPacket;
-import net.labymod.serverapi.core.packet.clientbound.game.feature.DiscordRPCPacket;
-import net.labymod.serverapi.core.packet.clientbound.game.feature.InteractionMenuPacket;
-import net.labymod.serverapi.core.packet.clientbound.game.feature.PlayingGameModePacket;
+import net.labymod.serverapi.core.packet.clientbound.game.feature.*;
 import net.labymod.serverapi.core.packet.clientbound.game.feature.marker.AddMarkerPacket;
 import net.labymod.serverapi.core.packet.clientbound.game.feature.marker.MarkerPacket;
 import net.labymod.serverapi.core.packet.clientbound.game.moderation.AddonDisablePacket;
@@ -53,6 +49,7 @@ import net.labymod.serverapi.core.packet.clientbound.game.moderation.AddonRecomm
 import net.labymod.serverapi.core.packet.clientbound.game.moderation.PermissionPacket;
 import net.labymod.serverapi.core.packet.clientbound.game.supplement.InputPromptPacket;
 import net.labymod.serverapi.core.packet.clientbound.game.supplement.ServerSwitchPromptPacket;
+import net.labymod.serverapi.core.packet.clientbound.game.supplement.UpdateReadTimeoutPacket;
 import net.labymod.serverapi.core.packet.serverbound.game.moderation.AddonRecommendationResponsePacket;
 import net.labymod.serverapi.core.packet.serverbound.game.supplement.InputPromptResponsePacket;
 import net.labymod.serverapi.core.packet.serverbound.game.supplement.ServerSwitchPromptResponsePacket;
@@ -439,6 +436,40 @@ public abstract class AbstractLabyModPlayer<P extends AbstractLabyModPlayer<?>> 
    */
   public void sendTabListBanner(@Nullable String iconUrl) {
     this.sendLabyModPacket(new TabListBannerPacket(iconUrl));
+  }
+
+  /**
+   * Update read timeout of player
+   *
+   * @param seconds The read timeout of the client in seconds
+   */
+  public void updateReadTimeout(int seconds) {
+    this.sendLabyModPacket(new UpdateReadTimeoutPacket(seconds));
+  }
+
+  /**
+   * Registers the provided server badges to the player.
+   * Use {@link #bindBadges(List)} to bind the registered badges to a player.
+   * @param badges The badges to register
+   */
+  public void registerBadges(List<ServerBadge> badges) {
+    this.sendLabyModPacket(new ServerBadgePacket(badges));
+  }
+
+  /**
+   * Bind the registered badges (of {@link #registerBadges(List)}) to a player
+   * @param badges The badges to bind
+   */
+  public void bindBadges(List<ServerUserBadge> badges) {
+    this.sendLabyModPacket(new ServerUserBadgePacket(badges));
+  }
+
+  /**
+   * Updates the visibility of the LabyMod user indicator
+   * @param visible Whether the LabyMod user indicator should be visible
+   */
+  public void updateLabyModUserIndicatorVisibility(boolean visible) {
+    this.sendLabyModPacket(new UpdateLabyModUserIndicatorVisibilityPacket(visible));
   }
 
   /**

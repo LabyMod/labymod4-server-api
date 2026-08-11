@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2024 LabyMedia GmbH
+ * Copyright (c) 2025 LabyMedia GmbH
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -50,6 +50,6 @@ public record LabyModInstalledAddonsUpdateEvent(
 
     @Override
     public @NotNull Player getPlayer() {
-        return player.getPlayer();
+        return this.player.getPlayer();
     }
 }

@@ -13,9 +13,9 @@ jobs:
       PUBLISH_TOKEN: ${{ secrets.LABYMOD_PUBLISH_TOKEN }}
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Set up JDK
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
           java-version: '17'
@@ -24,7 +24,7 @@ jobs:
       - name: Build Release Artifacts with Gradle
         run: ./gradlew build
       - name: Upload Artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: Artifacts
           path: build/commonOutput/*.jar
