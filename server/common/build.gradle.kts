@@ -12,7 +12,7 @@ val integration = configurations.create("integration") {
     }
 }
 
-val api by configurations
+val api = configurations.getByName("api")
 api.extendsFrom(integration)
 
 val integrationVersion = "1.0.1"
