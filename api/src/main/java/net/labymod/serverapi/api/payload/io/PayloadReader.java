@@ -42,6 +42,8 @@ import java.util.function.Supplier;
 
 public class PayloadReader {
 
+  private static final int MAXIMUM_COLLECTION_LENGTH = 1_048_576;
+
   private final ByteBuffer buffer;
 
   public PayloadReader() {
@@ -156,7 +158,7 @@ public class PayloadReader {
   }
 
   public <T> List<T> readList(Supplier<T> reader) {
-    int length = this.readVarInt();
+    int length = this.readCollectionLength("list");
     List<T> list = new ArrayList<>(length);
     for (int i = 0; i < length; i++) {
       T value = reader.get();
@@ -171,7 +173,7 @@ public class PayloadReader {
   }
 
   public <T> Set<T> readSet(Supplier<T> reader) {
-    int length = this.readVarInt();
+    int length = this.readCollectionLength("set");
     Set<T> set = new HashSet<>(length);
     for (int i = 0; i < length; i++) {
       set.add(reader.get());
@@ -181,13 +183,35 @@ public class PayloadReader {
   }
 
   public <T> T[] readArray(Supplier<T> reader) {
-    int length = this.readVarInt();
+    int length = this.readCollectionLength("array");
     T[] array = (T[]) new Object[length];
     for (int i = 0; i < length; i++) {
       array[i] = reader.get();
     }
 
     return array;
+  }
+
+  private int readCollectionLength(String type) {
+    int length = this.readVarInt();
+    if (length < 0) {
+      throw new PayloadReaderException(
+          String.format("The received %s length is less than zero.", type));
+    }
+
+    int maximumLength = Math.min(MAXIMUM_COLLECTION_LENGTH, this.buffer.remaining());
+    if (length > maximumLength) {
+      throw new PayloadReaderException(
+          String.format(
+              "The received %s length is longer than maximum allowed (%s > %s)",
+              type,
+              length,
+              maximumLength
+          )
+      );
+    }
+
+    return length;
   }
 
   public UUID readUUID() {
