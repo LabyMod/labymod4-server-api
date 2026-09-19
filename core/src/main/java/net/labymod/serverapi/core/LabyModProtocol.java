@@ -34,12 +34,14 @@ import net.labymod.serverapi.core.packet.clientbound.game.display.TabListFlagPac
 import net.labymod.serverapi.core.packet.clientbound.game.feature.*;
 import net.labymod.serverapi.core.packet.clientbound.game.feature.media.MediaPlayerPacket;
 import net.labymod.serverapi.core.packet.clientbound.game.feature.media.MediaPlayerVolumePacket;
+import net.labymod.serverapi.core.packet.clientbound.game.feature.banner.BannerImagePacket;
 import net.labymod.serverapi.core.packet.clientbound.game.feature.marker.AddMarkerPacket;
 import net.labymod.serverapi.core.packet.clientbound.game.feature.marker.MarkerPacket;
 import net.labymod.serverapi.core.packet.clientbound.game.moderation.AddonDisablePacket;
 import net.labymod.serverapi.core.packet.clientbound.game.moderation.AddonRecommendationPacket;
 import net.labymod.serverapi.core.packet.clientbound.game.moderation.InstalledAddonsRequestPacket;
 import net.labymod.serverapi.core.packet.clientbound.game.moderation.PermissionPacket;
+import net.labymod.serverapi.core.packet.clientbound.game.moderation.DeleteChatMessagesPacket;
 import net.labymod.serverapi.core.packet.clientbound.game.supplement.InputPromptPacket;
 import net.labymod.serverapi.core.packet.clientbound.game.supplement.ServerSwitchPromptPacket;
 import net.labymod.serverapi.core.packet.clientbound.game.supplement.UpdateReadTimeoutPacket;
@@ -98,5 +100,7 @@ public class LabyModProtocol extends Protocol {
     this.registerPacket(40, UpdateFeaturePacket.class, Direction.CLIENTBOUND);
     this.registerPacket(41, MediaPlayerPacket.class, Direction.CLIENTBOUND);
     this.registerPacket(42, MediaPlayerVolumePacket.class, Direction.CLIENTBOUND);
+    this.registerPacket(43, BannerImagePacket.class, Direction.CLIENTBOUND);
+    this.registerPacket(44, DeleteChatMessagesPacket.class, Direction.CLIENTBOUND);
   }
 }
