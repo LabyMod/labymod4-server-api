@@ -32,6 +32,7 @@ import net.labymod.serverapi.core.integration.LabyModIntegrationPlayer;
 import net.labymod.serverapi.core.integration.LabyModProtocolIntegration;
 import net.labymod.serverapi.core.model.display.*;
 import net.labymod.serverapi.core.model.feature.DiscordRPC;
+import net.labymod.serverapi.core.model.feature.Feature;
 import net.labymod.serverapi.core.model.feature.InteractionMenuEntry;
 import net.labymod.serverapi.core.model.moderation.Permission;
 import net.labymod.serverapi.core.model.moderation.RecommendedAddon;
@@ -42,10 +43,14 @@ import net.labymod.serverapi.core.packet.clientbound.game.display.SubtitlePacket
 import net.labymod.serverapi.core.packet.clientbound.game.display.TabListBannerPacket;
 import net.labymod.serverapi.core.packet.clientbound.game.display.TabListFlagPacket;
 import net.labymod.serverapi.core.packet.clientbound.game.feature.*;
+import net.labymod.serverapi.core.packet.clientbound.game.feature.banner.BannerImagePacket;
 import net.labymod.serverapi.core.packet.clientbound.game.feature.marker.AddMarkerPacket;
 import net.labymod.serverapi.core.packet.clientbound.game.feature.marker.MarkerPacket;
+import net.labymod.serverapi.core.packet.clientbound.game.feature.media.MediaPlayerPacket;
+import net.labymod.serverapi.core.packet.clientbound.game.feature.media.MediaPlayerVolumePacket;
 import net.labymod.serverapi.core.packet.clientbound.game.moderation.AddonDisablePacket;
 import net.labymod.serverapi.core.packet.clientbound.game.moderation.AddonRecommendationPacket;
+import net.labymod.serverapi.core.packet.clientbound.game.moderation.DeleteChatMessagesPacket;
 import net.labymod.serverapi.core.packet.clientbound.game.moderation.PermissionPacket;
 import net.labymod.serverapi.core.packet.clientbound.game.supplement.InputPromptPacket;
 import net.labymod.serverapi.core.packet.clientbound.game.supplement.ServerSwitchPromptPacket;
@@ -470,6 +475,141 @@ public abstract class AbstractLabyModPlayer<P extends AbstractLabyModPlayer<?>> 
    */
   public void updateLabyModUserIndicatorVisibility(boolean visible) {
     this.sendLabyModPacket(new UpdateLabyModUserIndicatorVisibilityPacket(visible));
+  }
+
+  /**
+   * Sends the provided feature to the player
+   *
+   * @param feature The feature to send
+   */
+  public void sendFeature(Feature.StatedFeature feature) {
+    this.sendLabyModPacket(new UpdateFeaturePacket(feature));
+  }
+
+
+  /**
+   * Registers a media player canvas with the specified canvas ID.
+   *
+   * @param canvasId The unique identifier for the media player canvas
+   */
+  public void registerMediaPlayerCanvas(@NotNull String canvasId) {
+    this.sendLabyModPacket(MediaPlayerPacket.register(canvasId));
+  }
+
+  /**
+   * Unregisters a media player canvas with the specified canvas ID.
+   *
+   * @param canvasId The unique identifier for the media player canvas
+   */
+  public void unregisterMediaPlayerCanvas(@NotNull String canvasId) {
+    this.sendLabyModPacket(MediaPlayerPacket.unregister(canvasId));
+  }
+
+  /**
+   * Plays media on a media player canvas with the specified canvas ID and URL.
+   *
+   * @param canvasId The unique identifier for the media player canvas
+   * @param url The URL of the media to be played
+   */
+  public void playMediaPlayer(@NotNull String canvasId, @NotNull String url) {
+    this.sendLabyModPacket(MediaPlayerPacket.play(canvasId, url));
+  }
+
+  /**
+   * Pauses media playback on a media player canvas with the specified canvas ID.
+   *
+   * @param canvasId The unique identifier for the media player canvas
+   */
+  public void pauseMediaPlayer(@NotNull String canvasId) {
+    this.sendLabyModPacket(MediaPlayerPacket.pause(canvasId));
+  }
+
+  /**
+   * Resumes media playback on a media player canvas with the specified canvas ID.
+   *
+   * @param canvasId The unique identifier for the media player canvas
+   */
+  public void resumeMediaPlayer(@NotNull String canvasId) {
+    this.sendLabyModPacket(MediaPlayerPacket.resume(canvasId));
+  }
+
+  /**
+   * Seeks to a specific position in media playback on a media player canvas with the specified canvas ID.
+   *
+   * @param canvasId The unique identifier for the media player canvas
+   * @param positionMillis The position in milliseconds to seek to
+   */
+  public void seekMediaPlayer(@NotNull String canvasId, long positionMillis) {
+    this.sendLabyModPacket(MediaPlayerPacket.seek(canvasId, positionMillis));
+  }
+
+  /**
+   * Stops media playback on a media player canvas with the specified canvas ID.
+   *
+   * @param canvasId The unique identifier for the media player canvas
+   */
+  public void stopMediaPlayer(@NotNull String canvasId) {
+    this.sendLabyModPacket(MediaPlayerPacket.stop(canvasId));
+  }
+
+  /**
+   * Syncs media playback on a media player canvas with the specified canvas ID.
+   *
+   * @param canvasId The unique identifier for the media player canvas
+   * @param url The URL of the media to be played
+   * @param positionMillis The position in milliseconds to seek to
+   * @param playing Whether the media is currently playing
+   */
+  public void syncMediaPlayer(@NotNull String canvasId, @Nullable String url, long positionMillis, boolean playing) {
+    this.sendLabyModPacket(MediaPlayerPacket.sync(canvasId, url, positionMillis, playing));
+  }
+
+  /**
+   * Updates the media player's absolute volume for the specified canvas ID.
+   *
+   * @param canvasId The unique identifier of the media player's canvas. Must not be null.
+   * @param decibel  The desired volume level in decibels to set for the media player.
+   */
+  public void updateMediaPlayerAbsolutVolume(@NotNull String canvasId, float decibel) {
+    this.sendLabyModPacket(MediaPlayerVolumePacket.absolute(canvasId, decibel));
+  }
+
+  /**
+   * Updates the media player's relative volume for the specified canvas ID.
+   *
+   * @param canvasId The unique identifier of the media player's canvas. Must not be null.
+   * @param decibel  The desired volume level in decibels to adjust for the media player.
+   */
+  public void updateMediaPlayerRelativeVolume(@NotNull String canvasId, float decibel) {
+    this.sendLabyModPacket(MediaPlayerVolumePacket.relative(canvasId, decibel));
+  }
+
+  /**
+   * Clears chat messages for the specified sender.
+   *
+   * @param sender the unique identifier of the sender whose chat messages are to be cleared
+   */
+  public void clearChatMessages(UUID sender) {
+    this.sendLabyModPacket(new DeleteChatMessagesPacket(sender));
+  }
+
+  /**
+   * Sends a banner image using the specified namespace and image URL.
+   *
+   * @param namespace the namespace identifier for the banner image
+   * @param imageUrl the URL of the banner image to be sent
+   */
+  public void sendBannerImage(String namespace, String imageUrl) {
+    this.sendLabyModPacket(BannerImagePacket.update(namespace, imageUrl));
+  }
+
+  /**
+   * Clears a banner image using the specified namespace.
+   *
+   * @param namespace the namespace identifier for the banner image to be cleared
+   */
+  public void clearBannerImage(String namespace) {
+    this.sendLabyModPacket(BannerImagePacket.clear(namespace));
   }
 
   /**
